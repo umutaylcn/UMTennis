@@ -1,100 +1,101 @@
-# vinext-starter
+# UMTennis
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+**ATP match predictions powered by leakage-free feature engineering, dual Elo ratings, and an XGBoost-Logistic Regression ensemble.**
 
-## Prerequisites
+[Live Demo](https://prediction.umtennis.workers.dev) · [Machine Learning API](https://github.com/umutaylcn/umtennis-api) · [API Health](https://umtennis-api.onrender.com/api/health)
 
-- Node.js `>=22.13.0`
+![UMTennis match prediction platform](public/og.png)
 
-## Quick Start
+## What it does
+
+UMTennis turns upcoming ATP fixtures into interactive pre-match analysis. Select a match to compare:
+
+- ATP ranking, general Elo, and surface-specific Elo
+- last 5, last 10, and surface form
+- career serve and return statistics
+- overall and surface head-to-head records
+- calibrated win probabilities and confidence levels
+- match-strength ratings and surface-aware presentation
+
+The interface is responsive, bilingual (English/Turkish), timezone-aware, and optimized for desktop and mobile.
+
+## Model results
+
+The production model is a probability ensemble of **60% XGBoost + 40% Logistic Regression**, selected with expanding-window cross-validation.
+
+| Evaluation period | Accuracy | ROC-AUC | Log loss | Brier score |
+| --- | ---: | ---: | ---: | ---: |
+| 2023-2025 untouched test set | 66.2% | 0.726 | 0.608 | 0.211 |
+| 2026 partial backtest | 66.0% | 0.733 | 0.602 | 0.208 |
+
+Accuracy reaches **78.0% at >=70% model confidence** on the held-out evaluation set, covering roughly 39.7% of matches. Confidence thresholds are descriptive model diagnostics, not betting advice.
+
+## Leakage-free pipeline
+
+```text
+Historical ATP matches
+        ↓
+Chronological audit and cleaning
+        ↓
+Pre-match state reconstruction
+        ↓
+119 features: Elo, surface Elo, form, H2H, ranking, tournament context
+        ↓
+Expanding-window cross-validation
+        ↓
+XGBoost + Logistic Regression ensemble
+        ↓
+Calibrated P(Player 1 wins)
+```
+
+Every stateful feature is calculated using only matches completed before the target match. Winner/loser columns are randomized into Player 1/Player 2 orientation to prevent target leakage.
+
+## Tech stack
+
+- **Frontend:** React 19, TypeScript, Next-compatible App Router, Vinext, CSS
+- **Hosting:** Cloudflare Workers
+- **API:** FastAPI, Python, pandas, scikit-learn, XGBoost
+- **Data:** ATP match history and live upcoming-fixture provider
+
+## Local development
+
+Requirements: Node.js `>=22.13.0`.
 
 ```bash
-npm install
-npm run dev
-npm run build
+pnpm install
+pnpm dev
 ```
 
-This starter does not use `wrangler.jsonc`.
+The frontend uses the production API by default. To use another backend, set:
 
-## Included Shape
-
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
-
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+Useful commands:
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+```bash
+pnpm build
+pnpm test
+pnpm lint
+```
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+## Repository structure
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+```text
+app/                 React pages, match dashboard, and responsive styles
+public/backgrounds/  Surface-specific visual assets
+public/players/      Prepared player portraits
+tests/               Render and build checks
+worker/              Cloudflare Worker entry point
+```
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+The modeling code, notebooks, feature pipeline, and FastAPI service live in [umtennis-api](https://github.com/umutaylcn/umtennis-api).
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+## Disclaimer
 
-## Useful Commands
+UMTennis is an educational portfolio project. Predictions are probabilistic and must not be interpreted as guaranteed outcomes or financial advice. Player images belong to their respective rights holders and are used for non-commercial demonstration purposes.
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+## Author
 
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+Developed by [Umut Ali Yalçın](https://github.com/umutaylcn).

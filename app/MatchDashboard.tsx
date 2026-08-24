@@ -420,11 +420,16 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
   ];
-  const [sourceIndex,setSourceIndex]=useState(0);
-  useEffect(()=>setSourceIndex(0),[id,name]);
+  const playerKey=`${id??"unknown"}|${name}`;
+  const [failedSources,setFailedSources]=useState<Record<string,number>>({});
+  const sourceIndex=failedSources[playerKey]??0;
+  const failCurrentSource=()=>setFailedSources(current=>({
+    ...current,
+    [playerKey]:(current[playerKey]??0)+1,
+  }));
   const source=sources[sourceIndex]??null;
   return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
-    {source?<img src={source} alt={name} onError={()=>setSourceIndex(index=>index+1)}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
+    {source?<img src={source} alt={name} onError={failCurrentSource}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
   </div>;
 }
 
