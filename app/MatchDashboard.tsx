@@ -415,7 +415,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
-    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=name-stable1`]:[]),
+    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=name-stable2`]:[]),
     ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=racket3`]:[]),
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
