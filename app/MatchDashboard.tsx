@@ -40,7 +40,31 @@ const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   1002:"https://media.prod.tennis.com/v1/tcf/images/players/9f7109a5-ca31-43ac-9b9a-c529bcd38d36/20260604_215936.png?fm=webp&q=80&w=1600",
   8730:"https://longform.atptour.com/meet-the-nextgenatp-class-of-2024/assets/djEb5QgRVw/mensik-v-1080x1920.jpg",
 };
-const PLAYER_CUTOUT_IDS=new Set([2,6,7,9,15,18,19,23,27,31,37,115,159,173,197,214,225,229,236,411,503,511,521,536,539,652,653,664,844,990,1002,1215,1253,4872,6146,8730]);
+const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,37,64,94,115,159,173,179,189,197,214,225,229,236,401,411,503,511,521,536,539,604,652,653,664,844,990,1002,1096,1215,1253,4872,6146,6316,7607,8730,9137]);
+// Provider IDs can change or be temporarily unavailable in a cached fixture.
+// Resolve these locally prepared portraits by stable player name first.
+const PLAYER_NAME_CUTOUTS:Record<string,string>={
+  "Dhakshineswar Suresh":"9137",
+  "Quinn Vandecasteele":"604",
+  "James Duckworth":"64",
+  "Jan Choinski":"94",
+  "Mees Rottgering":"7607",
+  "Martin Damm":"5",
+  "Abedallah Shelbayh":"401",
+  "Sebastian Gorzny":"6316",
+  "Cruz Hewitt":"4872",
+  "Felix Balshaw":"1096",
+  "Aleksandar Kovacevic":"189",
+  "Hugo Grenier":"179",
+  "Marcos Giron":"990",
+  "Vit Kopriva":"6146",
+  "Adam Walton":"159",
+  "Jesper De Jong":"229",
+  "Miomir Kecmanovic":"536",
+  "Francisco Comesana":"521",
+  "Adolfo Daniel Vallejo":"197",
+  "Mattia Bellucci":"225",
+};
 const TOP20_PLAYER_CUTOUTS:Record<string,string>={
   "Carlos Alcaraz":"carlos-alcaraz",
   "Jannik Sinner":"jannik-sinner",
@@ -156,6 +180,17 @@ const TOP100_PLAYER_CUTOUTS:Record<string,string>={
   "Ethan Quinn":"ethan-quinn",
 };
 const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
+  "Dhakshineswar Suresh":"right",
+  "Quinn Vandecasteele":"left",
+  "James Duckworth":"right",
+  "Jan Choinski":"left",
+  "Mees Rottgering":"left",
+  "Martin Damm":"left",
+  "Abedallah Shelbayh":"left",
+  "Sebastian Gorzny":"left",
+  "Felix Balshaw":"left",
+  "Aleksandar Kovacevic":"right",
+  "Hugo Grenier":"left",
   "Giovanni Mpetshi Perricard":"left",
   "Cruz Hewitt":"left",
   "Sho Shimabukuro":"left",
@@ -273,7 +308,16 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Titouan Droguet":"right",
   "Ethan Quinn":"left",
 };
-const PLAYER_PORTRAIT_SCALE:Record<string,"110"|"117"|"118"|"120"|"121"|"127"|"130"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"183"|"220"|"230">={
+const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"220"|"230">={
+  "Dhakshineswar Suresh":"182",
+  "Quinn Vandecasteele":"133",
+  "James Duckworth":"130",
+  "Jan Choinski":"130",
+  "Mees Rottgering":"120",
+  "Martin Damm":"109",
+  "Abedallah Shelbayh":"109",
+  "Sebastian Gorzny":"130",
+  "Hugo Grenier":"108",
   "Adam Walton":"110",
   "Arthur Fils":"110",
   "Michael Mmoh":"110",
@@ -324,6 +368,9 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"110"|"117"|"118"|"120"|"121"|"127"|"1
   "Dominic Stricker":"177",
 };
 const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
+  "Quinn Vandecasteele":"70px",
+  "Martin Damm":"5px",
+  "Abedallah Shelbayh":"5px",
   "Michael Mmoh":8,
   "Yannick Hanfmann":5,
   "Alexander Blockx":22,
@@ -341,6 +388,10 @@ const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
   "Jaume Munar":16,
   "Gabriel Diallo":"5px",
 };
+const PLAYER_MOBILE_PORTRAIT_SCALE:Record<string,"70">={
+  "Botic Van De Zandschulp":"70",
+  "Botic van de Zandschulp":"70",
+};
 const text={tr:{matches:"Maçlar",upcoming:"Yaklaşan Maçlar",choose:"Tahmini görmek için bir maç seç.",loading:"Maçlar yükleniyor…",failed:"Maçlar yüklenemedi.",back:"Tüm maçlar",prediction:"Kazanma olasılığı",atp:"ATP Sıralaması",elo:"UMTennis Elo",surfaceElo:"Surface Elo",preMatch:"Maç Öncesi İstatistikler",h2h:"Tüm H2H",surfaceH2h:"Surface H2H",last5:"Son 5 Maç",last10:"Son 10 Maç",surface10:"Surface Son 10",career:"Kariyer Ortalamaları",record:"Galibiyet / Mağlubiyet",aces:"Maç başı ace",doubleFaults:"Maç başı double fault",serve:"Service points won",return:"Return points won",bpSaved:"Break points saved",noData:"Yeterli veri yok",modelPick:"MODELİN SEÇİMİ",calculating:"Model hesaplıyor…"},en:{matches:"Matches",upcoming:"Upcoming Matches",choose:"Select a match to see the prediction.",loading:"Loading matches…",failed:"Matches could not be loaded.",back:"All matches",prediction:"Win probability",atp:"ATP Ranking",elo:"UMTennis Elo",surfaceElo:"Surface Elo",preMatch:"Pre-match Statistics",h2h:"All H2H",surfaceH2h:"Surface H2H",last5:"Last 5 Matches",last10:"Last 10 Matches",surface10:"Surface Last 10",career:"Career Averages",record:"Wins / Losses",aces:"Aces per match",doubleFaults:"Double faults per match",serve:"Service points won",return:"Return points won",bpSaved:"Break points saved",noData:"Not enough data",modelPick:"MODEL PICK",calculating:"Running model…"}};
 
 function probability(value:number){return `${(value*100).toFixed(1)}%`;}
@@ -352,7 +403,9 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const top60Slug=TOP60_PLAYER_CUTOUTS[name];
   const top80Slug=TOP80_PLAYER_CUTOUTS[name];
   const top100Slug=TOP100_PLAYER_CUTOUTS[name];
+  const nameCutout=PLAYER_NAME_CUTOUTS[name];
   const portraitScale=PLAYER_PORTRAIT_SCALE[name];
+  const mobilePortraitScale=PLAYER_MOBILE_PORTRAIT_SCALE[name];
   const portraitShift=PLAYER_PORTRAIT_SHIFT[name]??0;
   const portraitStyle=portraitShift?({"--portrait-shift":typeof portraitShift==="number"?`${portraitShift}%`:portraitShift} as CSSProperties):undefined;
   const shouldMirror=PLAYER_PHOTO_HOME_SIDE[name]!=null&&PLAYER_PHOTO_HOME_SIDE[name]!==side;
@@ -362,6 +415,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
+    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=name-stable1`]:[]),
     ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=racket3`]:[]),
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
@@ -369,7 +423,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const [sourceIndex,setSourceIndex]=useState(0);
   useEffect(()=>setSourceIndex(0),[id,name]);
   const source=sources[sourceIndex]??null;
-  return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
+  return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
     {source?<img src={source} alt={name} onError={()=>setSourceIndex(index=>index+1)}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
   </div>;
 }

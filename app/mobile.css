@@ -175,7 +175,7 @@
   }
 
   .analysis-player {
-    min-height: 492px;
+    min-height: 378px;
   }
 
   .analysis-player-name {
@@ -190,10 +190,20 @@
 
   .analysis-photo-zone {
     min-height: 325px;
+    margin-top: -114px;
   }
 
   .analysis-player .analysis-photo-zone .portrait-shell img {
     max-width: 100%;
+  }
+
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-70 img {
+    transform: translateY(var(--portrait-shift, 0%)) scale(.7);
+    transform-origin: center bottom;
+  }
+
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-70.portrait-mirrored img {
+    transform: translateY(var(--portrait-shift, 0%)) scale(.7) scaleX(-1);
   }
 
   .player-rank-overlay,
