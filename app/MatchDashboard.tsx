@@ -64,6 +64,7 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "Francisco Comesana":"521",
   "Adolfo Daniel Vallejo":"197",
   "Mattia Bellucci":"225",
+  "Adrian Mannarino":"adrian-mannarino",
 };
 const TOP20_PLAYER_CUTOUTS:Record<string,string>={
   "Carlos Alcaraz":"carlos-alcaraz",
@@ -131,6 +132,7 @@ const TOP60_PLAYER_CUTOUTS:Record<string,string>={
   "Benjamin Bonzi":"benjamin-bonzi",
   "Marin Cilic":"marin-cilic",
   "Sebastian Baez":"sebastian-baez",
+  "S. Baez":"sebastian-baez",
   "Arthur Rinderknech":"arthur-rinderknech",
   "Jaume Munar":"jaume-munar",
 };
@@ -197,6 +199,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Miomir Kecmanovic":"right",
   "Martin Landaluce":"left",
   "Mattia Bellucci":"left",
+  "Adrian Mannarino":"left",
   "Francisco Comesana":"left",
   "Adolfo Daniel Vallejo":"left",
   "Darwin Blanch":"left",
@@ -264,6 +267,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Benjamin Bonzi":"right",
   "Marin Cilic":"left",
   "Sebastian Baez":"right",
+  "S. Baez":"right",
   "Arthur Rinderknech":"left",
   "Jaume Munar":"right",
   "Jan Lennard Struff":"left",
@@ -336,6 +340,8 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"117"|"118"|"120"|"1
   "Kamil Majchrzak":"130",
   "Ugo Humbert":"130",
   "Sebastian Baez":"143",
+  "S. Baez":"143",
+  "Adrian Mannarino":"130",
   "Arthur Rinderknech":"130",
   "Hyeon Chung":"140",
   "Jan Lennard Struff":"127",
@@ -384,6 +390,7 @@ const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
   "Denis Shapovalov":5,
   "Benjamin Bonzi":9,
   "Sebastian Baez":28,
+  "S. Baez":28,
   "Arthur Rinderknech":20,
   "Jaume Munar":16,
   "Gabriel Diallo":"5px",
