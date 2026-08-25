@@ -391,6 +391,7 @@ const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
   "Benjamin Bonzi":9,
   "Sebastian Baez":28,
   "S. Baez":28,
+  "Adrian Mannarino":"35px",
   "Arthur Rinderknech":20,
   "Jaume Munar":16,
   "Gabriel Diallo":"5px",
