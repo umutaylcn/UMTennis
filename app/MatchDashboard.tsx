@@ -40,10 +40,24 @@ const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   1002:"https://media.prod.tennis.com/v1/tcf/images/players/9f7109a5-ca31-43ac-9b9a-c529bcd38d36/20260604_215936.png?fm=webp&q=80&w=1600",
   8730:"https://longform.atptour.com/meet-the-nextgenatp-class-of-2024/assets/djEb5QgRVw/mensik-v-1080x1920.jpg",
 };
-const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,37,64,94,115,159,173,179,189,197,214,225,229,236,401,411,503,511,521,536,539,604,652,653,664,844,990,1002,1096,1215,1253,4872,6146,6316,7607,8730,9137]);
+const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,94,109,115,159,164,173,179,189,197,198,204,214,225,229,236,401,411,472,494,503,511,521,527,536,539,604,623,652,653,664,842,844,990,1002,1096,1215,1253,4872,6146,6316,7607,8730,9137,12825,13409]);
 // Provider IDs can change or be temporarily unavailable in a cached fixture.
 // Resolve these locally prepared portraits by stable player name first.
 const PLAYER_NAME_CUTOUTS:Record<string,string>={
+  "Camilo Ugo Carabelli":"472",
+  "Carlos Taberner":"12825",
+  "Corentin Moutet":"33",
+  "Damir Dzumhur":"204",
+  "Dane Sweeny":"842",
+  "Facundo Diaz Acosta":"494",
+  "Filip Misolic":"13409",
+  "John Jeffrey Wolf":"623",
+  "J.J. Wolf":"623",
+  "J J Wolf":"623",
+  "Marco Trungelliti":"164",
+  "Roman Andres Burruchaga":"109",
+  "Stan Wawrinka":"527",
+  "Zachary Svajda":"198",
   "Dhakshineswar Suresh":"9137",
   "Quinn Vandecasteele":"604",
   "James Duckworth":"64",
@@ -313,6 +327,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Ethan Quinn":"left",
 };
 const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"220"|"230">={
+  "Marco Trungelliti":"220",
   "Dhakshineswar Suresh":"182",
   "Quinn Vandecasteele":"133",
   "James Duckworth":"130",
