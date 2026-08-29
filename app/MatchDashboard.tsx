@@ -40,7 +40,7 @@ const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   1002:"https://media.prod.tennis.com/v1/tcf/images/players/9f7109a5-ca31-43ac-9b9a-c529bcd38d36/20260604_215936.png?fm=webp&q=80&w=1600",
   8730:"https://longform.atptour.com/meet-the-nextgenatp-class-of-2024/assets/djEb5QgRVw/mensik-v-1080x1920.jpg",
 };
-const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,94,109,115,159,164,173,179,189,197,198,204,214,225,229,236,401,411,472,494,503,511,521,527,536,539,604,623,652,653,664,842,844,990,1002,1096,1215,1253,4872,6146,6316,7607,8730,9137,12825,13409]);
+const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,94,105,109,115,117,159,163,164,173,177,179,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,447,472,494,503,511,521,527,536,539,576,604,623,652,653,664,842,844,878,990,1002,1096,1178,1179,1215,1253,4872,6146,6316,7607,8730,8745,9137,12825,13409,33875]);
 // Provider IDs can change or be temporarily unavailable in a cached fixture.
 // Resolve these locally prepared portraits by stable player name first.
 const PLAYER_NAME_CUTOUTS:Record<string,string>={
@@ -79,6 +79,27 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "Adolfo Daniel Vallejo":"197",
   "Mattia Bellucci":"225",
   "Adrian Mannarino":"adrian-mannarino",
+  "Aleksandar Vukic":"234",
+  "Andrea Guerrieri":"105",
+  "Coleman Chak Lam Wong":"193",
+  "Coleman Wong":"193",
+  "Dalibor Svrcina":"399",
+  "Federico Cina":"33875",
+  "Francesco Passaro":"8745",
+  "Harry Wendelken":"73",
+  "Hugo Gaston":"233",
+  "Jack Kennedy":"878",
+  "Jacob Fearnley":"1179",
+  "Jurij Rodionov":"224",
+  "Lloyd Harris":"177",
+  "Nishesh Basavareddy":"447",
+  "Rei Sakamoto":"163",
+  "Shintaro Mochizuki":"1178",
+  "Toby Samuel":"397",
+  "Tomas Barrios Vera":"68",
+  "Tomas Vera Barrios":"68",
+  "Tristan Schoolkate":"117",
+  "Zsombor Piros":"576",
 };
 const TOP20_PLAYER_CUTOUTS:Record<string,string>={
   "Carlos Alcaraz":"carlos-alcaraz",
@@ -179,10 +200,12 @@ const TOP100_PLAYER_CUTOUTS:Record<string,string>={
   "Jenson Brooksby":"jenson-brooksby",
   "Gabriel Diallo":"gabriel-diallo",
   "Pablo Carreno Busta":"pablo-carreno-busta",
+  "Pablo Carreno-Busta":"pablo-carreno-busta",
   "Ignacio Buse":"ignacio-buse",
   "Jaime Faria":"jaime-faria",
   "Eliot Spizzirri":"eliot-spizzirri",
   "Luca Van Assche":"luca-van-assche",
+  "Luca van Assche":"luca-van-assche",
   "Lorenzo Sonego":"lorenzo-sonego",
   "Tomas Martin Etcheverry":"tomas-martin-etcheverry",
   "Yosuke Watanuki":"yosuke-watanuki",
