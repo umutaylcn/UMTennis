@@ -352,7 +352,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Titouan Droguet":"right",
   "Ethan Quinn":"left",
 };
-const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"220"|"230">={
+const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"220"|"230">={
   "Marco Trungelliti":"220",
   "Dhakshineswar Suresh":"182",
   "Quinn Vandecasteele":"133",
@@ -365,6 +365,7 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"117"|"118"|"120"|"1
   "Hugo Grenier":"108",
   "Adam Walton":"110",
   "Arthur Fils":"110",
+  "Michael Zheng":"115",
   "Michael Mmoh":"110",
   "Yannick Hanfmann":"110",
   "Jordan Thompson":"110",
