@@ -416,6 +416,7 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Dominic Stricker":"177",
 };
 const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
+  "Michael Zheng":"-30px",
   "Quinn Vandecasteele":"70px",
   "Martin Damm":"5px",
   "Abedallah Shelbayh":"5px",
