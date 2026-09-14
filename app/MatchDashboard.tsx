@@ -721,7 +721,7 @@ export function MatchDashboard(){
 
   return <main className={`site-screen surface-${surfaceClass}`}>
     <div className="page-background" aria-hidden="true"/>
-    {view==="previous"&&<div className="history-sparks" aria-hidden="true">{Array.from({length:12},(_,index)=><i key={index}/>)}</div>}
+    {view==="previous"&&<div className="history-sparks" aria-hidden="true"><div className="history-spark-gutter left">{Array.from({length:6},(_,index)=><i key={index}/>)}</div><div className="history-spark-gutter right">{Array.from({length:6},(_,index)=><i key={index}/>)}</div></div>}
     <header className="umt-header">
       <button className="umt-logo" onClick={closeMatch}><span>UM</span>Tennis</button>
       <nav><button className={view==="matches"?"active":""} onClick={closeMatch}>{t.matches}</button><button className={view==="previous"?"active":""} type="button" onClick={showPrevious}>{t.previous}</button><button className={view==="model"?"active":""} type="button" onClick={showModel}>Model</button></nav>
