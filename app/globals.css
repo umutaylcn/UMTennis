@@ -242,3 +242,6 @@
 
 /* One continuous radial light: bright center fading smoothly to transparent. */
 .history-sparks i{width:124px;height:124px;margin:-62px 0 0 -62px;background:radial-gradient(circle,rgba(229,255,157,.72) 0%,rgba(180,255,118,.36) 17%,rgba(105,255,133,.16) 38%,rgba(78,227,113,.06) 57%,transparent 74%);box-shadow:none;filter:blur(1.5px)}
+
+/* Constrain glow origins to the gutters without clipping their soft edges. */
+.history-spark-gutter{overflow:visible}
