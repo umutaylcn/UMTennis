@@ -622,12 +622,13 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
   const [tournament,setTournament]=useState("all");
   const [round,setRound]=useState("all");
   const [result,setResult]=useState("all");
+  const [confidence,setConfidence]=useState("all");
   const [page,setPage]=useState(1);
   const pageSize=20;
   const labels=language==="tr"?{
-    search:"Oyuncu veya turnuva ara",tournament:"TURNUVA",allTournaments:"Tüm turnuvalar",round:"TUR",allRounds:"Tüm turlar",result:"SONUÇ",allResults:"Tüm tahminler",correct:"Doğru",wrong:"Yanlış",clear:"Filtreleri temizle",shown:"maç gösteriliyor",none:"Bu filtrelere uyan maç bulunamadı.",previous:"Önceki",next:"Sonraki",page:"Sayfa"
+    search:"Oyuncu veya turnuva ara",tournament:"TURNUVA",allTournaments:"Tüm turnuvalar",round:"TUR",allRounds:"Tüm turlar",result:"SONUÇ",allResults:"Tüm tahminler",confidence:"TAHMİN GÜVENİ",allConfidence:"Tüm oranlar",correct:"Doğru",wrong:"Yanlış",clear:"Filtreleri temizle",shown:"maç gösteriliyor",none:"Bu filtrelere uyan maç bulunamadı.",previous:"Önceki",next:"Sonraki",page:"Sayfa"
   }:{
-    search:"Search player or tournament",tournament:"TOURNAMENT",allTournaments:"All tournaments",round:"ROUND",allRounds:"All rounds",result:"RESULT",allResults:"All predictions",correct:"Correct",wrong:"Wrong",clear:"Clear filters",shown:"matches shown",none:"No matches found for these filters.",previous:"Previous",next:"Next",page:"Page"
+    search:"Search player or tournament",tournament:"TOURNAMENT",allTournaments:"All tournaments",round:"ROUND",allRounds:"All rounds",result:"RESULT",allResults:"All predictions",confidence:"CONFIDENCE",allConfidence:"All confidence",correct:"Correct",wrong:"Wrong",clear:"Clear filters",shown:"matches shown",none:"No matches found for these filters.",previous:"Previous",next:"Next",page:"Page"
   };
   const tournamentOptions=useMemo(()=>[{value:"all",label:labels.allTournaments},...Array.from(new Set(matches.map(match=>match.tournament_name))).sort().map(value=>({value,label:value}))],[matches,labels.allTournaments]);
   const roundOptions=useMemo(()=>[{value:"all",label:labels.allRounds},...Array.from(new Set(matches.map(match=>match.round))).sort().map(value=>({value,label:value}))],[matches,labels.allRounds]);
@@ -638,11 +639,17 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
       return (!needle||searchable.includes(needle))
         &&(tournament==="all"||match.tournament_name===tournament)
         &&(round==="all"||match.round===round)
-        &&(result==="all"||(result==="correct")===match.prediction_correct);
+        &&(result==="all"||(result==="correct")===match.prediction_correct)
+        &&(confidence==="all"
+          ||(confidence==="under60"&&match.confidence<.6)
+          ||(confidence==="60-70"&&match.confidence>=.6&&match.confidence<.7)
+          ||(confidence==="70-80"&&match.confidence>=.7&&match.confidence<.8)
+          ||(confidence==="80-90"&&match.confidence>=.8&&match.confidence<=.9)
+          ||(confidence==="over90"&&match.confidence>.9));
     });
-  },[matches,query,tournament,round,result,language]);
-  useEffect(()=>setPage(1),[query,tournament,round,result,matches.length]);
-  const filtersActive=Boolean(query)||tournament!=="all"||round!=="all"||result!=="all";
+  },[matches,query,tournament,round,result,confidence,language]);
+  useEffect(()=>setPage(1),[query,tournament,round,result,confidence,matches.length]);
+  const filtersActive=Boolean(query)||tournament!=="all"||round!=="all"||result!=="all"||confidence!=="all";
   const accuracy=filteredMatches.length?Math.round(filteredMatches.filter(match=>match.prediction_correct).length/filteredMatches.length*100):null;
   const pageCount=Math.ceil(filteredMatches.length/pageSize);
   const paginatedMatches=filteredMatches.slice((page-1)*pageSize,page*pageSize);
@@ -660,8 +667,9 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
         <CustomSelect label={labels.tournament} value={tournament} options={tournamentOptions} onChange={setTournament}/>
         <CustomSelect label={labels.round} value={round} options={roundOptions} onChange={setRound}/>
         <CustomSelect label={labels.result} value={result} options={[{value:"all",label:labels.allResults},{value:"correct",label:labels.correct},{value:"wrong",label:labels.wrong}]} onChange={setResult}/>
+        <CustomSelect label={labels.confidence} value={confidence} options={[{value:"all",label:labels.allConfidence},{value:"under60",label:"< 60%"},{value:"60-70",label:"60–70%"},{value:"70-80",label:"70–80%"},{value:"80-90",label:"80–90%"},{value:"over90",label:"> 90%"}]} onChange={setConfidence}/>
       </div>
-      <div className="history-filter-summary"><span><b>{filteredMatches.length}</b> / {matches.length} {labels.shown}</span>{filtersActive&&<button type="button" onClick={()=>{setQuery("");setTournament("all");setRound("all");setResult("all");}}>↺ {labels.clear}</button>}</div>
+      <div className="history-filter-summary"><span><b>{filteredMatches.length}</b> / {matches.length} {labels.shown}</span>{filtersActive&&<button type="button" onClick={()=>{setQuery("");setTournament("all");setRound("all");setResult("all");setConfidence("all");}}>↺ {labels.clear}</button>}</div>
     </div>
     {status==="loading"&&<div className="message-card">{t.loading}</div>}
     {status==="error"&&<div className="message-card">{t.failed}</div>}
