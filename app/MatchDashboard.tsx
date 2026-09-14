@@ -618,13 +618,45 @@ function ModelDetails({language}:{language:Language}){
 
 function PreviousMatches({matches,status,language,formatStart}:{matches:PreviousMatch[];status:"loading"|"ready"|"error";language:Language;formatStart:(value:string)=>string}){
   const t=text[language];
+  const [query,setQuery]=useState("");
+  const [tournament,setTournament]=useState("all");
+  const [round,setRound]=useState("all");
+  const [result,setResult]=useState("all");
+  const labels=language==="tr"?{
+    search:"Oyuncu veya turnuva ara",tournament:"TURNUVA",allTournaments:"Tüm turnuvalar",round:"TUR",allRounds:"Tüm turlar",result:"SONUÇ",allResults:"Tüm tahminler",correct:"Doğru",wrong:"Yanlış",clear:"Filtreleri temizle",shown:"maç gösteriliyor",none:"Bu filtrelere uyan maç bulunamadı."
+  }:{
+    search:"Search player or tournament",tournament:"TOURNAMENT",allTournaments:"All tournaments",round:"ROUND",allRounds:"All rounds",result:"RESULT",allResults:"All predictions",correct:"Correct",wrong:"Wrong",clear:"Clear filters",shown:"matches shown",none:"No matches found for these filters."
+  };
+  const tournamentOptions=useMemo(()=>[{value:"all",label:labels.allTournaments},...Array.from(new Set(matches.map(match=>match.tournament_name))).sort().map(value=>({value,label:value}))],[matches,labels.allTournaments]);
+  const roundOptions=useMemo(()=>[{value:"all",label:labels.allRounds},...Array.from(new Set(matches.map(match=>match.round))).sort().map(value=>({value,label:value}))],[matches,labels.allRounds]);
+  const filteredMatches=useMemo(()=>{
+    const needle=query.trim().toLocaleLowerCase(language==="tr"?"tr":"en");
+    return matches.filter(match=>{
+      const searchable=`${match.p1_name} ${match.p2_name} ${match.tournament_name} ${match.round}`.toLocaleLowerCase(language==="tr"?"tr":"en");
+      return (!needle||searchable.includes(needle))
+        &&(tournament==="all"||match.tournament_name===tournament)
+        &&(round==="all"||match.round===round)
+        &&(result==="all"||(result==="correct")===match.prediction_correct);
+    });
+  },[matches,query,tournament,round,result,language]);
+  const filtersActive=Boolean(query)||tournament!=="all"||round!=="all"||result!=="all";
   const accuracy=matches.length?Math.round(matches.filter(match=>match.prediction_correct).length/matches.length*100):null;
   return <section className="previous-page">
     <div className="previous-heading"><div><span className="history-dot"/>UMTENNIS TRACK RECORD</div><h1>{t.previousHeading}</h1><p>{t.previousIntro}</p>{accuracy!=null&&<strong>{accuracy}% <span>{language==="tr"?"isabet":"accuracy"}</span></strong>}</div>
+    <div className="history-filter-panel">
+      <label className="history-search"><span aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder={labels.search} aria-label={labels.search}/>{query&&<button type="button" onClick={()=>setQuery("")} aria-label={labels.clear}>×</button>}</label>
+      <div className="history-filter-selects">
+        <CustomSelect label={labels.tournament} value={tournament} options={tournamentOptions} onChange={setTournament}/>
+        <CustomSelect label={labels.round} value={round} options={roundOptions} onChange={setRound}/>
+        <CustomSelect label={labels.result} value={result} options={[{value:"all",label:labels.allResults},{value:"correct",label:labels.correct},{value:"wrong",label:labels.wrong}]} onChange={setResult}/>
+      </div>
+      <div className="history-filter-summary"><span><b>{filteredMatches.length}</b> / {matches.length} {labels.shown}</span>{filtersActive&&<button type="button" onClick={()=>{setQuery("");setTournament("all");setRound("all");setResult("all");}}>↺ {labels.clear}</button>}</div>
+    </div>
     {status==="loading"&&<div className="message-card">{t.loading}</div>}
     {status==="error"&&<div className="message-card">{t.failed}</div>}
     {status==="ready"&&!matches.length&&<div className="message-card">{t.noPrevious}</div>}
-    <div className="previous-list">{matches.map(match=>{
+    {status==="ready"&&matches.length>0&&!filteredMatches.length&&<div className="message-card history-empty">{labels.none}</div>}
+    <div className="previous-list">{filteredMatches.map(match=>{
       const p1Picked=match.predicted_winner===match.p1_name;
       const statusLabel=match.prediction_correct?t.correct:t.wrong;
       return <article className={`previous-card ${match.prediction_correct?"correct":"wrong"}`} key={match.match_id}>
