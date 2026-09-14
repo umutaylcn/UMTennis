@@ -519,6 +519,32 @@ function CustomSelect({label,value,options,onChange,className=""}:{label:string;
   </div>;
 }
 
+function ConfidenceRange({label,value,onChange}:{label:string;value:[number,number];onChange:(value:[number,number])=>void}){
+  const [open,setOpen]=useState(false);
+  const root=useRef<HTMLDivElement>(null);
+  const [minimum,maximum]=value;
+  const start=(minimum-50)*2;
+  const end=(maximum-50)*2;
+  useEffect(()=>{
+    function close(event:PointerEvent){if(root.current&&!root.current.contains(event.target as Node))setOpen(false);}
+    function escape(event:KeyboardEvent){if(event.key==="Escape")setOpen(false);}
+    document.addEventListener("pointerdown",close);document.addEventListener("keydown",escape);
+    return()=>{document.removeEventListener("pointerdown",close);document.removeEventListener("keydown",escape);};
+  },[]);
+  return <div className={`control-field confidence-range-field ${open?"is-open":""}`} ref={root}>
+    <button type="button" aria-haspopup="dialog" aria-expanded={open} onClick={()=>setOpen(current=>!current)}><span className="control-label">{label}</span><b>{minimum}%–{maximum}%</b><i aria-hidden="true"/></button>
+    {open&&<div className="confidence-range-popover" role="dialog" aria-label={label}>
+      <div className="confidence-range-values"><b>{minimum}%</b><span>—</span><b>{maximum}%</b></div>
+      <div className="confidence-range-slider" style={{"--range-start":`${start}%`,"--range-end":`${end}%`} as CSSProperties}>
+        <span className="confidence-range-track" aria-hidden="true"/>
+        <input type="range" min="50" max="100" step="1" value={minimum} aria-label={`${label} minimum`} onChange={event=>onChange([Math.min(Number(event.target.value),maximum),maximum])}/>
+        <input type="range" min="50" max="100" step="1" value={maximum} aria-label={`${label} maximum`} onChange={event=>onChange([minimum,Math.max(Number(event.target.value),minimum)])}/>
+      </div>
+      <div className="confidence-range-limits"><span>50%</span><span>100%</span></div>
+    </div>}
+  </div>;
+}
+
 function ModelDetails({language}:{language:Language}){
   const isTr=language==="tr";
   const features=[
@@ -622,7 +648,7 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
   const [tournament,setTournament]=useState("all");
   const [round,setRound]=useState("all");
   const [result,setResult]=useState("all");
-  const [confidence,setConfidence]=useState("all");
+  const [confidenceRange,setConfidenceRange]=useState<[number,number]>([50,100]);
   const [page,setPage]=useState(1);
   const pageSize=20;
   const labels=language==="tr"?{
@@ -640,16 +666,12 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
         &&(tournament==="all"||match.tournament_name===tournament)
         &&(round==="all"||match.round===round)
         &&(result==="all"||(result==="correct")===match.prediction_correct)
-        &&(confidence==="all"
-          ||(confidence==="under60"&&match.confidence<.6)
-          ||(confidence==="60-70"&&match.confidence>=.6&&match.confidence<.7)
-          ||(confidence==="70-80"&&match.confidence>=.7&&match.confidence<.8)
-          ||(confidence==="80-90"&&match.confidence>=.8&&match.confidence<=.9)
-          ||(confidence==="over90"&&match.confidence>.9));
+        &&match.confidence*100>=confidenceRange[0]
+        &&match.confidence*100<=confidenceRange[1];
     });
-  },[matches,query,tournament,round,result,confidence,language]);
-  useEffect(()=>setPage(1),[query,tournament,round,result,confidence,matches.length]);
-  const filtersActive=Boolean(query)||tournament!=="all"||round!=="all"||result!=="all"||confidence!=="all";
+  },[matches,query,tournament,round,result,confidenceRange,language]);
+  useEffect(()=>setPage(1),[query,tournament,round,result,confidenceRange,matches.length]);
+  const filtersActive=Boolean(query)||tournament!=="all"||round!=="all"||result!=="all"||confidenceRange[0]!==50||confidenceRange[1]!==100;
   const accuracy=filteredMatches.length?Math.round(filteredMatches.filter(match=>match.prediction_correct).length/filteredMatches.length*100):null;
   const pageCount=Math.ceil(filteredMatches.length/pageSize);
   const paginatedMatches=filteredMatches.slice((page-1)*pageSize,page*pageSize);
@@ -666,10 +688,10 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
       <div className="history-filter-selects">
         <CustomSelect label={labels.tournament} value={tournament} options={tournamentOptions} onChange={setTournament}/>
         <CustomSelect label={labels.round} value={round} options={roundOptions} onChange={setRound}/>
-        <CustomSelect label={labels.confidence} value={confidence} options={[{value:"all",label:labels.allConfidence},{value:"under60",label:"< 60%"},{value:"60-70",label:"60–70%"},{value:"70-80",label:"70–80%"},{value:"80-90",label:"80–90%"},{value:"over90",label:"> 90%"}]} onChange={setConfidence}/>
+        <ConfidenceRange label={labels.confidence} value={confidenceRange} onChange={setConfidenceRange}/>
         <CustomSelect label={labels.result} value={result} options={[{value:"all",label:labels.allResults},{value:"correct",label:labels.correct},{value:"wrong",label:labels.wrong}]} onChange={setResult}/>
       </div>
-      <div className="history-filter-summary"><span><b>{filteredMatches.length}</b> / {matches.length} {labels.shown}</span>{filtersActive&&<button type="button" onClick={()=>{setQuery("");setTournament("all");setRound("all");setResult("all");setConfidence("all");}}>↺ {labels.clear}</button>}</div>
+      <div className="history-filter-summary"><span><b>{filteredMatches.length}</b> / {matches.length} {labels.shown}</span>{filtersActive&&<button type="button" onClick={()=>{setQuery("");setTournament("all");setRound("all");setResult("all");setConfidenceRange([50,100]);}}>↺ {labels.clear}</button>}</div>
     </div>
     {status==="loading"&&<div className="message-card">{t.loading}</div>}
     {status==="error"&&<div className="message-card">{t.failed}</div>}
