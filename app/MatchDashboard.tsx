@@ -622,10 +622,12 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
   const [tournament,setTournament]=useState("all");
   const [round,setRound]=useState("all");
   const [result,setResult]=useState("all");
+  const [page,setPage]=useState(1);
+  const pageSize=20;
   const labels=language==="tr"?{
-    search:"Oyuncu veya turnuva ara",tournament:"TURNUVA",allTournaments:"Tüm turnuvalar",round:"TUR",allRounds:"Tüm turlar",result:"SONUÇ",allResults:"Tüm tahminler",correct:"Doğru",wrong:"Yanlış",clear:"Filtreleri temizle",shown:"maç gösteriliyor",none:"Bu filtrelere uyan maç bulunamadı."
+    search:"Oyuncu veya turnuva ara",tournament:"TURNUVA",allTournaments:"Tüm turnuvalar",round:"TUR",allRounds:"Tüm turlar",result:"SONUÇ",allResults:"Tüm tahminler",correct:"Doğru",wrong:"Yanlış",clear:"Filtreleri temizle",shown:"maç gösteriliyor",none:"Bu filtrelere uyan maç bulunamadı.",previous:"Önceki",next:"Sonraki",page:"Sayfa"
   }:{
-    search:"Search player or tournament",tournament:"TOURNAMENT",allTournaments:"All tournaments",round:"ROUND",allRounds:"All rounds",result:"RESULT",allResults:"All predictions",correct:"Correct",wrong:"Wrong",clear:"Clear filters",shown:"matches shown",none:"No matches found for these filters."
+    search:"Search player or tournament",tournament:"TOURNAMENT",allTournaments:"All tournaments",round:"ROUND",allRounds:"All rounds",result:"RESULT",allResults:"All predictions",correct:"Correct",wrong:"Wrong",clear:"Clear filters",shown:"matches shown",none:"No matches found for these filters.",previous:"Previous",next:"Next",page:"Page"
   };
   const tournamentOptions=useMemo(()=>[{value:"all",label:labels.allTournaments},...Array.from(new Set(matches.map(match=>match.tournament_name))).sort().map(value=>({value,label:value}))],[matches,labels.allTournaments]);
   const roundOptions=useMemo(()=>[{value:"all",label:labels.allRounds},...Array.from(new Set(matches.map(match=>match.round))).sort().map(value=>({value,label:value}))],[matches,labels.allRounds]);
@@ -639,8 +641,17 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
         &&(result==="all"||(result==="correct")===match.prediction_correct);
     });
   },[matches,query,tournament,round,result,language]);
+  useEffect(()=>setPage(1),[query,tournament,round,result,matches.length]);
   const filtersActive=Boolean(query)||tournament!=="all"||round!=="all"||result!=="all";
-  const accuracy=matches.length?Math.round(matches.filter(match=>match.prediction_correct).length/matches.length*100):null;
+  const accuracy=filteredMatches.length?Math.round(filteredMatches.filter(match=>match.prediction_correct).length/filteredMatches.length*100):null;
+  const pageCount=Math.ceil(filteredMatches.length/pageSize);
+  const paginatedMatches=filteredMatches.slice((page-1)*pageSize,page*pageSize);
+  const paginationItems=useMemo<(number|string)[]>(()=>{
+    if(pageCount<=7)return Array.from({length:pageCount},(_,index)=>index+1);
+    const pages=[1,page-1,page,page+1,pageCount].filter(value=>value>=1&&value<=pageCount);
+    const unique=Array.from(new Set(pages)).sort((a,b)=>a-b);
+    return unique.flatMap((value,index)=>index&&value-unique[index-1]>1?[`gap-${value}`,value]:[value]);
+  },[page,pageCount]);
   return <section className="previous-page">
     <div className="previous-heading"><div><span className="history-dot"/>UMTENNIS TRACK RECORD</div><h1>{t.previousHeading}</h1><p>{t.previousIntro}</p>{accuracy!=null&&<strong>{accuracy}% <span>{language==="tr"?"isabet":"accuracy"}</span></strong>}</div>
     <div className="history-filter-panel">
@@ -656,7 +667,7 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
     {status==="error"&&<div className="message-card">{t.failed}</div>}
     {status==="ready"&&!matches.length&&<div className="message-card">{t.noPrevious}</div>}
     {status==="ready"&&matches.length>0&&!filteredMatches.length&&<div className="message-card history-empty">{labels.none}</div>}
-    <div className="previous-list">{filteredMatches.map(match=>{
+    <div className="previous-list">{paginatedMatches.map(match=>{
       const p1Picked=match.predicted_winner===match.p1_name;
       const statusLabel=match.prediction_correct?t.correct:t.wrong;
       return <article className={`previous-card ${match.prediction_correct?"correct":"wrong"}`} key={match.match_id}>
@@ -674,6 +685,11 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
         </div>
       </article>;
     })}</div>
+    {pageCount>1&&<nav className="history-pagination" aria-label={labels.page}>
+      <button type="button" disabled={page===1} onClick={()=>setPage(current=>Math.max(1,current-1))}>← <span>{labels.previous}</span></button>
+      <div>{paginationItems.map(item=>typeof item==="number"?<button type="button" className={item===page?"active":""} aria-current={item===page?"page":undefined} onClick={()=>setPage(item)} key={item}>{item}</button>:<i aria-hidden="true" key={item}>…</i>)}</div>
+      <button type="button" disabled={page===pageCount} onClick={()=>setPage(current=>Math.min(pageCount,current+1))}><span>{labels.next}</span> →</button>
+    </nav>}
   </section>;
 }
 
