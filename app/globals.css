@@ -245,3 +245,7 @@
 
 /* Constrain glow origins to the gutters without clipping their soft edges. */
 .history-spark-gutter{overflow:visible}
+
+/* Four-column Previous-page filter layout with balanced mobile wrapping. */
+.history-filter-selects{grid-template-columns:1.35fr .65fr .9fr .95fr}
+@media(max-width:700px){.history-filter-selects{grid-template-columns:1fr 1fr}.history-filter-selects .control-field:last-child{grid-column:1/-1}}
