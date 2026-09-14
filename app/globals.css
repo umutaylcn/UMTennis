@@ -239,3 +239,6 @@
 
 /* Soft circular glow only; no directional burst lines. */
 .history-sparks i:before,.history-sparks i:after{display:none}.history-sparks i{box-shadow:0 0 10px 4px rgba(220,255,139,.8),0 0 34px 17px rgba(111,255,125,.25),0 0 82px 38px rgba(111,255,125,.1)}
+
+/* One continuous radial light: bright center fading smoothly to transparent. */
+.history-sparks i{width:124px;height:124px;margin:-62px 0 0 -62px;background:radial-gradient(circle,rgba(229,255,157,.72) 0%,rgba(180,255,118,.36) 17%,rgba(105,255,133,.16) 38%,rgba(78,227,113,.06) 57%,transparent 74%);box-shadow:none;filter:blur(1.5px)}
