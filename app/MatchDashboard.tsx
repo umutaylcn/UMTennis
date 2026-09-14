@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 
 type Language = "en" | "tr";
-type View = "matches" | "model";
+type View = "matches" | "previous" | "model";
 type FormSummary = { matches:number; wins:number; losses:number; form:string; win_rate:number|null; aces:number|null; double_faults:number|null; service_points_won_pct:number|null; return_points_won_pct:number|null; break_points_saved_pct:number|null; };
 type PlayerProfile = { atp_rank:number|null; elo:number; elo_rank:number|null; surface_elo:number; surface_elo_rank:number|null; last_5:FormSummary; last_10:FormSummary; surface_last_10:FormSummary; career:FormSummary; };
 type Match = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; };
 type HeadToHead = { matches:number; p1_wins:number; p2_wins:number; surface_matches:number; p1_surface_wins:number; p2_surface_wins:number; };
 type Prediction = Match & { p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; h2h:HeadToHead; state_as_of_utc:string; p1_profile:PlayerProfile; p2_profile:PlayerProfile; };
+type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean; winner_sets?:number; loser_sets?:number; };
 
 function roundPresentation(round:string){
   const normalized=round.trim().toUpperCase();
@@ -443,7 +444,7 @@ const PLAYER_MOBILE_PORTRAIT_SCALE:Record<string,"70">={
   "Botic Van De Zandschulp":"70",
   "Botic van de Zandschulp":"70",
 };
-const text={tr:{matches:"Maçlar",upcoming:"Yaklaşan Maçlar",choose:"Tahmini görmek için bir maç seç.",loading:"Maçlar yükleniyor…",failed:"Maçlar yüklenemedi.",back:"Tüm maçlar",prediction:"Kazanma olasılığı",atp:"ATP Sıralaması",elo:"UMTennis Elo",surfaceElo:"Surface Elo",preMatch:"Maç Öncesi İstatistikler",h2h:"Tüm H2H",surfaceH2h:"Surface H2H",last5:"Son 5 Maç",last10:"Son 10 Maç",surface10:"Surface Son 10",career:"Kariyer Ortalamaları",record:"Galibiyet / Mağlubiyet",aces:"Maç başı ace",doubleFaults:"Maç başı double fault",serve:"Service points won",return:"Return points won",bpSaved:"Break points saved",noData:"Yeterli veri yok",modelPick:"MODELİN SEÇİMİ",calculating:"Model hesaplıyor…"},en:{matches:"Matches",upcoming:"Upcoming Matches",choose:"Select a match to see the prediction.",loading:"Loading matches…",failed:"Matches could not be loaded.",back:"All matches",prediction:"Win probability",atp:"ATP Ranking",elo:"UMTennis Elo",surfaceElo:"Surface Elo",preMatch:"Pre-match Statistics",h2h:"All H2H",surfaceH2h:"Surface H2H",last5:"Last 5 Matches",last10:"Last 10 Matches",surface10:"Surface Last 10",career:"Career Averages",record:"Wins / Losses",aces:"Aces per match",doubleFaults:"Double faults per match",serve:"Service points won",return:"Return points won",bpSaved:"Break points saved",noData:"Not enough data",modelPick:"MODEL PICK",calculating:"Running model…"}};
+const text={tr:{matches:"Maçlar",previous:"Geçmiş",previousHeading:"Geçmiş Maçlar",previousIntro:"Maç başlamadan kaydedilen model tahminleri ve gerçek sonuçlar.",ourPick:"Model tahmini",actualResult:"Gerçek sonuç",correct:"Doğru tahmin",wrong:"Yanlış tahmin",noPrevious:"Henüz sonuçlanmış ve arşivlenmiş tahmin yok.",upcoming:"Yaklaşan Maçlar",choose:"Tahmini görmek için bir maç seç.",loading:"Maçlar yükleniyor…",failed:"Maçlar yüklenemedi.",back:"Tüm maçlar",prediction:"Kazanma olasılığı",atp:"ATP Sıralaması",elo:"UMTennis Elo",surfaceElo:"Surface Elo",preMatch:"Maç Öncesi İstatistikler",h2h:"Tüm H2H",surfaceH2h:"Surface H2H",last5:"Son 5 Maç",last10:"Son 10 Maç",surface10:"Surface Son 10",career:"Kariyer Ortalamaları",record:"Galibiyet / Mağlubiyet",aces:"Maç başı ace",doubleFaults:"Maç başı double fault",serve:"Service points won",return:"Return points won",bpSaved:"Break points saved",noData:"Yeterli veri yok",modelPick:"MODELİN SEÇİMİ",calculating:"Model hesaplıyor…"},en:{matches:"Matches",previous:"Previous",previousHeading:"Previous Matches",previousIntro:"Pre-match model predictions compared with the actual results.",ourPick:"Model prediction",actualResult:"Actual result",correct:"Correct pick",wrong:"Wrong pick",noPrevious:"No completed archived predictions yet.",upcoming:"Upcoming Matches",choose:"Select a match to see the prediction.",loading:"Loading matches…",failed:"Matches could not be loaded.",back:"All matches",prediction:"Win probability",atp:"ATP Ranking",elo:"UMTennis Elo",surfaceElo:"Surface Elo",preMatch:"Pre-match Statistics",h2h:"All H2H",surfaceH2h:"Surface H2H",last5:"Last 5 Matches",last10:"Last 10 Matches",surface10:"Surface Last 10",career:"Career Averages",record:"Wins / Losses",aces:"Aces per match",doubleFaults:"Double faults per match",serve:"Service points won",return:"Return points won",bpSaved:"Break points saved",noData:"Not enough data",modelPick:"MODEL PICK",calculating:"Running model…"}};
 
 function probability(value:number){return `${(value*100).toFixed(1)}%`;}
 
@@ -615,14 +616,45 @@ function ModelDetails({language}:{language:Language}){
   </section>;
 }
 
+function PreviousMatches({matches,status,language,formatStart}:{matches:PreviousMatch[];status:"loading"|"ready"|"error";language:Language;formatStart:(value:string)=>string}){
+  const t=text[language];
+  const accuracy=matches.length?Math.round(matches.filter(match=>match.prediction_correct).length/matches.length*100):null;
+  return <section className="previous-page">
+    <div className="previous-heading"><div><span className="history-dot"/>UMTENNIS TRACK RECORD</div><h1>{t.previousHeading}</h1><p>{t.previousIntro}</p>{accuracy!=null&&<strong>{accuracy}% <span>{language==="tr"?"isabet":"accuracy"}</span></strong>}</div>
+    {status==="loading"&&<div className="message-card">{t.loading}</div>}
+    {status==="error"&&<div className="message-card">{t.failed}</div>}
+    {status==="ready"&&!matches.length&&<div className="message-card">{t.noPrevious}</div>}
+    <div className="previous-list">{matches.map(match=>{
+      const p1Picked=match.predicted_winner===match.p1_name;
+      const statusLabel=match.prediction_correct?t.correct:t.wrong;
+      return <article className={`previous-card ${match.prediction_correct?"correct":"wrong"}`} key={match.match_id}>
+        <div className="previous-meta"><span>{match.tournament_name}</span><span>{formatStart(match.start_time_utc)}</span></div>
+        <div className="previous-matchup">
+          <div className={match.actual_winner===match.p1_name?"actual-winner":""}><b>{match.p1_name}</b><strong>{probability(match.p1_win_probability)}</strong></div>
+          <div className="previous-vs"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><b>VS</b><small>{match.round}</small></div>
+          <div className={match.actual_winner===match.p2_name?"actual-winner":""}><b>{match.p2_name}</b><strong>{probability(match.p2_win_probability)}</strong></div>
+        </div>
+        <div className="previous-outcome">
+          <div><small>{t.ourPick}</small><b>{match.predicted_winner}</b><span>{probability(p1Picked?match.p1_win_probability:match.p2_win_probability)}</span></div>
+          <i aria-hidden="true">→</i>
+          <div><small>{t.actualResult}</small><b>{match.actual_winner}</b>{match.match_status==="retirement"&&<span>RET.</span>}</div>
+          <strong className="result-badge">{match.prediction_correct?"✓":"×"} {statusLabel}</strong>
+        </div>
+      </article>;
+    })}</div>
+  </section>;
+}
+
 export function MatchDashboard(){
   const [language,setLanguage]=useState<Language>("tr");
   const [view,setView]=useState<View>("matches");
   const [timezone,setTimezone]=useState("Europe/Istanbul");
   const [matches,setMatches]=useState<Match[]>([]);
+  const [previousMatches,setPreviousMatches]=useState<PreviousMatch[]>([]);
   const [selected,setSelected]=useState<Match|null>(null);
   const [prediction,setPrediction]=useState<Prediction|null>(null);
   const [status,setStatus]=useState<"loading"|"ready"|"error">("loading");
+  const [previousStatus,setPreviousStatus]=useState<"loading"|"ready"|"error">("loading");
   const [predictionError,setPredictionError]=useState(false);
   const timezoneOptions=useMemo(()=>{
     const local=Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -631,17 +663,19 @@ export function MatchDashboard(){
   const t=text[language];
 
   useEffect(()=>{fetch(`${API_BASE}/api/matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setMatches(data.matches??[]);setStatus("ready");}).catch(()=>setStatus("error"));},[]);
+  useEffect(()=>{fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setPreviousMatches(data.matches??[]);setPreviousStatus("ready");}).catch(()=>setPreviousStatus("error"));},[]);
   function formatStart(value:string){return new Intl.DateTimeFormat(language==="tr"?"tr-TR":"en-GB",{timeZone:timezone,weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(value));}
   async function openMatch(match:Match){setSelected(match);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});try{const response=await fetch(`${API_BASE}/api/matches/${match.match_id}/prediction`);if(!response.ok)throw new Error();setPrediction(await response.json());}catch{setPredictionError(true);}}
   function closeMatch(){setView("matches");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
   function showModel(){setView("model");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
-  const surfaceClass=view==="model"?"model":selected?.surface.toLowerCase()??"default";
+  function showPrevious(){setView("previous");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
+  const surfaceClass=view==="model"?"model":view==="previous"?"history":selected?.surface.toLowerCase()??"default";
 
   return <main className={`site-screen surface-${surfaceClass}`}>
     <div className="page-background" aria-hidden="true"/>
     <header className="umt-header">
       <button className="umt-logo" onClick={closeMatch}><span>UM</span>Tennis</button>
-      <nav><button className={view==="matches"?"active":""} onClick={closeMatch}>{t.matches}</button><button className={view==="model"?"active":""} type="button" onClick={showModel}>Model</button></nav>
+      <nav><button className={view==="matches"?"active":""} onClick={closeMatch}>{t.matches}</button><button className={view==="previous"?"active":""} type="button" onClick={showPrevious}>{t.previous}</button><button className={view==="model"?"active":""} type="button" onClick={showModel}>Model</button></nav>
       <div className="header-controls">
         <CustomSelect label="LANG" value={language} className="language-field" options={[{value:"tr",label:"TR"},{value:"en",label:"EN"}]} onChange={value=>setLanguage(value as Language)}/>
         <span className="control-divider" aria-hidden="true"/>
@@ -649,7 +683,7 @@ export function MatchDashboard(){
       </div>
     </header>
 
-    {view==="model"?<ModelDetails language={language}/>:!selected?<section className="fixture-column">
+    {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart}/>:!selected?<section className="fixture-column">
       <div className="fixture-heading"><div><span className="live-dot"/>ATP TOUR</div><h1>{t.upcoming}</h1><p>{t.choose}</p></div>
       {status==="loading"&&<div className="message-card">{t.loading}</div>}{status==="error"&&<div className="message-card">{t.failed}</div>}
       <div className="fixture-list">{matches.map(match=>{
