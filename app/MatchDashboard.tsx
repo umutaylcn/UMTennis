@@ -666,8 +666,8 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
       <div className="history-filter-selects">
         <CustomSelect label={labels.tournament} value={tournament} options={tournamentOptions} onChange={setTournament}/>
         <CustomSelect label={labels.round} value={round} options={roundOptions} onChange={setRound}/>
-        <CustomSelect label={labels.result} value={result} options={[{value:"all",label:labels.allResults},{value:"correct",label:labels.correct},{value:"wrong",label:labels.wrong}]} onChange={setResult}/>
         <CustomSelect label={labels.confidence} value={confidence} options={[{value:"all",label:labels.allConfidence},{value:"under60",label:"< 60%"},{value:"60-70",label:"60–70%"},{value:"70-80",label:"70–80%"},{value:"80-90",label:"80–90%"},{value:"over90",label:"> 90%"}]} onChange={setConfidence}/>
+        <CustomSelect label={labels.result} value={result} options={[{value:"all",label:labels.allResults},{value:"correct",label:labels.correct},{value:"wrong",label:labels.wrong}]} onChange={setResult}/>
       </div>
       <div className="history-filter-summary"><span><b>{filteredMatches.length}</b> / {matches.length} {labels.shown}</span>{filtersActive&&<button type="button" onClick={()=>{setQuery("");setTournament("all");setRound("all");setResult("all");setConfidence("all");}}>↺ {labels.clear}</button>}</div>
     </div>
