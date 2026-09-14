@@ -236,3 +236,6 @@
 /* Sparks stay inside the empty gutters and never pass behind history content. */
 .history-sparks{overflow:visible}.history-spark-gutter{position:absolute;top:0;bottom:0;width:max(0px,calc((100vw - 960px)/2));overflow:hidden}.history-spark-gutter.left{left:0}.history-spark-gutter.right{right:0}.history-spark-gutter.right i:nth-child(1){left:76%;top:12%;animation-delay:-7.4s;animation-duration:12.3s}.history-spark-gutter.right i:nth-child(2){left:33%;top:38%;animation-delay:-1.7s;animation-duration:9.8s}.history-spark-gutter.right i:nth-child(3){left:84%;top:66%;animation-delay:-10.2s;animation-duration:13.8s}.history-spark-gutter.right i:nth-child(4){left:18%;top:82%;animation-delay:-5.9s;animation-duration:11.1s}.history-spark-gutter.right i:nth-child(5){left:58%;top:25%;animation-delay:-3.2s;animation-duration:8.7s}.history-spark-gutter.right i:nth-child(6){left:69%;top:91%;animation-delay:-8.8s;animation-duration:12.9s}
 @media(max-width:1100px){.history-sparks{display:none}}
+
+/* Soft circular glow only; no directional burst lines. */
+.history-sparks i:before,.history-sparks i:after{display:none}.history-sparks i{box-shadow:0 0 10px 4px rgba(220,255,139,.8),0 0 34px 17px rgba(111,255,125,.25),0 0 82px 38px rgba(111,255,125,.1)}
