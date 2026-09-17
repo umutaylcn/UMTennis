@@ -6,7 +6,7 @@ type Language = "en" | "tr" | "fr" | "es" | "de" | "it";
 type View = "matches" | "previous" | "model";
 type FormSummary = { matches:number; wins:number; losses:number; form:string; win_rate:number|null; aces:number|null; double_faults:number|null; service_points_won_pct:number|null; return_points_won_pct:number|null; break_points_saved_pct:number|null; };
 type PlayerProfile = { atp_rank:number|null; elo:number; elo_rank:number|null; surface_elo:number; surface_elo_rank:number|null; last_5:FormSummary; last_10:FormSummary; surface_last_10:FormSummary; career:FormSummary; };
-type Match = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; };
+type Match = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; is_demo?:boolean; };
 type HeadToHead = { matches:number; p1_wins:number; p2_wins:number; surface_matches:number; p1_surface_wins:number; p2_surface_wins:number; };
 type Prediction = Match & { p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; h2h:HeadToHead; state_as_of_utc:string; p1_profile:PlayerProfile; p2_profile:PlayerProfile; };
 type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean; winner_sets?:number; loser_sets?:number; };
@@ -28,6 +28,10 @@ function MatchStrength({value}:{value:number}){
 
 const API_BASE=
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://umtennis-api.onrender.com";
+const UPCOMING_DEMO_MATCHES:Match[]=[
+  {match_id:-1,start_time_utc:"2026-09-18T18:00:00Z",tournament_name:"UMTennis Demo Open",surface:"Hard",round:"SF",p1_name:"Carlos Alcaraz",p2_name:"Jannik Sinner",p1_id:1,p2_id:2,p1_rank:2,p2_rank:1,p1_elo_rank:2,p2_elo_rank:1,match_strength:5,p1_win_probability:.42,p2_win_probability:.58,predicted_winner:"Jannik Sinner",confidence:.58,confidence_label:"Lean",is_demo:true},
+  {match_id:-2,start_time_utc:"2026-09-19T15:30:00Z",tournament_name:"UMTennis Demo Masters",surface:"Clay",round:"QF",p1_name:"Novak Djokovic",p2_name:"Alexander Zverev",p1_id:3,p2_id:4,p1_rank:4,p2_rank:3,p1_elo_rank:3,p2_elo_rank:5,match_strength:5,p1_win_probability:.74,p2_win_probability:.26,predicted_winner:"Novak Djokovic",confidence:.74,confidence_label:"Strong pick",is_demo:true},
+];
 const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   19:"https://media.prod.tennis.com/v1/tcf/images/headshots/cb77df64-7fd7-459a-923e-9b909d964f2d.png?fm=webp&q=80&w=1200",
   115:"https://images.prismic.io/fft-rg-site/ZksBuyol0Zci9Rk0_47931_J.FARIA.png?auto=format%2Ccompress&h=900&w=900",
@@ -785,14 +789,15 @@ export function MatchDashboard(){
     de:{search:"Spieler oder Turnier suchen",confidence:"KONFIDENZ",shown:"Matches angezeigt",none:"Keine bevorstehenden Matches entsprechen dieser Suche und Konfidenz.",clear:"Filter löschen"},
     it:{search:"Cerca giocatore o torneo",confidence:"AFFIDABILITÀ",shown:"partite mostrate",none:"Nessuna partita in programma corrisponde alla ricerca e all'affidabilità.",clear:"Azzera filtri"},
   }[language];
+  const availableMatches=useMemo(()=>status==="ready"?(matches.length?matches:UPCOMING_DEMO_MATCHES):[],[matches,status]);
   const visibleMatches=useMemo(()=>{
     const needle=upcomingQuery.trim().toLocaleLowerCase(language);
-    return matches.filter(match=>{
+    return availableMatches.filter(match=>{
       const searchable=`${match.p1_name} ${match.p2_name} ${match.tournament_name}`.toLocaleLowerCase(language);
       const confidence=(match.confidence??.5)*100;
       return (!needle||searchable.includes(needle))&&confidence>=upcomingConfidence[0]&&confidence<=upcomingConfidence[1];
     });
-  },[matches,upcomingQuery,upcomingConfidence,language]);
+  },[availableMatches,upcomingQuery,upcomingConfidence,language]);
   const upcomingFiltersActive=Boolean(upcomingQuery)||upcomingConfidence[0]!==50||upcomingConfidence[1]!==100;
 
   useEffect(()=>{fetch(`${API_BASE}/api/matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setMatches(data.matches??[]);setStatus("ready");}).catch(()=>setStatus("error"));},[]);
@@ -818,17 +823,17 @@ export function MatchDashboard(){
     </header>
 
     {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart}/>:!selected?<section className="fixture-column">
-      <div className="fixture-heading"><div><span className="live-dot"/>ATP TOUR</div><h1>{t.upcoming}</h1><p>{status==="ready"&&!matches.length?t.noUpcoming:t.choose}</p></div>
+      <div className="fixture-heading"><div><span className="live-dot"/>ATP TOUR</div><h1>{t.upcoming}</h1><p>{status==="ready"&&!availableMatches.length?t.noUpcoming:t.choose}</p></div>
       {status==="loading"&&<div className="message-card">{t.loading}</div>}{status==="error"&&<div className="message-card">{t.failed}</div>}
-      {status==="ready"&&matches.length>0&&<div className="upcoming-filter-bar">
+      {status==="ready"&&availableMatches.length>0&&<div className="upcoming-filter-bar">
         <label className="upcoming-search"><span aria-hidden="true"/><input type="search" value={upcomingQuery} onChange={event=>setUpcomingQuery(event.target.value)} placeholder={upcomingLabels.search} aria-label={upcomingLabels.search}/>{upcomingQuery&&<button type="button" onClick={()=>setUpcomingQuery("")} aria-label={upcomingLabels.clear}>×</button>}</label>
         <ConfidenceRange label={upcomingLabels.confidence} value={upcomingConfidence} onChange={setUpcomingConfidence}/>
-        <div className="upcoming-filter-summary"><span><b>{visibleMatches.length}</b> / {matches.length} {upcomingLabels.shown}</span>{upcomingFiltersActive&&<button type="button" onClick={()=>{setUpcomingQuery("");setUpcomingConfidence([50,100]);}}>↺ {upcomingLabels.clear}</button>}</div>
+        <div className="upcoming-filter-summary"><span><b>{visibleMatches.length}</b> / {availableMatches.length} {upcomingLabels.shown}</span>{upcomingFiltersActive&&<button type="button" onClick={()=>{setUpcomingQuery("");setUpcomingConfidence([50,100]);}}>↺ {upcomingLabels.clear}</button>}</div>
       </div>}
-      {status==="ready"&&matches.length>0&&!visibleMatches.length&&<div className="message-card upcoming-empty">{upcomingLabels.none}</div>}
+      {status==="ready"&&availableMatches.length>0&&!visibleMatches.length&&<div className="message-card upcoming-empty">{upcomingLabels.none}</div>}
       <div className="fixture-list">{visibleMatches.map(match=>{
         const round=roundPresentation(match.round);
-        return <button className={`fixture-row round-${round.tier}`} type="button" key={match.match_id} onClick={()=>openMatch(match)}><div className="fixture-topline"><span>{match.tournament_name}</span><span>{formatStart(match.start_time_utc)}</span></div><div className="fixture-mainline"><div className="fixture-player"><small>{match.p1_rank?`#${match.p1_rank}`:"—"}</small><b>{match.p1_name}</b></div><div className="versus"><b>VS</b><MatchStrength value={match.match_strength}/></div><div className="fixture-player right"><small>{match.p2_rank?`#${match.p2_rank}`:"—"}</small><b>{match.p2_name}</b></div></div><div className="fixture-footer"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span><i>→</i></div></button>;
+        return <button className={`fixture-row round-${round.tier}${match.is_demo?" demo-fixture":""}`} type="button" key={match.match_id} disabled={match.is_demo} title={match.is_demo?"Filter preview":undefined} onClick={()=>openMatch(match)}><div className="fixture-topline"><span>{match.tournament_name}</span><span>{formatStart(match.start_time_utc)}</span></div><div className="fixture-mainline"><div className="fixture-player"><small>{match.p1_rank?`#${match.p1_rank}`:"—"}</small><b>{match.p1_name}</b></div><div className="versus"><b>VS</b><MatchStrength value={match.match_strength}/></div><div className="fixture-player right"><small>{match.p2_rank?`#${match.p2_rank}`:"—"}</small><b>{match.p2_name}</b></div></div><div className="fixture-footer"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span>{match.is_demo&&<em>DEMO</em>}<i>→</i></div></button>;
       })}</div>
     </section>:<section className="match-detail">
       <button className="back-button" onClick={closeMatch}>← {t.back}</button>
