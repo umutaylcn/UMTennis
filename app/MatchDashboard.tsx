@@ -6,7 +6,7 @@ type Language = "en" | "tr" | "fr" | "es" | "de" | "it";
 type View = "matches" | "previous" | "model";
 type FormSummary = { matches:number; wins:number; losses:number; form:string; win_rate:number|null; aces:number|null; double_faults:number|null; service_points_won_pct:number|null; return_points_won_pct:number|null; break_points_saved_pct:number|null; };
 type PlayerProfile = { atp_rank:number|null; elo:number; elo_rank:number|null; surface_elo:number; surface_elo_rank:number|null; last_5:FormSummary; last_10:FormSummary; surface_last_10:FormSummary; career:FormSummary; };
-type Match = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; };
+type Match = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; };
 type HeadToHead = { matches:number; p1_wins:number; p2_wins:number; surface_matches:number; p1_surface_wins:number; p2_surface_wins:number; };
 type Prediction = Match & { p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; h2h:HeadToHead; state_as_of_utc:string; p1_profile:PlayerProfile; p2_profile:PlayerProfile; };
 type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean; winner_sets?:number; loser_sets?:number; };
@@ -751,6 +751,8 @@ export function MatchDashboard(){
   const [status,setStatus]=useState<"loading"|"ready"|"error">("loading");
   const [previousStatus,setPreviousStatus]=useState<"loading"|"ready"|"error">("loading");
   const [predictionError,setPredictionError]=useState(false);
+  const [upcomingQuery,setUpcomingQuery]=useState("");
+  const [upcomingConfidence,setUpcomingConfidence]=useState<[number,number]>([50,100]);
   const timezoneOptions=useMemo(()=>{
     return [
       {value:"local",label:"Local"},
@@ -775,6 +777,23 @@ export function MatchDashboard(){
     ];
   },[]);
   const t=text[language];
+  const upcomingLabels={
+    tr:{search:"Oyuncu veya turnuva ara",confidence:"TAHMİN GÜVENİ",shown:"maç gösteriliyor",none:"Bu arama ve güven aralığında yaklaşan maç yok.",clear:"Filtreleri temizle"},
+    en:{search:"Search player or tournament",confidence:"CONFIDENCE",shown:"matches shown",none:"No upcoming matches match this search and confidence range.",clear:"Clear filters"},
+    fr:{search:"Rechercher un joueur ou un tournoi",confidence:"CONFIANCE",shown:"matchs affichés",none:"Aucun match à venir ne correspond à cette recherche et à cette confiance.",clear:"Effacer les filtres"},
+    es:{search:"Buscar jugador o torneo",confidence:"CONFIANZA",shown:"partidos mostrados",none:"No hay próximos partidos para esta búsqueda y este nivel de confianza.",clear:"Limpiar filtros"},
+    de:{search:"Spieler oder Turnier suchen",confidence:"KONFIDENZ",shown:"Matches angezeigt",none:"Keine bevorstehenden Matches entsprechen dieser Suche und Konfidenz.",clear:"Filter löschen"},
+    it:{search:"Cerca giocatore o torneo",confidence:"AFFIDABILITÀ",shown:"partite mostrate",none:"Nessuna partita in programma corrisponde alla ricerca e all'affidabilità.",clear:"Azzera filtri"},
+  }[language];
+  const visibleMatches=useMemo(()=>{
+    const needle=upcomingQuery.trim().toLocaleLowerCase(language);
+    return matches.filter(match=>{
+      const searchable=`${match.p1_name} ${match.p2_name} ${match.tournament_name}`.toLocaleLowerCase(language);
+      const confidence=(match.confidence??.5)*100;
+      return (!needle||searchable.includes(needle))&&confidence>=upcomingConfidence[0]&&confidence<=upcomingConfidence[1];
+    });
+  },[matches,upcomingQuery,upcomingConfidence,language]);
+  const upcomingFiltersActive=Boolean(upcomingQuery)||upcomingConfidence[0]!==50||upcomingConfidence[1]!==100;
 
   useEffect(()=>{fetch(`${API_BASE}/api/matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setMatches(data.matches??[]);setStatus("ready");}).catch(()=>setStatus("error"));},[]);
   useEffect(()=>{fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setPreviousMatches(data.matches??[]);setPreviousStatus("ready");}).catch(()=>setPreviousStatus("error"));},[]);
@@ -801,7 +820,13 @@ export function MatchDashboard(){
     {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart}/>:!selected?<section className="fixture-column">
       <div className="fixture-heading"><div><span className="live-dot"/>ATP TOUR</div><h1>{t.upcoming}</h1><p>{status==="ready"&&!matches.length?t.noUpcoming:t.choose}</p></div>
       {status==="loading"&&<div className="message-card">{t.loading}</div>}{status==="error"&&<div className="message-card">{t.failed}</div>}
-      <div className="fixture-list">{matches.map(match=>{
+      {status==="ready"&&matches.length>0&&<div className="upcoming-filter-bar">
+        <label className="upcoming-search"><span aria-hidden="true"/><input type="search" value={upcomingQuery} onChange={event=>setUpcomingQuery(event.target.value)} placeholder={upcomingLabels.search} aria-label={upcomingLabels.search}/>{upcomingQuery&&<button type="button" onClick={()=>setUpcomingQuery("")} aria-label={upcomingLabels.clear}>×</button>}</label>
+        <ConfidenceRange label={upcomingLabels.confidence} value={upcomingConfidence} onChange={setUpcomingConfidence}/>
+        <div className="upcoming-filter-summary"><span><b>{visibleMatches.length}</b> / {matches.length} {upcomingLabels.shown}</span>{upcomingFiltersActive&&<button type="button" onClick={()=>{setUpcomingQuery("");setUpcomingConfidence([50,100]);}}>↺ {upcomingLabels.clear}</button>}</div>
+      </div>}
+      {status==="ready"&&matches.length>0&&!visibleMatches.length&&<div className="message-card upcoming-empty">{upcomingLabels.none}</div>}
+      <div className="fixture-list">{visibleMatches.map(match=>{
         const round=roundPresentation(match.round);
         return <button className={`fixture-row round-${round.tier}`} type="button" key={match.match_id} onClick={()=>openMatch(match)}><div className="fixture-topline"><span>{match.tournament_name}</span><span>{formatStart(match.start_time_utc)}</span></div><div className="fixture-mainline"><div className="fixture-player"><small>{match.p1_rank?`#${match.p1_rank}`:"—"}</small><b>{match.p1_name}</b></div><div className="versus"><b>VS</b><MatchStrength value={match.match_strength}/></div><div className="fixture-player right"><small>{match.p2_rank?`#${match.p2_rank}`:"—"}</small><b>{match.p2_name}</b></div></div><div className="fixture-footer"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span><i>→</i></div></button>;
       })}</div>
