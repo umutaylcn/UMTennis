@@ -752,7 +752,29 @@ export function MatchDashboard(){
   const [previousStatus,setPreviousStatus]=useState<"loading"|"ready"|"error">("loading");
   const [predictionError,setPredictionError]=useState(false);
   const timezoneOptions=useMemo(()=>{
-    return [{value:"local",label:"Local"},{value:"Europe/Istanbul",label:"İstanbul"},{value:"Europe/London",label:"London"},{value:"America/New_York",label:"New York"},{value:"UTC",label:"UTC"}];
+    return [
+      {value:"local",label:"Local"},
+      {value:"UTC",label:"UTC"},
+      {value:"Europe/Istanbul",label:"İstanbul"},
+      {value:"Europe/London",label:"London"},
+      {value:"Europe/Paris",label:"Paris"},
+      {value:"Europe/Berlin",label:"Berlin"},
+      {value:"Europe/Madrid",label:"Madrid"},
+      {value:"Europe/Rome",label:"Rome"},
+      {value:"America/New_York",label:"New York"},
+      {value:"America/Chicago",label:"Chicago"},
+      {value:"America/Denver",label:"Denver"},
+      {value:"America/Los_Angeles",label:"Los Angeles"},
+      {value:"America/Sao_Paulo",label:"São Paulo"},
+      {value:"Asia/Dubai",label:"Dubai"},
+      {value:"Asia/Kolkata",label:"New Delhi"},
+      {value:"Asia/Bangkok",label:"Bangkok"},
+      {value:"Asia/Singapore",label:"Singapore"},
+      {value:"Asia/Hong_Kong",label:"Hong Kong"},
+      {value:"Asia/Tokyo",label:"Tokyo"},
+      {value:"Asia/Seoul",label:"Seoul"},
+      {value:"Australia/Sydney",label:"Sydney"},
+    ];
   },[]);
   const t=text[language];
 
