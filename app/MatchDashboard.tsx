@@ -724,9 +724,9 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
 }
 
 export function MatchDashboard(){
-  const [language,setLanguage]=useState<Language>("tr");
+  const [language,setLanguage]=useState<Language>("en");
   const [view,setView]=useState<View>("matches");
-  const [timezone,setTimezone]=useState("Europe/Istanbul");
+  const [timezone,setTimezone]=useState("local");
   const [matches,setMatches]=useState<Match[]>([]);
   const [previousMatches,setPreviousMatches]=useState<PreviousMatch[]>([]);
   const [selected,setSelected]=useState<Match|null>(null);
@@ -735,14 +735,13 @@ export function MatchDashboard(){
   const [previousStatus,setPreviousStatus]=useState<"loading"|"ready"|"error">("loading");
   const [predictionError,setPredictionError]=useState(false);
   const timezoneOptions=useMemo(()=>{
-    const local=Intl.DateTimeFormat().resolvedOptions().timeZone;
-    return [{value:local,label:"Local"},{value:"Europe/Istanbul",label:"İstanbul"},{value:"Europe/London",label:"London"},{value:"America/New_York",label:"New York"},{value:"UTC",label:"UTC"}].filter((item,index,all)=>all.findIndex(candidate=>candidate.value===item.value)===index);
+    return [{value:"local",label:"Local"},{value:"Europe/Istanbul",label:"İstanbul"},{value:"Europe/London",label:"London"},{value:"America/New_York",label:"New York"},{value:"UTC",label:"UTC"}];
   },[]);
   const t=text[language];
 
   useEffect(()=>{fetch(`${API_BASE}/api/matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setMatches(data.matches??[]);setStatus("ready");}).catch(()=>setStatus("error"));},[]);
   useEffect(()=>{fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setPreviousMatches(data.matches??[]);setPreviousStatus("ready");}).catch(()=>setPreviousStatus("error"));},[]);
-  function formatStart(value:string){return new Intl.DateTimeFormat(language==="tr"?"tr-TR":"en-GB",{timeZone:timezone,weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(value));}
+  function formatStart(value:string){return new Intl.DateTimeFormat(language==="tr"?"tr-TR":"en-GB",{timeZone:timezone==="local"?undefined:timezone,weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(value));}
   async function openMatch(match:Match){setSelected(match);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});try{const response=await fetch(`${API_BASE}/api/matches/${match.match_id}/prediction`);if(!response.ok)throw new Error();setPrediction(await response.json());}catch{setPredictionError(true);}}
   function closeMatch(){setView("matches");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
   function showModel(){setView("model");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
