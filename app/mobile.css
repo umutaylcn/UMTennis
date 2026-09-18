@@ -111,9 +111,68 @@
   }
 
   .fixture-mainline {
-    grid-template-columns: minmax(0,1fr) 43px 72px 43px minmax(0,1fr);
-    gap: 4px;
+    grid-template-columns: minmax(0,1fr) 92px minmax(0,1fr);
+    grid-template-areas:
+      "player-one versus player-two"
+      "probability-one versus probability-two";
+    column-gap: 8px;
+    row-gap: 7px;
     margin: 13px 0 11px;
+  }
+
+  .fixture-mainline > .fixture-player:first-child {
+    grid-area: player-one;
+  }
+
+  .fixture-mainline > .fixture-probability:nth-child(2) {
+    grid-area: probability-one;
+  }
+
+  .fixture-mainline > .versus {
+    grid-area: versus;
+  }
+
+  .fixture-mainline > .fixture-probability:nth-child(4) {
+    grid-area: probability-two;
+  }
+
+  .fixture-mainline > .fixture-player:last-child {
+    grid-area: player-two;
+  }
+
+  .fixture-probability {
+    align-self: start;
+    font-size: 18px;
+    transform: none;
+  }
+
+  .fixture-mainline > .fixture-probability:nth-child(2) {
+    text-align: left;
+  }
+
+  .fixture-mainline > .fixture-probability:nth-child(4) {
+    text-align: right;
+  }
+
+  .mobile-fixture-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .mobile-fixture-meta .surface-tag {
+    padding: 4px 6px;
+    font-size: 7px;
+  }
+
+  .mobile-fixture-meta .fixture-round {
+    font-size: 9px;
+  }
+
+  .fixture-footer > .surface-tag,
+  .fixture-footer > .fixture-round {
+    display: none;
   }
 
   .fixture-player b {
