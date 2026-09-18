@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import { createPortal } from "react-dom";
 
 type Language = "en" | "tr" | "fr" | "es" | "de" | "it";
 type View = "matches" | "previous" | "model";
@@ -531,9 +530,8 @@ function CustomSelect({label,value,options,onChange,className=""}:{label:string;
   </div>;
 }
 
-function ConfidenceRange({label,value,onChange,mobileViewportCentered=false}:{label:string;value:[number,number];onChange:(value:[number,number])=>void;mobileViewportCentered?:boolean}){
+function ConfidenceRange({label,value,onChange}:{label:string;value:[number,number];onChange:(value:[number,number])=>void}){
   const [open,setOpen]=useState(false);
-  const [mobile,setMobile]=useState(false);
   const root=useRef<HTMLDivElement>(null);
   const popoverRoot=useRef<HTMLDivElement>(null);
   const [minimum,maximum]=value;
@@ -545,13 +543,7 @@ function ConfidenceRange({label,value,onChange,mobileViewportCentered=false}:{la
     document.addEventListener("pointerdown",close);document.addEventListener("keydown",escape);
     return()=>{document.removeEventListener("pointerdown",close);document.removeEventListener("keydown",escape);};
   },[]);
-  useEffect(()=>{
-    const query=window.matchMedia("(max-width: 700px)");
-    const update=()=>setMobile(query.matches);
-    update();query.addEventListener("change",update);
-    return()=>query.removeEventListener("change",update);
-  },[]);
-  const popover=<div className={`confidence-range-popover${mobileViewportCentered&&mobile?" viewport-centered":""}`} role="dialog" aria-label={label} ref={popoverRoot}>
+  const popover=<div className="confidence-range-popover" role="dialog" aria-label={label} ref={popoverRoot}>
     <div className="confidence-range-values"><b>{minimum}%</b><span>—</span><b>{maximum}%</b></div>
     <div className="confidence-range-slider" style={{"--range-start":`${start}%`,"--range-end":`${end}%`} as CSSProperties}>
       <span className="confidence-range-track" aria-hidden="true"/>
@@ -562,7 +554,7 @@ function ConfidenceRange({label,value,onChange,mobileViewportCentered=false}:{la
   </div>;
   return <div className={`control-field confidence-range-field ${open?"is-open":""}`} ref={root}>
     <button type="button" aria-haspopup="dialog" aria-expanded={open} onClick={()=>setOpen(current=>!current)}><span className="control-label">{label}</span><b>{minimum}%–{maximum}%</b><i aria-hidden="true"/></button>
-    {open&&(mobileViewportCentered&&mobile?createPortal(popover,document.body):popover)}
+    {open&&popover}
   </div>;
 }
 
@@ -837,7 +829,7 @@ export function MatchDashboard(){
       {status==="loading"&&<div className="message-card">{t.loading}</div>}{status==="error"&&<div className="message-card">{t.failed}</div>}
       {status==="ready"&&availableMatches.length>0&&<div className="upcoming-filter-bar">
         <label className="upcoming-search"><span aria-hidden="true"/><input type="search" value={upcomingQuery} onChange={event=>setUpcomingQuery(event.target.value)} placeholder={upcomingLabels.search} aria-label={upcomingLabels.search}/>{upcomingQuery&&<button type="button" onClick={()=>setUpcomingQuery("")} aria-label={upcomingLabels.clear}>×</button>}</label>
-        <ConfidenceRange label={upcomingLabels.confidence} value={upcomingConfidence} onChange={setUpcomingConfidence} mobileViewportCentered/>
+        <ConfidenceRange label={upcomingLabels.confidence} value={upcomingConfidence} onChange={setUpcomingConfidence}/>
         <div className="upcoming-filter-summary"><span><b>{visibleMatches.length}</b> / {availableMatches.length} {upcomingLabels.shown}</span>{upcomingFiltersActive&&<button type="button" onClick={()=>{setUpcomingQuery("");setUpcomingConfidence([50,100]);}}>↺ {upcomingLabels.clear}</button>}</div>
       </div>}
       {status==="ready"&&availableMatches.length>0&&!visibleMatches.length&&<div className="message-card upcoming-empty">{upcomingLabels.none}</div>}
