@@ -464,12 +464,12 @@ function probability(value:number){return `${(value*100).toFixed(1)}%`;}
 function probabilityTone(value:number):CSSProperties{
   const distance=Math.abs(value-.5);
   const strength=Math.max(0,Math.min(1,(distance-.04)/.36));
-  const neutral=[238,242,239];
+  const neutral=[244,211,94];
   const target=value>=.5?[117,233,155]:[255,114,109];
   const rgb=neutral.map((channel,index)=>Math.round(channel+(target[index]-channel)*strength));
   return{
     color:`rgb(${rgb.join(",")})`,
-    textShadow:strength>.02?`0 0 ${Math.round(7+strength*11)}px rgba(${target.join(",")},${(.08+strength*.3).toFixed(2)})`:"none",
+    textShadow:strength>.02?`0 0 ${Math.round(7+strength*11)}px rgba(${target.join(",")},${(.08+strength*.3).toFixed(2)})`:"0 0 10px rgba(244,211,94,.18)",
   };
 }
 
