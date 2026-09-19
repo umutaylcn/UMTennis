@@ -738,7 +738,7 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
       const p1Picked=match.predicted_winner===match.p1_name;
       const statusLabel=match.prediction_correct?t.correct:t.wrong;
       return <article className={`previous-card ${match.prediction_correct?"correct":"wrong"}`} key={match.match_id}>
-        <div className="previous-meta"><span>{match.tournament_name}</span><span>{formatStart(match.start_time_utc)}</span></div>
+        <div className="previous-meta"><span>{match.tournament_name}</span><span className="previous-meta-center"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><small>{match.round}</small></span><span>{formatStart(match.start_time_utc)}</span></div>
         <div className="previous-matchup">
           <div className={match.actual_winner===match.p1_name?"actual-winner":""}><b>{match.p1_name}</b><strong>{probability(match.p1_win_probability)}</strong></div>
           <div className="previous-vs"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><b>VS</b><small>{match.round}</small></div>
