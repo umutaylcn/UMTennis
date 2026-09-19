@@ -597,6 +597,17 @@
     padding-top: 9px;
   }
 
+  .previous-outcome small,
+  .previous-outcome b {
+    max-width: 100%;
+    white-space: nowrap;
+  }
+
+  .previous-outcome b {
+    font-size: clamp(9px,2.8vw,11px);
+    letter-spacing: -.01em;
+  }
+
   .previous-outcome .result-badge {
     display: none;
   }
