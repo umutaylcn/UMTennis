@@ -556,6 +556,50 @@
   .chart-card {
     padding: 19px 12px 14px;
   }
+
+  .previous-matchup {
+    align-items: end;
+    margin: 12px 0 7px;
+  }
+
+  .previous-matchup > div:not(.previous-vs) strong {
+    display: none;
+  }
+
+  .previous-vs {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-areas:
+      "surface round"
+      "versus versus";
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    column-gap: 5px;
+    row-gap: 4px;
+  }
+
+  .previous-vs .surface-tag {
+    grid-area: surface;
+  }
+
+  .previous-vs small {
+    grid-area: round;
+  }
+
+  .previous-vs > b {
+    grid-area: versus;
+    line-height: 1;
+  }
+
+  .previous-outcome {
+    min-height: 0;
+    padding-top: 9px;
+  }
+
+  .previous-outcome .result-badge {
+    display: none;
+  }
 }
 
 @media (max-width: 370px) {
@@ -597,7 +641,4 @@
     font-size: 10px;
   }
 
-  .previous-outcome .result-badge {
-    display: none;
-  }
 }
