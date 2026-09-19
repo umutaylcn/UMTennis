@@ -614,7 +614,7 @@
   }
 
   .previous-outcome b {
-    font-size: clamp(9px,2.8vw,11px);
+    font-size: clamp(10.8px,3.36vw,13.2px);
     letter-spacing: -.01em;
   }
 
