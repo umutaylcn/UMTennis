@@ -28,13 +28,6 @@ function MatchStrength({value}:{value:number}){
 
 const API_BASE=
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://umtennis-api.onrender.com";
-const UPCOMING_DEMO_MATCHES:Match[]=[
-  {match_id:-1,start_time_utc:"2026-09-18T18:00:00Z",tournament_name:"UMTennis Coin Flip",surface:"Hard",round:"R32",p1_name:"Carlos Alcaraz",p2_name:"Jannik Sinner",p1_id:1,p2_id:2,p1_rank:2,p2_rank:1,p1_elo_rank:2,p2_elo_rank:1,match_strength:5,p1_win_probability:.501,p2_win_probability:.499,predicted_winner:"Carlos Alcaraz",confidence:.501,confidence_label:"Coin flip",is_demo:true},
-  {match_id:-2,start_time_utc:"2026-09-18T20:30:00Z",tournament_name:"UMTennis Slight Edge",surface:"Clay",round:"QF",p1_name:"Novak Djokovic",p2_name:"Alexander Zverev",p1_id:3,p2_id:4,p1_rank:4,p2_rank:3,p1_elo_rank:3,p2_elo_rank:5,match_strength:5,p1_win_probability:.42,p2_win_probability:.58,predicted_winner:"Alexander Zverev",confidence:.58,confidence_label:"Lean",is_demo:true},
-  {match_id:-3,start_time_utc:"2026-09-19T12:00:00Z",tournament_name:"UMTennis Clear Favorite",surface:"Grass",round:"R16",p1_name:"Taylor Fritz",p2_name:"Casper Ruud",p1_id:5,p2_id:6,p1_rank:5,p2_rank:12,p1_elo_rank:6,p2_elo_rank:14,match_strength:4.5,p1_win_probability:.70,p2_win_probability:.30,predicted_winner:"Taylor Fritz",confidence:.70,confidence_label:"Strong pick",is_demo:true},
-  {match_id:-4,start_time_utc:"2026-09-19T15:30:00Z",tournament_name:"UMTennis Heavy Favorite",surface:"Hard",round:"SF",p1_name:"Daniil Medvedev",p2_name:"Alex de Minaur",p1_id:7,p2_id:8,p1_rank:10,p2_rank:7,p1_elo_rank:12,p2_elo_rank:8,match_strength:4.5,p1_win_probability:.18,p2_win_probability:.82,predicted_winner:"Alex de Minaur",confidence:.82,confidence_label:"Heavy favorite",is_demo:true},
-  {match_id:-5,start_time_utc:"2026-09-19T18:00:00Z",tournament_name:"UMTennis Dominant Pick",surface:"Clay",round:"F",p1_name:"Ben Shelton",p2_name:"Learner Tien",p1_id:9,p2_id:10,p1_rank:8,p2_rank:22,p1_elo_rank:9,p2_elo_rank:25,match_strength:4,p1_win_probability:.92,p2_win_probability:.08,predicted_winner:"Ben Shelton",confidence:.92,confidence_label:"Dominant favorite",is_demo:true},
-];
 const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   19:"https://media.prod.tennis.com/v1/tcf/images/headshots/cb77df64-7fd7-459a-923e-9b909d964f2d.png?fm=webp&q=80&w=1200",
   115:"https://images.prismic.io/fft-rg-site/ZksBuyol0Zci9Rk0_47931_J.FARIA.png?auto=format%2Ccompress&h=900&w=900",
@@ -805,7 +798,7 @@ export function MatchDashboard(){
     de:{search:"Spieler oder Turnier suchen",confidence:"KONFIDENZ",shown:"Matches angezeigt",none:"Keine bevorstehenden Matches entsprechen dieser Suche und Konfidenz.",clear:"Filter löschen"},
     it:{search:"Cerca giocatore o torneo",confidence:"AFFIDABILITÀ",shown:"partite mostrate",none:"Nessuna partita in programma corrisponde alla ricerca e all'affidabilità.",clear:"Azzera filtri"},
   }[language];
-  const availableMatches=useMemo(()=>status==="ready"?(matches.length?matches:UPCOMING_DEMO_MATCHES):[],[matches,status]);
+  const availableMatches=useMemo(()=>status==="ready"?matches:[],[matches,status]);
   const visibleMatches=useMemo(()=>{
     const needle=upcomingQuery.trim().toLocaleLowerCase(language);
     return availableMatches.filter(match=>{
