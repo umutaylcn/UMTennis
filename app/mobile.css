@@ -593,8 +593,13 @@
   }
 
   .previous-outcome {
+    align-items: start;
     min-height: 0;
     padding-top: 9px;
+  }
+
+  .previous-outcome > i {
+    align-self: center;
   }
 
   .previous-outcome small,
@@ -606,6 +611,11 @@
   .previous-outcome b {
     font-size: clamp(9px,2.8vw,11px);
     letter-spacing: -.01em;
+  }
+
+  .previous-outcome small,
+  .previous-outcome b {
+    line-height: 1.2;
   }
 
   .previous-outcome .result-badge {
