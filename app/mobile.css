@@ -602,6 +602,11 @@
     align-self: center;
   }
 
+  .previous-outcome > div:last-of-type {
+    align-items: flex-end;
+    text-align: right;
+  }
+
   .previous-outcome small,
   .previous-outcome b {
     max-width: 100%;
