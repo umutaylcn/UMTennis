@@ -562,6 +562,10 @@
     margin: 12px 0 7px;
   }
 
+  .previous-meta-center {
+    display: none;
+  }
+
   .previous-matchup > div:not(.previous-vs) strong {
     display: none;
   }
