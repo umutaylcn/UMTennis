@@ -596,4 +596,8 @@
   .metric-label span {
     font-size: 10px;
   }
+
+  .previous-outcome .result-badge {
+    display: none;
+  }
 }
