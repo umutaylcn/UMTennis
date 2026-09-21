@@ -775,7 +775,6 @@ export function MatchDashboard(){
   const [upcomingConfidence,setUpcomingConfidence]=useState<[number,number]>([50,100]);
   const [mobileSettingsOpen,setMobileSettingsOpen]=useState(false);
   const [mobileNavHidden,setMobileNavHidden]=useState(false);
-  const lastScrollY=useRef(0);
   const timezoneOptions=useMemo(()=>{
     return [
       {value:"local",label:"Local"},
@@ -826,17 +825,14 @@ export function MatchDashboard(){
   useEffect(()=>{if(upcomingTournament!=="all"&&!availableMatches.some(match=>match.tournament_name===upcomingTournament))setUpcomingTournament("all");},[availableMatches,upcomingTournament]);
 
   useEffect(()=>{
-    lastScrollY.current=window.scrollY;
     let frame=0;
     function updateMobileHeader(){
       frame=0;
       const currentY=Math.max(0,window.scrollY);
-      const delta=currentY-lastScrollY.current;
       const isMobile=window.matchMedia("(max-width: 760px)").matches;
-      if(!isMobile||currentY<=20)setMobileNavHidden(false);
-      else if(delta>4){setMobileNavHidden(true);setMobileSettingsOpen(false);}
-      else if(delta<-4)setMobileNavHidden(false);
-      lastScrollY.current=currentY;
+      const shouldHide=isMobile&&currentY>2;
+      setMobileNavHidden(shouldHide);
+      if(shouldHide)setMobileSettingsOpen(false);
     }
     function handleScroll(){if(!frame)frame=window.requestAnimationFrame(updateMobileHeader);}
     window.addEventListener("scroll",handleScroll,{passive:true});
