@@ -773,6 +773,7 @@ export function MatchDashboard(){
   const [upcomingQuery,setUpcomingQuery]=useState("");
   const [upcomingTournament,setUpcomingTournament]=useState("all");
   const [upcomingConfidence,setUpcomingConfidence]=useState<[number,number]>([50,100]);
+  const [mobileSettingsOpen,setMobileSettingsOpen]=useState(false);
   const timezoneOptions=useMemo(()=>{
     return [
       {value:"local",label:"Local"},
@@ -837,7 +838,10 @@ export function MatchDashboard(){
     <header className="umt-header">
       <button className="umt-logo" onClick={closeMatch}><span>UM</span>Tennis</button>
       <nav><button className={view==="matches"?"active":""} onClick={closeMatch}>{t.matches}</button><button className={view==="previous"?"active":""} type="button" onClick={showPrevious}>{t.previous}</button><button className={view==="model"?"active":""} type="button" onClick={showModel}>Model</button></nav>
-      <div className="header-controls">
+      <button className={`mobile-settings-toggle${mobileSettingsOpen?" active":""}`} type="button" aria-label="Settings" aria-expanded={mobileSettingsOpen} onClick={()=>setMobileSettingsOpen(current=>!current)}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M7 14v6"/><circle cx="14" cy="7" r="2"/><circle cx="7" cy="17" r="2"/></svg>
+      </button>
+      <div className={`header-controls${mobileSettingsOpen?" mobile-open":""}`}>
         <CustomSelect label="LANG" value={language} className="language-field" options={[{value:"en",label:"EN"},{value:"tr",label:"TR"},{value:"fr",label:"FR"},{value:"es",label:"ES"},{value:"de",label:"DE"},{value:"it",label:"IT"}]} onChange={value=>setLanguage(value as Language)}/>
         <span className="control-divider" aria-hidden="true"/>
         <CustomSelect label="TIME" value={timezone} className="timezone-field" options={timezoneOptions} onChange={setTimezone}/>
