@@ -21,8 +21,8 @@
     grid-template-rows: 43px 0;
     row-gap: 0;
     border-bottom-color: rgba(255,255,255,.08);
-    background: rgba(2,7,5,.15);
-    backdrop-filter: blur(8px);
+    background: rgba(2,7,5,.07);
+    backdrop-filter: blur(4px);
   }
 
   .umt-logo {
