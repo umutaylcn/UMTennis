@@ -830,9 +830,9 @@ export function MatchDashboard(){
       frame=0;
       const currentY=Math.max(0,window.scrollY);
       const isMobile=window.matchMedia("(max-width: 760px)").matches;
-      const shouldHide=isMobile&&currentY>2;
-      setMobileNavHidden(shouldHide);
-      if(shouldHide)setMobileSettingsOpen(false);
+      if(!isMobile){setMobileNavHidden(false);return;}
+      setMobileNavHidden(currentlyHidden=>currentlyHidden?currentY>20:currentY>=80);
+      if(currentY>=80)setMobileSettingsOpen(false);
     }
     function handleScroll(){if(!frame)frame=window.requestAnimationFrame(updateMobileHeader);}
     window.addEventListener("scroll",handleScroll,{passive:true});
