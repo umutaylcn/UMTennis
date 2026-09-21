@@ -28,6 +28,12 @@ function MatchStrength({value}:{value:number}){
 
 const API_BASE=
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://umtennis-api.onrender.com";
+const UPCOMING_FILTER_PREVIEW:Match[]=[
+  {match_id:-101,start_time_utc:"2026-09-23T06:00:00Z",tournament_name:"Chengdu Open",surface:"Hard",round:"R32",p1_name:"Andrey Rublev",p2_name:"Alexander Bublik",p1_id:null,p2_id:null,p1_rank:15,p2_rank:24,p1_elo_rank:14,p2_elo_rank:23,match_strength:4,p1_win_probability:.55,p2_win_probability:.45,predicted_winner:"Andrey Rublev",confidence:.55,confidence_label:"Lean",is_demo:true},
+  {match_id:-102,start_time_utc:"2026-09-23T09:30:00Z",tournament_name:"Chengdu Open",surface:"Hard",round:"R32",p1_name:"Lorenzo Musetti",p2_name:"Flavio Cobolli",p1_id:null,p2_id:null,p1_rank:9,p2_rank:18,p1_elo_rank:11,p2_elo_rank:20,match_strength:4.5,p1_win_probability:.68,p2_win_probability:.32,predicted_winner:"Lorenzo Musetti",confidence:.68,confidence_label:"Strong pick",is_demo:true},
+  {match_id:-103,start_time_utc:"2026-09-23T07:30:00Z",tournament_name:"Hangzhou Open",surface:"Hard",round:"R32",p1_name:"Daniil Medvedev",p2_name:"Alex de Minaur",p1_id:null,p2_id:null,p1_rank:10,p2_rank:7,p1_elo_rank:12,p2_elo_rank:8,match_strength:5,p1_win_probability:.51,p2_win_probability:.49,predicted_winner:"Daniil Medvedev",confidence:.51,confidence_label:"Coin flip",is_demo:true},
+  {match_id:-104,start_time_utc:"2026-09-23T11:00:00Z",tournament_name:"Hangzhou Open",surface:"Hard",round:"R32",p1_name:"Ben Shelton",p2_name:"Learner Tien",p1_id:null,p2_id:null,p1_rank:8,p2_rank:22,p1_elo_rank:9,p2_elo_rank:25,match_strength:4,p1_win_probability:.82,p2_win_probability:.18,predicted_winner:"Ben Shelton",confidence:.82,confidence_label:"Heavy favorite",is_demo:true},
+];
 const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   19:"https://media.prod.tennis.com/v1/tcf/images/headshots/cb77df64-7fd7-459a-923e-9b909d964f2d.png?fm=webp&q=80&w=1200",
   115:"https://images.prismic.io/fft-rg-site/ZksBuyol0Zci9Rk0_47931_J.FARIA.png?auto=format%2Ccompress&h=900&w=900",
@@ -799,7 +805,7 @@ export function MatchDashboard(){
     de:{search:"Spieler oder Turnier suchen",tournament:"TURNIER",allTournaments:"Alle Turniere",confidence:"KONFIDENZ",shown:"Matches angezeigt",none:"Keine bevorstehenden Matches entsprechen diesen Filtern.",clear:"Filter löschen"},
     it:{search:"Cerca giocatore o torneo",tournament:"TORNEO",allTournaments:"Tutti i tornei",confidence:"AFFIDABILITÀ",shown:"partite mostrate",none:"Nessuna partita in programma corrisponde a questi filtri.",clear:"Azzera filtri"},
   }[language];
-  const availableMatches=useMemo(()=>status==="ready"?matches:[],[matches,status]);
+  const availableMatches=useMemo(()=>status==="ready"?(matches.length?matches:UPCOMING_FILTER_PREVIEW):[],[matches,status]);
   const upcomingTournamentOptions=useMemo(()=>[{value:"all",label:upcomingLabels.allTournaments},...Array.from(new Set(availableMatches.map(match=>match.tournament_name))).sort().map(value=>({value,label:value}))],[availableMatches,upcomingLabels.allTournaments]);
   const visibleMatches=useMemo(()=>{
     const needle=upcomingQuery.trim().toLocaleLowerCase(language);
