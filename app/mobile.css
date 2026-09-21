@@ -13,13 +13,16 @@
     column-gap: 8px;
     row-gap: 5px;
     align-items: center;
-    transition: height .2s ease, grid-template-rows .2s ease, row-gap .2s ease;
+    transition: height .2s ease, grid-template-rows .2s ease, row-gap .2s ease, background .2s ease, border-color .2s ease, backdrop-filter .2s ease;
   }
 
   .umt-header.mobile-nav-hidden {
     height: 58px;
     grid-template-rows: 43px 0;
     row-gap: 0;
+    border-bottom-color: rgba(255,255,255,.08);
+    background: rgba(2,7,5,.15);
+    backdrop-filter: blur(8px);
   }
 
   .umt-logo {
