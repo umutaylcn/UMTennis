@@ -13,6 +13,13 @@
     column-gap: 8px;
     row-gap: 5px;
     align-items: center;
+    transition: height .2s ease, grid-template-rows .2s ease, row-gap .2s ease;
+  }
+
+  .umt-header.mobile-nav-hidden {
+    height: 58px;
+    grid-template-rows: 43px 0;
+    row-gap: 0;
   }
 
   .umt-logo {
@@ -122,6 +129,14 @@
     background: rgba(4,11,8,.72);
     box-shadow: inset 0 1px rgba(255,255,255,.06), 0 8px 22px rgba(0,0,0,.22);
     backdrop-filter: blur(13px);
+    transition: opacity .17s ease, transform .2s ease, visibility .17s ease;
+  }
+
+  .umt-header.mobile-nav-hidden nav {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-10px) scale(.97);
   }
 
   .umt-header nav button {

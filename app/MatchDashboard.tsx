@@ -774,6 +774,8 @@ export function MatchDashboard(){
   const [upcomingTournament,setUpcomingTournament]=useState("all");
   const [upcomingConfidence,setUpcomingConfidence]=useState<[number,number]>([50,100]);
   const [mobileSettingsOpen,setMobileSettingsOpen]=useState(false);
+  const [mobileNavHidden,setMobileNavHidden]=useState(false);
+  const lastScrollY=useRef(0);
   const timezoneOptions=useMemo(()=>{
     return [
       {value:"local",label:"Local"},
@@ -823,6 +825,25 @@ export function MatchDashboard(){
 
   useEffect(()=>{if(upcomingTournament!=="all"&&!availableMatches.some(match=>match.tournament_name===upcomingTournament))setUpcomingTournament("all");},[availableMatches,upcomingTournament]);
 
+  useEffect(()=>{
+    lastScrollY.current=window.scrollY;
+    let frame=0;
+    function updateMobileHeader(){
+      frame=0;
+      const currentY=Math.max(0,window.scrollY);
+      const delta=currentY-lastScrollY.current;
+      const isMobile=window.matchMedia("(max-width: 760px)").matches;
+      if(!isMobile||currentY<=20)setMobileNavHidden(false);
+      else if(delta>4){setMobileNavHidden(true);setMobileSettingsOpen(false);}
+      else if(delta<-4)setMobileNavHidden(false);
+      lastScrollY.current=currentY;
+    }
+    function handleScroll(){if(!frame)frame=window.requestAnimationFrame(updateMobileHeader);}
+    window.addEventListener("scroll",handleScroll,{passive:true});
+    window.addEventListener("resize",handleScroll);
+    return()=>{window.removeEventListener("scroll",handleScroll);window.removeEventListener("resize",handleScroll);if(frame)window.cancelAnimationFrame(frame);};
+  },[]);
+
   useEffect(()=>{fetch(`${API_BASE}/api/matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setMatches(data.matches??[]);setStatus("ready");}).catch(()=>setStatus("error"));},[]);
   useEffect(()=>{fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setPreviousMatches(data.matches??[]);setPreviousStatus("ready");}).catch(()=>setPreviousStatus("error"));},[]);
   function formatStart(value:string){const locale:Record<Language,string>={en:"en-GB",tr:"tr-TR",fr:"fr-FR",es:"es-ES",de:"de-DE",it:"it-IT"};return new Intl.DateTimeFormat(locale[language],{timeZone:timezone==="local"?undefined:timezone,weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(value));}
@@ -835,7 +856,7 @@ export function MatchDashboard(){
   return <main className={`site-screen surface-${surfaceClass}`}>
     <div className="page-background" aria-hidden="true"/>
     {view==="previous"&&<div className="history-sparks" aria-hidden="true"><div className="history-spark-gutter left">{Array.from({length:6},(_,index)=><i key={index}/>)}</div><div className="history-spark-gutter right">{Array.from({length:6},(_,index)=><i key={index}/>)}</div></div>}
-    <header className="umt-header">
+    <header className={`umt-header${mobileNavHidden?" mobile-nav-hidden":""}`}>
       <button className="umt-logo" onClick={closeMatch}><span>UM</span>Tennis</button>
       <nav><button className={view==="matches"?"active":""} onClick={closeMatch}>{t.matches}</button><button className={view==="previous"?"active":""} type="button" onClick={showPrevious}>{t.previous}</button><button className={view==="model"?"active":""} type="button" onClick={showModel}>Model</button></nav>
       <button className={`mobile-settings-toggle${mobileSettingsOpen?" active":""}`} type="button" aria-label="Settings" aria-expanded={mobileSettingsOpen} onClick={()=>setMobileSettingsOpen(current=>!current)}>
