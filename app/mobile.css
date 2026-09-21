@@ -170,42 +170,6 @@
     display: block;
   }
 
-  .upcoming-search input::placeholder {
-    color: transparent;
-  }
-
-  .upcoming-search-marquee {
-    display: block;
-    position: absolute;
-    right: 10px;
-    left: 34px;
-    overflow: hidden;
-    color: rgba(255,255,255,.4);
-    font-size: 11px;
-    line-height: 1;
-    pointer-events: none;
-  }
-
-  .upcoming-search-marquee > div {
-    display: flex;
-    width: max-content;
-    gap: 26px;
-    animation: upcoming-search-scroll 7s linear infinite;
-  }
-
-  .upcoming-search-marquee i {
-    font-style: normal;
-    white-space: nowrap;
-  }
-
-  .upcoming-search:focus-within .upcoming-search-marquee {
-    opacity: 0;
-  }
-
-  @keyframes upcoming-search-scroll {
-    to { transform: translateX(calc(-50% - 13px)); }
-  }
-
   .fixture-row {
     padding: 15px 15px 13px;
     border-radius: 13px;
