@@ -765,6 +765,7 @@ export function MatchDashboard(){
   const [previousStatus,setPreviousStatus]=useState<"loading"|"ready"|"error">("loading");
   const [predictionError,setPredictionError]=useState(false);
   const [upcomingQuery,setUpcomingQuery]=useState("");
+  const [upcomingTournament,setUpcomingTournament]=useState("all");
   const [upcomingConfidence,setUpcomingConfidence]=useState<[number,number]>([50,100]);
   const timezoneOptions=useMemo(()=>{
     return [
@@ -791,23 +792,29 @@ export function MatchDashboard(){
   },[]);
   const t=text[language];
   const upcomingLabels={
-    tr:{search:"Oyuncu veya turnuva ara",confidence:"TAHMİN GÜVENİ",shown:"maç gösteriliyor",none:"Bu arama ve güven aralığında yaklaşan maç yok.",clear:"Filtreleri temizle"},
-    en:{search:"Search player or tournament",confidence:"CONFIDENCE",shown:"matches shown",none:"No upcoming matches match this search and confidence range.",clear:"Clear filters"},
-    fr:{search:"Rechercher un joueur ou un tournoi",confidence:"CONFIANCE",shown:"matchs affichés",none:"Aucun match à venir ne correspond à cette recherche et à cette confiance.",clear:"Effacer les filtres"},
-    es:{search:"Buscar jugador o torneo",confidence:"CONFIANZA",shown:"partidos mostrados",none:"No hay próximos partidos para esta búsqueda y este nivel de confianza.",clear:"Limpiar filtros"},
-    de:{search:"Spieler oder Turnier suchen",confidence:"KONFIDENZ",shown:"Matches angezeigt",none:"Keine bevorstehenden Matches entsprechen dieser Suche und Konfidenz.",clear:"Filter löschen"},
-    it:{search:"Cerca giocatore o torneo",confidence:"AFFIDABILITÀ",shown:"partite mostrate",none:"Nessuna partita in programma corrisponde alla ricerca e all'affidabilità.",clear:"Azzera filtri"},
+    tr:{search:"Oyuncu veya turnuva ara",tournament:"TURNUVA",allTournaments:"Tüm turnuvalar",confidence:"TAHMİN GÜVENİ",shown:"maç gösteriliyor",none:"Bu filtrelere uyan yaklaşan maç yok.",clear:"Filtreleri temizle"},
+    en:{search:"Search player or tournament",tournament:"TOURNAMENT",allTournaments:"All tournaments",confidence:"CONFIDENCE",shown:"matches shown",none:"No upcoming matches match these filters.",clear:"Clear filters"},
+    fr:{search:"Rechercher un joueur ou un tournoi",tournament:"TOURNOI",allTournaments:"Tous les tournois",confidence:"CONFIANCE",shown:"matchs affichés",none:"Aucun match à venir ne correspond à ces filtres.",clear:"Effacer les filtres"},
+    es:{search:"Buscar jugador o torneo",tournament:"TORNEO",allTournaments:"Todos los torneos",confidence:"CONFIANZA",shown:"partidos mostrados",none:"No hay próximos partidos para estos filtros.",clear:"Limpiar filtros"},
+    de:{search:"Spieler oder Turnier suchen",tournament:"TURNIER",allTournaments:"Alle Turniere",confidence:"KONFIDENZ",shown:"Matches angezeigt",none:"Keine bevorstehenden Matches entsprechen diesen Filtern.",clear:"Filter löschen"},
+    it:{search:"Cerca giocatore o torneo",tournament:"TORNEO",allTournaments:"Tutti i tornei",confidence:"AFFIDABILITÀ",shown:"partite mostrate",none:"Nessuna partita in programma corrisponde a questi filtri.",clear:"Azzera filtri"},
   }[language];
   const availableMatches=useMemo(()=>status==="ready"?matches:[],[matches,status]);
+  const upcomingTournamentOptions=useMemo(()=>[{value:"all",label:upcomingLabels.allTournaments},...Array.from(new Set(availableMatches.map(match=>match.tournament_name))).sort().map(value=>({value,label:value}))],[availableMatches,upcomingLabels.allTournaments]);
   const visibleMatches=useMemo(()=>{
     const needle=upcomingQuery.trim().toLocaleLowerCase(language);
     return availableMatches.filter(match=>{
       const searchable=`${match.p1_name} ${match.p2_name} ${match.tournament_name}`.toLocaleLowerCase(language);
       const confidence=(match.confidence??.5)*100;
-      return (!needle||searchable.includes(needle))&&confidence>=upcomingConfidence[0]&&confidence<=upcomingConfidence[1];
+      return (!needle||searchable.includes(needle))
+        &&(upcomingTournament==="all"||match.tournament_name===upcomingTournament)
+        &&confidence>=upcomingConfidence[0]
+        &&confidence<=upcomingConfidence[1];
     });
-  },[availableMatches,upcomingQuery,upcomingConfidence,language]);
-  const upcomingFiltersActive=Boolean(upcomingQuery)||upcomingConfidence[0]!==50||upcomingConfidence[1]!==100;
+  },[availableMatches,upcomingQuery,upcomingTournament,upcomingConfidence,language]);
+  const upcomingFiltersActive=Boolean(upcomingQuery)||upcomingTournament!=="all"||upcomingConfidence[0]!==50||upcomingConfidence[1]!==100;
+
+  useEffect(()=>{if(upcomingTournament!=="all"&&!availableMatches.some(match=>match.tournament_name===upcomingTournament))setUpcomingTournament("all");},[availableMatches,upcomingTournament]);
 
   useEffect(()=>{fetch(`${API_BASE}/api/matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setMatches(data.matches??[]);setStatus("ready");}).catch(()=>setStatus("error"));},[]);
   useEffect(()=>{fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setPreviousMatches(data.matches??[]);setPreviousStatus("ready");}).catch(()=>setPreviousStatus("error"));},[]);
@@ -836,8 +843,9 @@ export function MatchDashboard(){
       {status==="loading"&&<div className="message-card">{t.loading}</div>}{status==="error"&&<div className="message-card">{t.failed}</div>}
       {status==="ready"&&availableMatches.length>0&&<div className="upcoming-filter-bar">
         <label className="upcoming-search"><span aria-hidden="true"/><input type="search" value={upcomingQuery} onChange={event=>setUpcomingQuery(event.target.value)} placeholder={upcomingLabels.search} aria-label={upcomingLabels.search}/>{!upcomingQuery&&<div className="upcoming-search-marquee" aria-hidden="true"><div><i>{upcomingLabels.search}</i><i>{upcomingLabels.search}</i></div></div>}{upcomingQuery&&<button type="button" onClick={()=>setUpcomingQuery("")} aria-label={upcomingLabels.clear}>×</button>}</label>
+        <CustomSelect label={upcomingLabels.tournament} value={upcomingTournament} className="upcoming-tournament-field" options={upcomingTournamentOptions} onChange={setUpcomingTournament}/>
         <ConfidenceRange label={upcomingLabels.confidence} value={upcomingConfidence} onChange={setUpcomingConfidence}/>
-        <div className="upcoming-filter-summary"><span><b>{visibleMatches.length}</b> / {availableMatches.length} {upcomingLabels.shown}</span>{upcomingFiltersActive&&<button type="button" onClick={()=>{setUpcomingQuery("");setUpcomingConfidence([50,100]);}}>↺ {upcomingLabels.clear}</button>}</div>
+        <div className="upcoming-filter-summary"><span><b>{visibleMatches.length}</b> / {availableMatches.length} {upcomingLabels.shown}</span>{upcomingFiltersActive&&<button type="button" onClick={()=>{setUpcomingQuery("");setUpcomingTournament("all");setUpcomingConfidence([50,100]);}}>↺ {upcomingLabels.clear}</button>}</div>
       </div>}
       {status==="ready"&&availableMatches.length>0&&!visibleMatches.length&&<div className="message-card upcoming-empty">{upcomingLabels.none}</div>}
       <div className="fixture-list">{visibleMatches.map(match=>{

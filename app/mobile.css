@@ -102,6 +102,15 @@
 
   .upcoming-search {
     position: relative;
+    grid-column: 1 / -1;
+  }
+
+  .upcoming-tournament-field {
+    grid-column: 1;
+  }
+
+  .upcoming-tournament-field > button .control-label {
+    display: block;
   }
 
   .upcoming-search input::placeholder {
