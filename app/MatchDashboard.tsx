@@ -41,7 +41,7 @@ const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   1002:"https://media.prod.tennis.com/v1/tcf/images/players/9f7109a5-ca31-43ac-9b9a-c529bcd38d36/20260604_215936.png?fm=webp&q=80&w=1600",
   8730:"https://longform.atptour.com/meet-the-nextgenatp-class-of-2024/assets/djEb5QgRVw/mensik-v-1080x1920.jpg",
 };
-const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,94,105,109,115,117,159,163,164,173,177,179,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,447,472,494,503,511,521,527,536,539,576,578,604,623,652,653,664,842,844,878,990,1002,1096,1178,1179,1215,1253,4872,6146,6316,7607,8730,8745,9137,12825,13409,33875]);
+const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,94,105,109,115,117,159,163,164,173,177,179,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,445,447,472,480,494,503,511,521,527,536,539,576,578,604,623,652,653,664,670,840,842,844,878,990,1002,1096,1178,1179,1215,1253,1575,4872,6146,6316,7607,7638,8730,8745,9137,12825,13409,33875]);
 // Provider IDs can change or be temporarily unavailable in a cached fixture.
 // Resolve these locally prepared portraits by stable player name first.
 const PLAYER_NAME_CUTOUTS:Record<string,string>={
@@ -102,6 +102,12 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "Tomas Vera Barrios":"68",
   "Tristan Schoolkate":"117",
   "Zsombor Piros":"576",
+  "Jia Hu":"7638",
+  "Kyrian Jacquet":"1575",
+  "Yi Zhou":"480",
+  "Zhizhen Zhang":"445",
+  "Yunchaokete Bu":"840",
+  "Jie Cui":"670",
 };
 const TOP20_PLAYER_CUTOUTS:Record<string,string>={
   "Carlos Alcaraz":"carlos-alcaraz",
@@ -169,6 +175,7 @@ const TOP60_PLAYER_CUTOUTS:Record<string,string>={
   "Benjamin Bonzi":"benjamin-bonzi",
   "Marin Cilic":"marin-cilic",
   "Sebastian Baez":"sebastian-baez",
+  "Sebastián Báez":"sebastian-baez",
   "S. Baez":"sebastian-baez",
   "Arthur Rinderknech":"arthur-rinderknech",
   "Jaume Munar":"jaume-munar",
@@ -222,7 +229,7 @@ const TOP100_PLAYER_CUTOUTS:Record<string,string>={
 };
 const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Arthur Gea":"right",
-  "Michael Zheng":"left",
+  "Michael Zheng":"right",
   "Dhakshineswar Suresh":"right",
   "Quinn Vandecasteele":"left",
   "James Duckworth":"right",
@@ -240,13 +247,21 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Miomir Kecmanovic":"right",
   "Martin Landaluce":"left",
   "Mattia Bellucci":"left",
-  "Adrian Mannarino":"left",
+  "Adrian Mannarino":"right",
   "Francisco Comesana":"left",
-  "Adolfo Daniel Vallejo":"left",
+  "Adolfo Daniel Vallejo":"right",
   "Darwin Blanch":"left",
   "Valentin Royer":"left",
   "Marcos Giron":"left",
   "Vit Kopriva":"left",
+  "Adam Walton":"left",
+  "Camilo Ugo Carabelli":"left",
+  "Jia Hu":"right",
+  "Kyrian Jacquet":"right",
+  "Yi Zhou":"right",
+  "Zhizhen Zhang":"left",
+  "Yunchaokete Bu":"left",
+  "Jie Cui":"left",
   "Jesper De Jong":"right",
   "Jannik Sinner":"left",
   "Carlos Alcaraz":"right",
@@ -308,6 +323,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Benjamin Bonzi":"right",
   "Marin Cilic":"left",
   "Sebastian Baez":"right",
+  "Sebastián Báez":"right",
   "S. Baez":"right",
   "Arthur Rinderknech":"left",
   "Jaume Munar":"right",
@@ -383,6 +399,7 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Kamil Majchrzak":"130",
   "Ugo Humbert":"130",
   "Sebastian Baez":"143",
+  "Sebastián Báez":"143",
   "S. Baez":"143",
   "Adrian Mannarino":"130",
   "Arthur Rinderknech":"130",
@@ -434,6 +451,7 @@ const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
   "Denis Shapovalov":5,
   "Benjamin Bonzi":9,
   "Sebastian Baez":28,
+  "Sebastián Báez":28,
   "S. Baez":28,
   "Adrian Mannarino":"130px",
   "Arthur Rinderknech":20,
