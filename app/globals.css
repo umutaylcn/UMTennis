@@ -123,6 +123,7 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-220{overflow:visible}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-220 img{transform:translateY(var(--portrait-shift,0%)) scale(2.2);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-230{overflow:visible}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-230{clip-path:inset(-200% 0 -200% 0)}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-230 img{transform:translateY(var(--portrait-shift,0%)) scale(2.3);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-mirrored img{transform:scaleX(-1)}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-108.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.08) scaleX(-1);transform-origin:center bottom}
