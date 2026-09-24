@@ -377,7 +377,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Titouan Droguet":"right",
   "Ethan Quinn":"left",
 };
-const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"220"|"230">={
+const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"192"|"220">={
   "Marco Trungelliti":"220",
   "Dhakshineswar Suresh":"182",
   "Quinn Vandecasteele":"133",
@@ -410,7 +410,7 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Sebastián Báez":"143",
   "S. Baez":"143",
   "Adrian Mannarino":"130",
-  "Yunchaokete Bu":"230",
+  "Yunchaokete Bu":"192",
   "Arthur Rinderknech":"130",
   "Hyeon Chung":"140",
   "Jan Lennard Struff":"127",

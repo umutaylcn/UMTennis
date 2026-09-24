@@ -122,9 +122,8 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-183 img{transform:translateY(var(--portrait-shift,0%)) scale(1.83);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-220{overflow:visible}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-220 img{transform:translateY(var(--portrait-shift,0%)) scale(2.2);transform-origin:center bottom}
-.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-230{overflow:visible}
-.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-230{clip-path:inset(-200% 0 -200% 0)}
-.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-230 img{transform:translateY(var(--portrait-shift,0%)) scale(2.3);transform-origin:center bottom}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-192{overflow:visible;clip-path:inset(-200% 0 -200% 0)}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-192 img{transform:translateY(var(--portrait-shift,0%)) scale(1.9167);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-mirrored img{transform:scaleX(-1)}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-108.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.08) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-109.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.09) scaleX(-1);transform-origin:center bottom}
@@ -150,7 +149,7 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-182.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.82) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-183.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.83) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-220.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(2.2) scaleX(-1);transform-origin:center bottom}
-.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-230.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(2.3) scaleX(-1);transform-origin:center bottom}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-192.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.9167) scaleX(-1);transform-origin:center bottom}
 .player-rank-overlay{position:absolute;z-index:4;right:18px;bottom:20px;width:auto;max-width:88%;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;text-shadow:0 3px 11px rgba(0,0,0,.98),0 0 22px rgba(0,0,0,.88)}
 .player-rank-overlay p{display:grid;grid-template-columns:auto auto;align-items:baseline;justify-content:end;column-gap:7px;margin:0;padding:4px 0;border:0}.player-rank-overlay span{color:rgba(255,255,255,.72);font-size:10px;font-weight:800;letter-spacing:.065em;text-transform:uppercase}.player-rank-overlay b{font-size:15px;line-height:1;text-align:right;white-space:nowrap}
 .analysis-player.right .player-rank-overlay{right:auto;left:18px}
