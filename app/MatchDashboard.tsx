@@ -13,6 +13,7 @@ type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:s
 
 function roundPresentation(round:string){
   const normalized=round.trim().toUpperCase();
+  if(!normalized||normalized==="NAN"||normalized==="NONE"||normalized==="NULL")return{tier:"standard",label:"TBD"};
   if(normalized==="QF"||normalized.includes("QUARTER"))return{tier:"qf",label:"QF"};
   if(normalized==="SF"||normalized.includes("SEMI"))return{tier:"sf",label:"SF"};
   if(normalized==="F"||normalized==="FINAL")return{tier:"f",label:"F"};
@@ -109,6 +110,10 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "Zhizhen Zhang":"445",
   "Yunchaokete Bu":"840",
   "Jie Cui":"670",
+  "Nikoloz Basilashvili":"nikoloz-basilashvili",
+  "Alexandre Muller":"alexandre-muller",
+  "Alexandre Müller":"alexandre-muller",
+  "Taro Daniel":"taro-daniel",
 };
 const TOP20_PLAYER_CUTOUTS:Record<string,string>={
   "Carlos Alcaraz":"carlos-alcaraz",
@@ -141,6 +146,7 @@ const TOP40_PLAYER_CUTOUTS:Record<string,string>={
   "Ben Shelton":"ben-shelton",
   "Flavio Cobolli":"flavio-cobolli",
   "Alejandro Davidovich Fokina":"alejandro-davidovich-fokina",
+  "A. Davidovich Fokina":"alejandro-davidovich-fokina",
   "Andrey Rublev":"andrey-rublev",
   "Alexander Bublik":"alexander-bublik",
   "Nick Kyrgios":"nick-kyrgios",
@@ -404,6 +410,7 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Sebastián Báez":"143",
   "S. Baez":"143",
   "Adrian Mannarino":"130",
+  "Yunchaokete Bu":"230",
   "Arthur Rinderknech":"130",
   "Hyeon Chung":"140",
   "Jan Lennard Struff":"127",
@@ -895,7 +902,7 @@ export function MatchDashboard(){
       })}</div>
     </section>:<section className="match-detail">
       <button className="back-button" onClick={closeMatch}>← {t.back}</button>
-      <div className="match-kicker"><span className={`surface-tag ${selected.surface.toLowerCase()}`}>{selected.surface}</span><b>{selected.tournament_name}</b><span>{selected.round} · {formatStart(selected.start_time_utc)}</span></div>
+      <div className="match-kicker"><span className={`surface-tag ${selected.surface.toLowerCase()}`}>{selected.surface}</span><b>{selected.tournament_name}</b><span>{roundPresentation(selected.round).label} · {formatStart(selected.start_time_utc)}</span></div>
       {!prediction&&!predictionError?<div className="prediction-loader"><span/>{t.calculating}</div>:predictionError?<div className="prediction-loader error">{t.failed}</div>:prediction&&<>
         <div className="analysis-stage">
           <article className="analysis-player left">
