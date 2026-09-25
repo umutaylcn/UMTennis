@@ -89,6 +89,7 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "Coleman Wong":"193",
   "Dalibor Svrcina":"399",
   "Federico Cina":"33875",
+  "Federico Cinà":"33875",
   "Francesco Passaro":"8745",
   "Harry Wendelken":"73",
   "Hugo Gaston":"233",
