@@ -9,7 +9,7 @@ type PlayerProfile = { atp_rank:number|null; elo:number; elo_rank:number|null; s
 type Match = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; };
 type HeadToHead = { matches:number; p1_wins:number; p2_wins:number; surface_matches:number; p1_surface_wins:number; p2_surface_wins:number; };
 type Prediction = Match & { p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; h2h:HeadToHead; state_as_of_utc:string; p1_profile:PlayerProfile; p2_profile:PlayerProfile; };
-type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean; winner_sets?:number; loser_sets?:number; };
+type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_side?:"p1"|"p2"; predicted_winner:string; confidence:number; actual_side?:"p1"|"p2"; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean; winner_sets?:number; loser_sets?:number; };
 
 function roundPresentation(round:string){
   const normalized=round.trim().toUpperCase();
@@ -756,19 +756,20 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
     {status==="ready"&&!matches.length&&<div className="message-card">{t.noPrevious}</div>}
     {status==="ready"&&matches.length>0&&!filteredMatches.length&&<div className="message-card history-empty">{labels.none}</div>}
     <div className="previous-list">{paginatedMatches.map(match=>{
-      const p1Picked=match.predicted_winner===match.p1_name;
+      const p1Picked=match.predicted_side?match.predicted_side==="p1":match.p1_win_probability>=match.p2_win_probability;
+      const actualSide=match.actual_side??(match.actual_winner===match.p1_name?"p1":match.actual_winner===match.p2_name?"p2":null);
       const statusLabel=match.prediction_correct?t.correct:t.wrong;
       return <article className={`previous-card ${match.prediction_correct?"correct":"wrong"}`} key={match.match_id}>
         <div className="previous-meta"><span>{match.tournament_name}</span><span className="previous-meta-center"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><small>{match.round}</small></span><span>{formatStart(match.start_time_utc)}</span></div>
         <div className="previous-matchup">
-          <div className={match.actual_winner===match.p1_name?"actual-winner":""}><b>{match.p1_name}</b><strong>{probability(match.p1_win_probability)}</strong></div>
+          <div className={actualSide==="p1"?"actual-winner":""}><b>{match.p1_name}</b><strong>{probability(match.p1_win_probability)}</strong></div>
           <div className="previous-vs"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><b>VS</b><small>{match.round}</small></div>
-          <div className={match.actual_winner===match.p2_name?"actual-winner":""}><b>{match.p2_name}</b><strong>{probability(match.p2_win_probability)}</strong></div>
+          <div className={actualSide==="p2"?"actual-winner":""}><b>{match.p2_name}</b><strong>{probability(match.p2_win_probability)}</strong></div>
         </div>
         <div className="previous-outcome">
-          <div><small>{t.ourPick}</small><b>{match.predicted_winner}</b><span>{probability(p1Picked?match.p1_win_probability:match.p2_win_probability)}</span></div>
+          <div><small>{t.ourPick}</small><b>{p1Picked?match.p1_name:match.p2_name}</b><span>{probability(match.confidence)}</span></div>
           <i aria-hidden="true">→</i>
-          <div><small>{t.actualResult}</small><b>{match.actual_winner}</b>{match.match_status==="retirement"&&<span>RET.</span>}</div>
+          <div><small>{t.actualResult}</small><b>{actualSide==="p1"?match.p1_name:actualSide==="p2"?match.p2_name:match.actual_winner}</b>{match.match_status==="retirement"&&<span>RET.</span>}</div>
           <strong className="result-badge">{match.prediction_correct?"✓":"×"} {statusLabel}</strong>
         </div>
       </article>;
