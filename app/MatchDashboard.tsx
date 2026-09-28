@@ -716,7 +716,15 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
     it:{search:"Cerca giocatore o torneo",tournament:"TORNEO",allTournaments:"Tutti i tornei",round:"TURNO",allRounds:"Tutti i turni",result:"RISULTATO",allResults:"Tutti i pronostici",confidence:"AFFIDABILITÀ",correct:"Corretto",wrong:"Errato",clear:"Azzera filtri",shown:"partite mostrate",none:"Nessuna partita corrisponde ai filtri.",previous:"Precedente",next:"Successivo",page:"Pagina",accuracy:"precisione"},
   }[language];
   const tournamentOptions=useMemo(()=>[{value:"all",label:labels.allTournaments},...Array.from(new Set(matches.map(match=>match.tournament_name))).sort().map(value=>({value,label:value}))],[matches,labels.allTournaments]);
-  const roundOptions=useMemo(()=>[{value:"all",label:labels.allRounds},...Array.from(new Set(matches.map(match=>match.round))).sort().map(value=>({value,label:value}))],[matches,labels.allRounds]);
+  const roundOptions=useMemo(()=>{
+    const order=["F","SF","QF","R16","R32","R64","R128","RR"];
+    const rounds=Array.from(new Set(matches.map(match=>match.round))).sort((a,b)=>{
+      const aRank=order.indexOf(a);
+      const bRank=order.indexOf(b);
+      return (aRank<0?order.length:aRank)-(bRank<0?order.length:bRank)||a.localeCompare(b);
+    });
+    return [{value:"all",label:labels.allRounds},...rounds.map(value=>({value,label:value}))];
+  },[matches,labels.allRounds]);
   const filteredMatches=useMemo(()=>{
     const needle=query.trim().toLocaleLowerCase(language);
     return matches.filter(match=>{
