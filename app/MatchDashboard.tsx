@@ -9,7 +9,7 @@ type PlayerProfile = { atp_rank:number|null; elo:number; elo_rank:number|null; s
 type Match = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; };
 type HeadToHead = { matches:number; p1_wins:number; p2_wins:number; surface_matches:number; p1_surface_wins:number; p2_surface_wins:number; };
 type Prediction = Match & { p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; h2h:HeadToHead; state_as_of_utc:string; p1_profile:PlayerProfile; p2_profile:PlayerProfile; };
-type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_side?:"p1"|"p2"; predicted_winner:string; confidence:number; actual_side?:"p1"|"p2"; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean; winner_sets?:number; loser_sets?:number; };
+type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; round_at_prediction?:string; round_verified_after_match?:boolean; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_side?:"p1"|"p2"; predicted_winner:string; confidence:number; actual_side?:"p1"|"p2"; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean; winner_sets?:number; loser_sets?:number; };
 
 function roundPresentation(round:string){
   const normalized=round.trim().toUpperCase();
@@ -699,6 +699,7 @@ function ModelDetails({language}:{language:Language}){
 
 function PreviousMatches({matches,status,language,formatStart}:{matches:PreviousMatch[];status:"loading"|"ready"|"error";language:Language;formatStart:(value:string)=>string}){
   const t=text[language];
+  const verifiedRoundNote={tr:"Tur maçtan sonra doğrulandı; tahmin yapılırken bilinmiyordu.",en:"Round verified after the match; it was unknown when the prediction was made.",fr:"Tour confirmé après le match ; il était inconnu lors de la prédiction.",es:"Ronda verificada después del partido; se desconocía al hacer la predicción.",de:"Runde erst nach dem Match bestätigt; bei der Prognose war sie unbekannt.",it:"Turno verificato dopo la partita; non era noto al momento del pronostico."}[language];
   const [query,setQuery]=useState("");
   const [tournament,setTournament]=useState("all");
   const [round,setRound]=useState("all");
@@ -740,7 +741,7 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
     return unique.flatMap((value,index)=>index&&value-unique[index-1]>1?[`gap-${value}`,value]:[value]);
   },[page,pageCount]);
   return <section className="previous-page">
-    <div className="previous-heading"><div><span className="history-dot"/>UMTENNIS TRACK RECORD</div><h1>{t.previousHeading}</h1><p>{t.previousIntro}</p>{accuracy!=null&&<strong>{accuracy}% <span>{labels.accuracy}</span></strong>}</div>
+    <div className="previous-heading"><div><span className="history-dot"/>UMTENNIS TRACK RECORD</div><h1>{t.previousHeading}</h1><p>{t.previousIntro}</p>{matches.some(match=>match.round_verified_after_match)&&<p>* {verifiedRoundNote}</p>}{accuracy!=null&&<strong>{accuracy}% <span>{labels.accuracy}</span></strong>}</div>
     <div className="history-filter-panel">
       <label className="history-search"><span aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder={labels.search} aria-label={labels.search}/>{query&&<button type="button" onClick={()=>setQuery("")} aria-label={labels.clear}>×</button>}</label>
       <div className="history-filter-selects">
@@ -760,10 +761,10 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
       const actualSide=match.actual_side??(match.actual_winner===match.p1_name?"p1":match.actual_winner===match.p2_name?"p2":null);
       const statusLabel=match.prediction_correct?t.correct:t.wrong;
       return <article className={`previous-card ${match.prediction_correct?"correct":"wrong"}`} key={match.match_id}>
-        <div className="previous-meta"><span>{match.tournament_name}</span><span className="previous-meta-center"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><small>{match.round}</small></span><span>{formatStart(match.start_time_utc)}</span></div>
+        <div className="previous-meta"><span>{match.tournament_name}</span><span className="previous-meta-center"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><small title={match.round_verified_after_match?verifiedRoundNote:undefined}>{match.round}{match.round_verified_after_match?"*":""}</small></span><span>{formatStart(match.start_time_utc)}</span></div>
         <div className="previous-matchup">
           <div className={actualSide==="p1"?"actual-winner":""}><b>{match.p1_name}</b><strong>{probability(match.p1_win_probability)}</strong></div>
-          <div className="previous-vs"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><b>VS</b><small>{match.round}</small></div>
+          <div className="previous-vs"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><b>VS</b><small title={match.round_verified_after_match?verifiedRoundNote:undefined}>{match.round}{match.round_verified_after_match?"*":""}</small></div>
           <div className={actualSide==="p2"?"actual-winner":""}><b>{match.p2_name}</b><strong>{probability(match.p2_win_probability)}</strong></div>
         </div>
         <div className="previous-outcome">
