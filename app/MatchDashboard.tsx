@@ -395,6 +395,8 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Hugo Grenier":"108",
   "Adam Walton":"110",
   "Arthur Fils":"110",
+  "Holger Rune":"120",
+  "H. Rune":"120",
   "Michael Zheng":"115",
   "Michael Mmoh":"110",
   "Yannick Hanfmann":"110",
