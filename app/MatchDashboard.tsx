@@ -745,7 +745,7 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
   },[matches,query,tournament,round,result,confidenceRange,language]);
   useEffect(()=>setPage(1),[query,tournament,round,result,confidenceRange,matches.length]);
   const filtersActive=Boolean(query)||tournament!=="all"||round!=="all"||result!=="all"||confidenceRange[0]!==50||confidenceRange[1]!==100;
-  const accuracy=filteredMatches.length?Math.round(filteredMatches.filter(match=>match.prediction_correct).length/filteredMatches.length*100):null;
+  const accuracy=filteredMatches.length?filteredMatches.filter(match=>match.prediction_correct).length/filteredMatches.length*100:null;
   const pageCount=Math.ceil(filteredMatches.length/pageSize);
   const paginatedMatches=filteredMatches.slice((page-1)*pageSize,page*pageSize);
   const paginationItems=useMemo<(number|string)[]>(()=>{
@@ -755,7 +755,7 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
     return unique.flatMap((value,index)=>index&&value-unique[index-1]>1?[`gap-${value}`,value]:[value]);
   },[page,pageCount]);
   return <section className="previous-page">
-    <div className="previous-heading"><div><span className="history-dot"/>UMTENNIS TRACK RECORD</div><h1>{t.previousHeading}</h1><p>{t.previousIntro}</p>{matches.some(match=>match.round_verified_after_match)&&<p>* {verifiedRoundNote}</p>}{accuracy!=null&&<strong>{accuracy}% <span>{labels.accuracy}</span></strong>}</div>
+    <div className="previous-heading"><div><span className="history-dot"/>UMTENNIS TRACK RECORD</div><h1>{t.previousHeading}</h1><p>{t.previousIntro}</p>{matches.some(match=>match.round_verified_after_match)&&<p>* {verifiedRoundNote}</p>}{accuracy!=null&&<strong>{accuracy.toFixed(2)}% <span>{labels.accuracy}</span></strong>}</div>
     <div className="history-filter-panel">
       <label className="history-search"><span aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder={labels.search} aria-label={labels.search}/>{query&&<button type="button" onClick={()=>setQuery("")} aria-label={labels.clear}>×</button>}</label>
       <div className="history-filter-selects">
