@@ -788,7 +788,7 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
         <div className="previous-outcome">
           <div><small>{t.ourPick}</small><b>{p1Picked?match.p1_name:match.p2_name}</b><span>{probability(match.confidence)}</span></div>
           <i aria-hidden="true">→</i>
-          <div><small>{t.actualResult}</small><b>{actualSide==="p1"?match.p1_name:actualSide==="p2"?match.p2_name:match.actual_winner}</b>{match.match_status==="retirement"&&<span>RET.</span>}</div>
+          <div><small>{t.actualResult}</small><b>{actualSide==="p1"?match.p1_name:actualSide==="p2"?match.p2_name:match.actual_winner}</b>{match.match_status==="retirement"&&<span>RET.</span>}{match.match_status==="defaulted"&&<span>DQ</span>}</div>
           <strong className="result-badge">{match.prediction_correct?"✓":"×"} {statusLabel}</strong>
         </div>
       </article>;
