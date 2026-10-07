@@ -550,8 +550,8 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
-    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=authentic-20261007-b`]:[]),
-    ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=authentic-20261007-b`]:[]),
+    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=sourced-34b67e4`]:[]),
+    ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=sourced-34b67e4`]:[]),
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
   ];
