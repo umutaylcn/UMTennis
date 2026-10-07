@@ -45,6 +45,7 @@
 .analysis-player.left{justify-content:flex-start;margin-left:-28px}.analysis-player.right{justify-content:flex-end;margin-right:-28px}
 .analysis-player .portrait-shell{inset:0;width:100%;height:100%;opacity:1;pointer-events:none}
 .analysis-player .portrait-shell.left,.analysis-player .portrait-shell.right{justify-content:center}
+.portrait-credit{position:absolute;left:10px;bottom:7px;z-index:3;color:#d9e0d9;font:10px/1.2 Arial,sans-serif;text-shadow:0 1px 4px #000;text-decoration:underline;background:rgba(0,0,0,.55);padding:3px 5px;border-radius:3px;pointer-events:auto}
 .analysis-player .portrait-shell img{width:clamp(430px,43vw,720px);height:100%;object-fit:contain;object-position:center bottom;mask-image:linear-gradient(to bottom,transparent 0,#000 4%,#000 82%,transparent 100%);filter:saturate(.92) contrast(1.08) drop-shadow(0 25px 34px rgba(0,0,0,.4))}
 .analysis-player.right .portrait-shell img{object-position:center bottom}
 .analysis-player:after{content:"";position:absolute;z-index:1;inset:auto 0 0;height:70%;pointer-events:none;background:linear-gradient(to top,rgba(2,8,5,.98),rgba(2,8,5,.65) 42%,transparent)}
