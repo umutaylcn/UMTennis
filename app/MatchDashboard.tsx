@@ -550,8 +550,8 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
-    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=name-stable2`]:[]),
-    ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=authentic-20261007`]:[]),
+    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=authentic-20261007-b`]:[]),
+    ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=authentic-20261007-b`]:[]),
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
   ];
@@ -566,6 +566,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
     {source?<img src={source} alt={name} onError={failCurrentSource}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
     {normalizedPortraitName(name)==="bernard tomic"&&sourceIndex===0?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Bernard_Tomic_2,_Wimbledon_2013_-_Diliff.jpg" target="_blank" rel="noreferrer">Photo: David Iliff · CC BY-SA 3.0 · cutout</a>:null}
+    {id===990&&source?.includes("/players/cutouts/990.png")?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Marcos_Giron_((SA)_at_2014_USOPEN.jpg" target="_blank" rel="noreferrer">Photo: Emmett Hume · CC BY-SA 4.0 · cutout</a>:null}
   </div>;
 }
 
