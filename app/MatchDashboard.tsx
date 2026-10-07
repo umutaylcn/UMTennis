@@ -279,7 +279,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Cruz Hewitt":"left",
   "Sho Shimabukuro":"left",
   "Miomir Kecmanovic":"right",
-  "Martin Landaluce":"left",
+  "Martin Landaluce":"right",
   "Mattia Bellucci":"left",
   "Adrian Mannarino":"right",
   "Francisco Comesana":"left",
@@ -405,7 +405,14 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Titouan Droguet":"right",
   "Ethan Quinn":"left",
 };
-const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"220">={
+const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220">={
+  "Adolfo Daniel Vallejo":"110",
+  "Daniel Adolfo Vallejo":"110",
+  "Valentin Royer":"200",
+  "Marcos Giron":"200",
+  "Martin Landaluce":"150",
+  "Vit Kopriva":"200",
+  "Miomir Kecmanovic":"200",
   "Sho Shimabukuro":"220",
   "Nicolas Mejia":"220",
   "Kimmer Coppejans":"220",
