@@ -257,10 +257,11 @@ const TOP100_PLAYER_CUTOUTS:Record<string,string>={
 };
 const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Ilia Simakin":"left",
-  "Nicolas Mejia":"right",
+  "Nicolas Mejia":"left",
   "Kimmer Coppejans":"left",
   "Pavel Kotov":"right",
   "Bernard Tomic":"right",
+  "Nikoloz Basilashvili":"left",
   "Arthur Gea":"right",
   "Michael Zheng":"right",
   "Dhakshineswar Suresh":"right",
@@ -282,8 +283,8 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Mattia Bellucci":"left",
   "Adrian Mannarino":"right",
   "Francisco Comesana":"left",
-  "Adolfo Daniel Vallejo":"right",
-  "Daniel Adolfo Vallejo":"right",
+  "Adolfo Daniel Vallejo":"left",
+  "Daniel Adolfo Vallejo":"left",
   "Darwin Blanch":"left",
   "Valentin Royer":"left",
   "Marcos Giron":"left",
@@ -404,8 +405,13 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Titouan Droguet":"right",
   "Ethan Quinn":"left",
 };
-const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"192"|"220">={
-  "Marco Trungelliti":"220",
+const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"220">={
+  "Sho Shimabukuro":"220",
+  "Nicolas Mejia":"220",
+  "Kimmer Coppejans":"220",
+  "Pavel Kotov":"220",
+  "Bernard Tomic":"220",
+  "Marco Trungelliti":"186",
   "Dhakshineswar Suresh":"182",
   "Quinn Vandecasteele":"133",
   "James Duckworth":"130",
@@ -427,7 +433,7 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Benjamin Bonzi":"118",
   "Novak Djokovic":"120",
   "Sebastian Korda":"120",
-  "Mariano Navone":"120",
+  "Mariano Navone":"109",
   "Daniel Merida Aguilar":"110",
   "Jaume Munar":"120",
   "Alexander Blockx":"130",
