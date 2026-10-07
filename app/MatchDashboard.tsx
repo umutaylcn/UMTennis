@@ -42,7 +42,7 @@ const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   1002:"https://media.prod.tennis.com/v1/tcf/images/players/9f7109a5-ca31-43ac-9b9a-c529bcd38d36/20260604_215936.png?fm=webp&q=80&w=1600",
   8730:"https://longform.atptour.com/meet-the-nextgenatp-class-of-2024/assets/djEb5QgRVw/mensik-v-1080x1920.jpg",
 };
-const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,94,105,109,115,117,159,163,164,173,177,179,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,445,447,472,480,494,503,511,521,527,536,539,576,578,604,623,652,653,664,670,840,842,844,878,990,1002,1096,1178,1179,1215,1253,1575,4872,6146,6316,7607,7638,8730,8745,9137,12825,13409,33875]);
+const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,94,101,105,109,115,117,132,159,163,164,173,177,179,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,445,447,472,480,494,503,511,521,527,536,539,576,578,604,623,652,653,658,659,664,670,840,842,844,878,990,1002,1096,1104,1178,1179,1215,1253,1575,4872,6146,6316,7607,7638,8730,8745,9137,12825,13409,33875]);
 // Provider IDs can change or be temporarily unavailable in a cached fixture.
 // Resolve these locally prepared portraits by stable player name first.
 const PLAYER_NAME_CUTOUTS:Record<string,string>={
@@ -117,7 +117,22 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "Alexandre Muller":"alexandre-muller",
   "Alexandre Müller":"alexandre-muller",
   "Taro Daniel":"taro-daniel",
+  "Ilia Simakin":"658",
+  "Nicolas Mejia":"132",
+  "Kimmer Coppejans":"101",
+  "Pavel Kotov":"659",
+  "Bernard Tomic":"1104",
 };
+function normalizedPortraitName(name:string){
+  return name.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("en-US").replace(/[^a-z0-9]+/g," ").trim();
+}
+function portraitValue<T>(values:Record<string,T>,name:string):T|undefined{
+  if(values[name]!==undefined)return values[name];
+  const normalized=normalizedPortraitName(name);
+  const matches=Object.entries(values).filter(([candidate])=>normalizedPortraitName(candidate)===normalized);
+  const uniqueValues=[...new Set(matches.map(([,value])=>value))];
+  return uniqueValues.length===1?uniqueValues[0]:undefined;
+}
 const TOP20_PLAYER_CUTOUTS:Record<string,string>={
   "Carlos Alcaraz":"carlos-alcaraz",
   "Jannik Sinner":"jannik-sinner",
@@ -241,6 +256,11 @@ const TOP100_PLAYER_CUTOUTS:Record<string,string>={
   "Ethan Quinn":"ethan-quinn",
 };
 const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
+  "Ilia Simakin":"left",
+  "Nicolas Mejia":"right",
+  "Kimmer Coppejans":"left",
+  "Pavel Kotov":"right",
+  "Bernard Tomic":"right",
   "Arthur Gea":"right",
   "Michael Zheng":"right",
   "Dhakshineswar Suresh":"right",
@@ -506,17 +526,18 @@ function probabilityTone(value:number):CSSProperties{
 
 function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"right"}){
   const fallback=id?PLAYER_IMAGE_FALLBACKS[id]:undefined;
-  const top20Slug=TOP20_PLAYER_CUTOUTS[name];
-  const top40Slug=TOP40_PLAYER_CUTOUTS[name];
-  const top60Slug=TOP60_PLAYER_CUTOUTS[name];
-  const top80Slug=TOP80_PLAYER_CUTOUTS[name];
-  const top100Slug=TOP100_PLAYER_CUTOUTS[name];
-  const nameCutout=PLAYER_NAME_CUTOUTS[name];
-  const portraitScale=PLAYER_PORTRAIT_SCALE[name];
-  const mobilePortraitScale=PLAYER_MOBILE_PORTRAIT_SCALE[name];
-  const portraitShift=PLAYER_PORTRAIT_SHIFT[name]??0;
+  const top20Slug=portraitValue(TOP20_PLAYER_CUTOUTS,name);
+  const top40Slug=portraitValue(TOP40_PLAYER_CUTOUTS,name);
+  const top60Slug=portraitValue(TOP60_PLAYER_CUTOUTS,name);
+  const top80Slug=portraitValue(TOP80_PLAYER_CUTOUTS,name);
+  const top100Slug=portraitValue(TOP100_PLAYER_CUTOUTS,name);
+  const nameCutout=portraitValue(PLAYER_NAME_CUTOUTS,name);
+  const portraitScale=portraitValue(PLAYER_PORTRAIT_SCALE,name);
+  const mobilePortraitScale=portraitValue(PLAYER_MOBILE_PORTRAIT_SCALE,name);
+  const portraitShift=portraitValue(PLAYER_PORTRAIT_SHIFT,name)??0;
   const portraitStyle=portraitShift?({"--portrait-shift":typeof portraitShift==="number"?`${portraitShift}%`:portraitShift} as CSSProperties):undefined;
-  const shouldMirror=PLAYER_PHOTO_HOME_SIDE[name]!=null&&PLAYER_PHOTO_HOME_SIDE[name]!==side;
+  const homeSide=portraitValue(PLAYER_PHOTO_HOME_SIDE,name);
+  const shouldMirror=homeSide!=null&&homeSide!==side;
   const sources=[
     ...(top20Slug?[`/players/cutouts/top20/${top20Slug}.png`]:[]),
     ...(top40Slug?[`/players/cutouts/top40/${top40Slug}.png`]:[]),
@@ -524,7 +545,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
     ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=name-stable2`]:[]),
-    ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=racket4`]:[]),
+    ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=authentic-20261007`]:[]),
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
   ];
@@ -538,6 +559,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const source=sources[sourceIndex]??null;
   return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
     {source?<img src={source} alt={name} onError={failCurrentSource}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
+    {normalizedPortraitName(name)==="bernard tomic"&&sourceIndex===0?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Bernard_Tomic_2,_Wimbledon_2013_-_Diliff.jpg" target="_blank" rel="noreferrer">Photo: David Iliff · CC BY-SA 3.0 · cutout</a>:null}
   </div>;
 }
 
