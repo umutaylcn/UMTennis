@@ -783,29 +783,29 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
         &&match.confidence*100<=confidenceRange[1];
     });
   },[matches,query,tournament,round,result,confidenceRange,language]);
-  useEffect(()=>setPage(1),[query,tournament,round,result,confidenceRange,matches.length]);
   const filtersActive=Boolean(query)||tournament!=="all"||round!=="all"||result!=="all"||confidenceRange[0]!==50||confidenceRange[1]!==100;
   const scoredMatches=filteredMatches.filter(match=>match.match_status!=="defaulted");
   const accuracy=scoredMatches.length?scoredMatches.filter(match=>match.prediction_correct).length/scoredMatches.length*100:null;
   const pageCount=Math.ceil(filteredMatches.length/pageSize);
-  const paginatedMatches=filteredMatches.slice((page-1)*pageSize,page*pageSize);
+  const currentPage=Math.min(page,Math.max(1,pageCount));
+  const paginatedMatches=filteredMatches.slice((currentPage-1)*pageSize,currentPage*pageSize);
   const paginationItems=useMemo<(number|string)[]>(()=>{
     if(pageCount<=7)return Array.from({length:pageCount},(_,index)=>index+1);
-    const pages=[1,page-1,page,page+1,pageCount].filter(value=>value>=1&&value<=pageCount);
+    const pages=[1,currentPage-1,currentPage,currentPage+1,pageCount].filter(value=>value>=1&&value<=pageCount);
     const unique=Array.from(new Set(pages)).sort((a,b)=>a-b);
     return unique.flatMap((value,index)=>index&&value-unique[index-1]>1?[`gap-${value}`,value]:[value]);
-  },[page,pageCount]);
+  },[currentPage,pageCount]);
   return <section className="previous-page">
     <div className="previous-heading"><div><span className="history-dot"/>UMTENNIS TRACK RECORD</div><h1>{t.previousHeading}</h1><p>{t.previousIntro}</p>{matches.some(match=>match.round_verified_after_match)&&<p>* {verifiedRoundNote}</p>}{accuracy!=null&&<strong>{accuracy.toFixed(2)}% <span>{labels.accuracy}</span></strong>}</div>
     <div className="history-filter-panel">
-      <label className="history-search"><span aria-hidden="true"/><input type="search" value={query} onChange={event=>setQuery(event.target.value)} placeholder={labels.search} aria-label={labels.search}/>{query&&<button type="button" onClick={()=>setQuery("")} aria-label={labels.clear}>×</button>}</label>
+      <label className="history-search"><span aria-hidden="true"/><input type="search" value={query} onChange={event=>{setQuery(event.target.value);setPage(1);}} placeholder={labels.search} aria-label={labels.search}/>{query&&<button type="button" onClick={()=>{setQuery("");setPage(1);}} aria-label={labels.clear}>×</button>}</label>
       <div className="history-filter-selects">
-        <CustomSelect label={labels.tournament} value={tournament} options={tournamentOptions} onChange={setTournament}/>
-        <CustomSelect label={labels.round} value={round} options={roundOptions} onChange={setRound}/>
-        <ConfidenceRange label={labels.confidence} value={confidenceRange} onChange={setConfidenceRange}/>
-        <CustomSelect label={labels.result} value={result} options={[{value:"all",label:labels.allResults},{value:"correct",label:labels.correct},{value:"wrong",label:labels.wrong},{value:"void",label:labels.void}]} onChange={setResult}/>
+        <CustomSelect label={labels.tournament} value={tournament} options={tournamentOptions} onChange={value=>{setTournament(value);setPage(1);}}/>
+        <CustomSelect label={labels.round} value={round} options={roundOptions} onChange={value=>{setRound(value);setPage(1);}}/>
+        <ConfidenceRange label={labels.confidence} value={confidenceRange} onChange={value=>{setConfidenceRange(value);setPage(1);}}/>
+        <CustomSelect label={labels.result} value={result} options={[{value:"all",label:labels.allResults},{value:"correct",label:labels.correct},{value:"wrong",label:labels.wrong},{value:"void",label:labels.void}]} onChange={value=>{setResult(value);setPage(1);}}/>
       </div>
-      <div className="history-filter-summary"><span><b>{filteredMatches.length}</b> / {matches.length} {labels.shown}</span>{filtersActive&&<button type="button" onClick={()=>{setQuery("");setTournament("all");setRound("all");setResult("all");setConfidenceRange([50,100]);}}>↺ {labels.clear}</button>}</div>
+      <div className="history-filter-summary"><span><b>{filteredMatches.length}</b> / {matches.length} {labels.shown}</span>{filtersActive&&<button type="button" onClick={()=>{setQuery("");setTournament("all");setRound("all");setResult("all");setConfidenceRange([50,100]);setPage(1);}}>↺ {labels.clear}</button>}</div>
     </div>
     {status==="loading"&&<div className="message-card">{t.loading}</div>}
     {status==="error"&&<div className="message-card">{t.failed}</div>}
@@ -832,9 +832,9 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
       </article>;
     })}</div>
     {pageCount>1&&<nav className="history-pagination" aria-label={labels.page}>
-      <button type="button" disabled={page===1} onClick={()=>setPage(current=>Math.max(1,current-1))}>← <span>{labels.previous}</span></button>
-      <div>{paginationItems.map(item=>typeof item==="number"?<button type="button" className={item===page?"active":""} aria-current={item===page?"page":undefined} onClick={()=>setPage(item)} key={item}>{item}</button>:<i aria-hidden="true" key={item}>…</i>)}</div>
-      <button type="button" disabled={page===pageCount} onClick={()=>setPage(current=>Math.min(pageCount,current+1))}><span>{labels.next}</span> →</button>
+      <button type="button" disabled={currentPage===1} onClick={()=>setPage(Math.max(1,currentPage-1))}>← <span>{labels.previous}</span></button>
+      <div>{paginationItems.map(item=>typeof item==="number"?<button type="button" className={item===currentPage?"active":""} aria-current={item===currentPage?"page":undefined} onClick={()=>setPage(item)} key={item}>{item}</button>:<i aria-hidden="true" key={item}>…</i>)}</div>
+      <button type="button" disabled={currentPage===pageCount} onClick={()=>setPage(Math.min(pageCount,currentPage+1))}><span>{labels.next}</span> →</button>
     </nav>}
   </section>;
 }
@@ -889,20 +889,19 @@ export function MatchDashboard(){
   }[language];
   const availableMatches=useMemo(()=>status==="ready"?matches:[],[matches,status]);
   const upcomingTournamentOptions=useMemo(()=>[{value:"all",label:upcomingLabels.allTournaments},...Array.from(new Set(availableMatches.map(match=>match.tournament_name))).sort().map(value=>({value,label:value}))],[availableMatches,upcomingLabels.allTournaments]);
+  const activeUpcomingTournament=upcomingTournament==="all"||availableMatches.some(match=>match.tournament_name===upcomingTournament)?upcomingTournament:"all";
   const visibleMatches=useMemo(()=>{
     const needle=upcomingQuery.trim().toLocaleLowerCase(language);
     return availableMatches.filter(match=>{
       const searchable=`${match.p1_name} ${match.p2_name} ${match.tournament_name}`.toLocaleLowerCase(language);
       const confidence=(match.confidence??.5)*100;
       return (!needle||searchable.includes(needle))
-        &&(upcomingTournament==="all"||match.tournament_name===upcomingTournament)
+        &&(activeUpcomingTournament==="all"||match.tournament_name===activeUpcomingTournament)
         &&confidence>=upcomingConfidence[0]
         &&confidence<=upcomingConfidence[1];
     });
-  },[availableMatches,upcomingQuery,upcomingTournament,upcomingConfidence,language]);
-  const upcomingFiltersActive=Boolean(upcomingQuery)||upcomingTournament!=="all"||upcomingConfidence[0]!==50||upcomingConfidence[1]!==100;
-
-  useEffect(()=>{if(upcomingTournament!=="all"&&!availableMatches.some(match=>match.tournament_name===upcomingTournament))setUpcomingTournament("all");},[availableMatches,upcomingTournament]);
+  },[availableMatches,upcomingQuery,activeUpcomingTournament,upcomingConfidence,language]);
+  const upcomingFiltersActive=Boolean(upcomingQuery)||activeUpcomingTournament!=="all"||upcomingConfidence[0]!==50||upcomingConfidence[1]!==100;
 
   useEffect(()=>{
     let frame=0;
@@ -950,7 +949,7 @@ export function MatchDashboard(){
       {status==="loading"&&<div className="message-card">{t.loading}</div>}{status==="error"&&<div className="message-card">{t.failed}</div>}
       {status==="ready"&&availableMatches.length>0&&<div className="upcoming-filter-bar">
         <label className="upcoming-search"><span aria-hidden="true"/><input type="search" value={upcomingQuery} onChange={event=>setUpcomingQuery(event.target.value)} placeholder={upcomingLabels.search} aria-label={upcomingLabels.search}/>{upcomingQuery&&<button type="button" onClick={()=>setUpcomingQuery("")} aria-label={upcomingLabels.clear}>×</button>}</label>
-        <CustomSelect label={upcomingLabels.tournament} value={upcomingTournament} className="upcoming-tournament-field" options={upcomingTournamentOptions} onChange={setUpcomingTournament}/>
+        <CustomSelect label={upcomingLabels.tournament} value={activeUpcomingTournament} className="upcoming-tournament-field" options={upcomingTournamentOptions} onChange={setUpcomingTournament}/>
         <ConfidenceRange label={upcomingLabels.confidence} value={upcomingConfidence} onChange={setUpcomingConfidence}/>
         <div className="upcoming-filter-summary"><span><b>{visibleMatches.length}</b> / {availableMatches.length} {upcomingLabels.shown}</span>{upcomingFiltersActive&&<button type="button" onClick={()=>{setUpcomingQuery("");setUpcomingTournament("all");setUpcomingConfidence([50,100]);}}>↺ {upcomingLabels.clear}</button>}</div>
       </div>}
