@@ -181,6 +181,7 @@
 .form-comparison-row .form-dots .loss{height:13px}
 .form-comparison-row .form-dots .win{background:var(--green);color:var(--green)}
 .form-comparison-row .form-dots .loss{background:var(--red);color:var(--red)}
+.form-comparison-row .form-dots .neutral{background:#929b9c;color:#929b9c;box-shadow:0 0 10px currentColor}
 .form-comparison-row>span{color:rgba(255,255,255,.76);font-size:10px;font-weight:900;letter-spacing:.075em;line-height:1.15}
 .comparison-row{grid-template-columns:1fr minmax(170px,1.55fr) 1fr;min-height:51px}
 .comparison-row>.metric-label{display:grid;grid-template-columns:6px 1fr 6px;align-items:center;gap:12px;text-align:center}

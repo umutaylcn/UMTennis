@@ -577,7 +577,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   </div>;
 }
 
-function FormDots({form}:{form:string}){return <div className="form-dots">{form?form.split("").map((result,index)=><span className={result==="W"?"win":"loss"} key={`${result}-${index}`}>{result}</span>):<em>—</em>}</div>;}
+function FormDots({form}:{form:string}){return <div className="form-dots">{form?form.split("").map((result,index)=><span className={result==="W"?"win":result==="L"?"loss":"neutral"} key={`${result}-${index}`}>{result}</span>):<em>—</em>}</div>;}
 
 function ComparisonRow({label,left,right,suffix="",lowerIsBetter=false}:{label:string;left:number|null;right:number|null;suffix?:string;lowerIsBetter?:boolean}){
   const display=(value:number|null)=>value==null?"—":`${value}${suffix}`;
