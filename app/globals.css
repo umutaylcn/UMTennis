@@ -181,7 +181,7 @@
 .form-comparison-row .form-dots .loss{height:13px}
 .form-comparison-row .form-dots .win{background:var(--green);color:var(--green)}
 .form-comparison-row .form-dots .loss{background:var(--red);color:var(--red)}
-.form-comparison-row .form-dots .neutral{background:#929b9c;color:#929b9c;box-shadow:0 0 10px currentColor}
+.form-comparison-row .form-dots .neutral{height:17.5px;background:#929b9c;color:#929b9c;box-shadow:0 0 10px currentColor}
 .form-comparison-row>span{color:rgba(255,255,255,.76);font-size:10px;font-weight:900;letter-spacing:.075em;line-height:1.15}
 .comparison-row{grid-template-columns:1fr minmax(170px,1.55fr) 1fr;min-height:51px}
 .comparison-row>.metric-label{display:grid;grid-template-columns:6px 1fr 6px;align-items:center;gap:12px;text-align:center}
@@ -195,7 +195,7 @@
 .player-probability,.analysis-player.right .player-probability{justify-content:center;align-items:center}
 .player-probability>span{display:none}
 @media(max-width:850px){.comparison-row{grid-template-columns:1fr minmax(140px,1.35fr) 1fr}.metric-label span,.form-comparison-row>span{font-size:9px}.comparison-row>.metric-label{gap:8px}.match-kicker{font-size:11px}.player-probability,.analysis-player.right .player-probability{align-items:center}}
-@media(max-width:520px){.form-comparison-row .form-dots{gap:3px}.form-comparison-row .form-dots span{width:4px;height:18px}.form-comparison-row .form-dots .loss{height:10px}.comparison-row{grid-template-columns:1fr minmax(112px,1.25fr) 1fr}.comparison-row>.metric-label{grid-template-columns:4px 1fr 4px;gap:5px}.metric-label span,.form-comparison-row>span{font-size:8px}.metric-label i,.metric-label i.worse{width:4px;height:24px}}
+@media(max-width:520px){.form-comparison-row .form-dots{gap:3px}.form-comparison-row .form-dots span{width:4px;height:18px}.form-comparison-row .form-dots .loss{height:10px}.form-comparison-row .form-dots .neutral{height:14px}.comparison-row{grid-template-columns:1fr minmax(112px,1.25fr) 1fr}.comparison-row>.metric-label{grid-template-columns:4px 1fr 4px;gap:5px}.metric-label span,.form-comparison-row>span{font-size:8px}.metric-label i,.metric-label i.worse{width:4px;height:24px}}
 
 /* Model details */
 .surface-model .page-background{background-image:radial-gradient(circle at 50% 0,rgba(52,106,88,.48),transparent 37%),linear-gradient(145deg,#07130f,#020706 62%,#0b1712)}
