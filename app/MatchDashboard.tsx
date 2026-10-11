@@ -932,6 +932,7 @@ export function MatchDashboard(){
     <div className="page-background" aria-hidden="true"/>
     {view==="previous"&&<div className="history-sparks" aria-hidden="true"><div className="history-spark-gutter left">{Array.from({length:6},(_,index)=><i key={index}/>)}</div><div className="history-spark-gutter right">{Array.from({length:6},(_,index)=><i key={index}/>)}</div></div>}
     <header className={`umt-header${mobileNavHidden?" mobile-nav-hidden":""}`}>
+      {view==="matches"&&selected&&<button className="mobile-back-button" type="button" onClick={closeMatch}>← {t.back}</button>}
       <button className="umt-logo" onClick={closeMatch}><span>UM</span>Tennis</button>
       <nav><button className={view==="matches"?"active":""} onClick={closeMatch}>{t.matches}</button><button className={view==="previous"?"active":""} type="button" onClick={showPrevious}>{t.previous}</button><button className={view==="model"?"active":""} type="button" onClick={showModel}>Model</button></nav>
       <button className={`mobile-settings-toggle${mobileSettingsOpen?" active":""}`} type="button" aria-label="Settings" aria-expanded={mobileSettingsOpen} onClick={()=>setMobileSettingsOpen(current=>!current)}>
