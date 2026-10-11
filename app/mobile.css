@@ -366,8 +366,8 @@
   }
 
   .analysis-photo-zone {
-    min-height: 325px;
-    margin-top: -114px;
+    min-height: clamp(235px, 75vw, 325px);
+    margin-top: 20px;
   }
 
   .analysis-player .analysis-photo-zone .portrait-shell img {
