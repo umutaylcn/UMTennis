@@ -920,7 +920,11 @@ export function MatchDashboard(){
   },[]);
 
   useEffect(()=>{fetch(`${API_BASE}/api/matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setMatches(data.matches??[]);setStatus("ready");}).catch(()=>setStatus("error"));},[]);
-  useEffect(()=>{fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setPreviousMatches(data.matches??[]);setPreviousStatus("ready");}).catch(()=>setPreviousStatus("error"));},[]);
+  useEffect(()=>{fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
+    const history:PreviousMatch[]=Array.isArray(data.matches)?data.matches:[];
+    setPreviousMatches(history.filter(match=>!/\blaver\s+cup\b/i.test(match.tournament_name)));
+    setPreviousStatus("ready");
+  }).catch(()=>setPreviousStatus("error"));},[]);
   function formatStart(value:string){const locale:Record<Language,string>={en:"en-GB",tr:"tr-TR",fr:"fr-FR",es:"es-ES",de:"de-DE",it:"it-IT"};return new Intl.DateTimeFormat(locale[language],{timeZone:timezone==="local"?undefined:timezone,weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(value));}
   async function openMatch(match:Match){setSelected(match);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});try{const response=await fetch(`${API_BASE}/api/matches/${match.match_id}/prediction`);if(!response.ok)throw new Error();setPrediction(await response.json());}catch{setPredictionError(true);}}
   function closeMatch(){setView("matches");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
