@@ -72,6 +72,12 @@ The frontend uses the production API by default. To use another backend, set:
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ```
 
+The Matches landing screen reads the precomputed `public/data/upcoming.json`
+asset from Cloudflare. `scripts/update_live_site_data.ps1` in the workspace
+refreshes the backend data and regenerates this file; publish the backend first,
+then rebuild and deploy this Worker. Previous matches and detailed match analysis
+still use the API, with Previous requested only when its tab is opened.
+
 Useful commands:
 
 ```bash
