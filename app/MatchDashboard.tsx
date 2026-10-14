@@ -849,6 +849,7 @@ export function MatchDashboard(){
   const [prediction,setPrediction]=useState<Prediction|null>(null);
   const [status,setStatus]=useState<"loading"|"ready"|"error">("loading");
   const [previousStatus,setPreviousStatus]=useState<"loading"|"ready"|"error">("loading");
+  const previousRequested=useRef(false);
   const [predictionError,setPredictionError]=useState(false);
   const [upcomingQuery,setUpcomingQuery]=useState("");
   const [upcomingTournament,setUpcomingTournament]=useState("all");
@@ -919,12 +920,17 @@ export function MatchDashboard(){
     return()=>{window.removeEventListener("scroll",handleScroll);window.removeEventListener("resize",handleScroll);if(frame)window.cancelAnimationFrame(frame);};
   },[]);
 
-  useEffect(()=>{fetch(`${API_BASE}/api/matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setMatches(data.matches??[]);setStatus("ready");}).catch(()=>setStatus("error"));},[]);
-  useEffect(()=>{fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
+  useEffect(()=>{fetch("/data/upcoming.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
+    const cutoff=Date.now()-3*60*60*1000;
+    const upcoming:Match[]=Array.isArray(data.matches)?data.matches:[];
+    setMatches(upcoming.filter(match=>Date.parse(match.start_time_utc)>=cutoff));
+    setStatus("ready");
+  }).catch(()=>setStatus("error"));},[]);
+  useEffect(()=>{if(view!=="previous"||previousRequested.current)return;previousRequested.current=true;fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
     const history:PreviousMatch[]=Array.isArray(data.matches)?data.matches:[];
     setPreviousMatches(history.filter(match=>!/\blaver\s+cup\b/i.test(match.tournament_name)));
     setPreviousStatus("ready");
-  }).catch(()=>setPreviousStatus("error"));},[]);
+  }).catch(()=>setPreviousStatus("error"));},[view]);
   function formatStart(value:string){const locale:Record<Language,string>={en:"en-GB",tr:"tr-TR",fr:"fr-FR",es:"es-ES",de:"de-DE",it:"it-IT"};return new Intl.DateTimeFormat(locale[language],{timeZone:timezone==="local"?undefined:timezone,weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(value));}
   async function openMatch(match:Match){setSelected(match);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});try{const response=await fetch(`${API_BASE}/api/matches/${match.match_id}/prediction`);if(!response.ok)throw new Error();setPrediction(await response.json());}catch{setPredictionError(true);}}
   function closeMatch(){setView("matches");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
