@@ -410,6 +410,9 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Ethan Quinn":"left",
 };
 const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220">={
+  "Mattia Bellucci":"110",
+  "Max Schoenhaus":"120",
+  "Max Schönhaus":"120",
   "Adolfo Daniel Vallejo":"110",
   "Daniel Adolfo Vallejo":"110",
   "Valentin Royer":"200",
@@ -550,6 +553,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const top100Slug=portraitValue(TOP100_PLAYER_CUTOUTS,name);
   const nameCutout=portraitValue(PLAYER_NAME_CUTOUTS,name);
   const portraitScale=portraitValue(PLAYER_PORTRAIT_SCALE,name);
+  const boundedPortrait=nameCutout==="225"||nameCutout==="1041";
   const mobilePortraitScale=portraitValue(PLAYER_MOBILE_PORTRAIT_SCALE,name);
   const portraitShift=portraitValue(PLAYER_PORTRAIT_SHIFT,name)??0;
   const portraitStyle=portraitShift?({"--portrait-shift":typeof portraitShift==="number"?`${portraitShift}%`:portraitShift} as CSSProperties):undefined;
@@ -574,7 +578,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     [playerKey]:(current[playerKey]??0)+1,
   }));
   const source=sources[sourceIndex]??null;
-  return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
+  return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${boundedPortrait?" portrait-bounded":""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
     {source?<img src={source} alt={name} onError={failCurrentSource}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
     {id===225&&source?.includes("/players/cutouts/225.png")?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Mattia_Bellucci_(2024_DC_Open)_02.jpg" target="_blank" rel="noreferrer">Photo: Hameltion · CC BY-SA 4.0 · cutout</a>:null}
     {id===183&&source?.includes("/players/cutouts/183.png")?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Timofey_Skatov_(2026_US_Open)_01.jpg" target="_blank" rel="noreferrer">Photo: Hameltion · CC BY-SA 4.0 · cutout</a>:null}
