@@ -927,12 +927,7 @@ export function MatchDashboard(){
     return()=>{window.removeEventListener("scroll",handleScroll);window.removeEventListener("resize",handleScroll);if(frame)window.cancelAnimationFrame(frame);};
   },[]);
 
-  useEffect(()=>{fetch("/data/upcoming.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
-    const cutoff=Date.now()-3*60*60*1000;
-    const upcoming:Match[]=Array.isArray(data.matches)?data.matches:[];
-    setMatches(upcoming.filter(match=>Date.parse(match.start_time_utc)>=cutoff));
-    setStatus("ready");
-  }).catch(()=>setStatus("error"));},[]);
+  useEffect(()=>{fetch(`${API_BASE}/api/matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{setMatches(data.matches??[]);setStatus("ready");}).catch(()=>setStatus("error"));},[]);
   useEffect(()=>{if(view!=="previous"||previousRequested.current)return;previousRequested.current=true;fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
     const history:PreviousMatch[]=Array.isArray(data.matches)?data.matches:[];
     setPreviousMatches(history.filter(match=>!/\blaver\s+cup\b/i.test(match.tournament_name)));
