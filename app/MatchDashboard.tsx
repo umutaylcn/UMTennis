@@ -580,11 +580,6 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const source=sources[sourceIndex]??null;
   return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${boundedPortrait?" portrait-bounded":""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
     {source?<img src={source} alt={name} onError={failCurrentSource}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
-    {id===225&&source?.includes("/players/cutouts/225.png")?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Mattia_Bellucci_(2024_DC_Open)_02.jpg" target="_blank" rel="noreferrer">Photo: Hameltion · CC BY-SA 4.0 · cutout</a>:null}
-    {id===183&&source?.includes("/players/cutouts/183.png")?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Timofey_Skatov_(2026_US_Open)_01.jpg" target="_blank" rel="noreferrer">Photo: Hameltion · CC BY-SA 4.0 · cutout</a>:null}
-    {id===1041&&source?.includes("/players/cutouts/1041.png")?<a className="portrait-credit" href="https://www.tennismagazin.de/news/max-schoenhaus-im-portraet-der-zocker-aus-dem-sauerland/" target="_blank" rel="noreferrer">Photo: Imago / Hasenkopf · cutout</a>:null}
-    {normalizedPortraitName(name)==="bernard tomic"&&sourceIndex===0?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Bernard_Tomic_2,_Wimbledon_2013_-_Diliff.jpg" target="_blank" rel="noreferrer">Photo: David Iliff · CC BY-SA 3.0 · cutout</a>:null}
-    {id===990&&source?.includes("/players/cutouts/990.png")?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Marcos_Giron_((SA)_at_2014_USOPEN.jpg" target="_blank" rel="noreferrer">Photo: Emmett Hume · CC BY-SA 4.0 · cutout</a>:null}
   </div>;
 }
 
@@ -750,6 +745,7 @@ function ModelDetails({language}:{language:Language}){
       </div>
 
       <section className="model-disclaimer"><span>UM</span><p><b>{m.guarantee}</b>{m.disclaimer}</p></section>
+      <details className="photo-credits"><summary>Photo credits</summary><p>Player portraits are edited cutouts of source photographs. <a href="https://commons.wikimedia.org/wiki/File:Mattia_Bellucci_(2024_DC_Open)_02.jpg" target="_blank" rel="noreferrer">Mattia Bellucci</a> and <a href="https://commons.wikimedia.org/wiki/File:Timofey_Skatov_(2026_US_Open)_01.jpg" target="_blank" rel="noreferrer">Timofey Skatov</a>: Hameltion, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>. <a href="https://commons.wikimedia.org/wiki/File:Bernard_Tomic_2,_Wimbledon_2013_-_Diliff.jpg" target="_blank" rel="noreferrer">Bernard Tomic</a>: David Iliff, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noreferrer">CC BY-SA 3.0</a>. <a href="https://commons.wikimedia.org/wiki/File:Marcos_Giron_((SA)_at_2014_USOPEN.jpg" target="_blank" rel="noreferrer">Marcos Giron</a>: Emmett Hume, CC BY-SA 4.0. <a href="https://www.tennismagazin.de/news/max-schoenhaus-im-portraet-der-zocker-aus-dem-sauerland/" target="_blank" rel="noreferrer">Max Schoenhaus</a>: Imago / Hasenkopf. Backgrounds were removed and portraits cropped or resized.</p></details>
     </div>
   </section>;
 }
