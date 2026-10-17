@@ -42,7 +42,7 @@ const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   1002:"https://media.prod.tennis.com/v1/tcf/images/players/9f7109a5-ca31-43ac-9b9a-c529bcd38d36/20260604_215936.png?fm=webp&q=80&w=1600",
   8730:"https://longform.atptour.com/meet-the-nextgenatp-class-of-2024/assets/djEb5QgRVw/mensik-v-1080x1920.jpg",
 };
-const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,94,101,105,109,115,117,132,159,163,164,173,177,179,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,445,447,472,480,494,503,511,521,527,536,539,576,578,604,623,652,653,658,659,664,670,840,842,844,878,990,1002,1096,1104,1178,1179,1215,1253,1575,4872,6146,6316,7607,7638,8730,8745,9137,12825,13409,33875]);
+const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,94,101,105,109,115,117,132,159,163,164,173,177,179,183,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,445,447,472,480,494,503,511,521,527,536,539,576,578,604,623,652,653,658,659,664,670,840,842,844,878,990,1002,1041,1096,1104,1178,1179,1215,1253,1575,4872,6146,6316,7607,7638,8730,8745,9137,12825,13409,33875]);
 // Provider IDs can change or be temporarily unavailable in a cached fixture.
 // Resolve these locally prepared portraits by stable player name first.
 const PLAYER_NAME_CUTOUTS:Record<string,string>={
@@ -81,6 +81,10 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "Adolfo Daniel Vallejo":"197",
   "Daniel Adolfo Vallejo":"197",
   "Mattia Bellucci":"225",
+  "Timofey Skatov":"183",
+  "T. Skatov":"183",
+  "Max Schoenhaus":"1041",
+  "Max Schönhaus":"1041",
   "Adrian Mannarino":"adrian-mannarino",
   "Aleksandar Vukic":"234",
   "Arthur Gea":"578",
@@ -557,8 +561,8 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
-    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=sourced-34b67e4`]:[]),
-    ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=sourced-34b67e4`]:[]),
+    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
+    ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=${[225,183,1041].includes(id)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
   ];
@@ -572,6 +576,9 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const source=sources[sourceIndex]??null;
   return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
     {source?<img src={source} alt={name} onError={failCurrentSource}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
+    {id===225&&source?.includes("/players/cutouts/225.png")?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Mattia_Bellucci_(2024_DC_Open)_02.jpg" target="_blank" rel="noreferrer">Photo: Hameltion · CC BY-SA 4.0 · cutout</a>:null}
+    {id===183&&source?.includes("/players/cutouts/183.png")?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Timofey_Skatov_(2026_US_Open)_01.jpg" target="_blank" rel="noreferrer">Photo: Hameltion · CC BY-SA 4.0 · cutout</a>:null}
+    {id===1041&&source?.includes("/players/cutouts/1041.png")?<a className="portrait-credit" href="https://www.tennismagazin.de/news/max-schoenhaus-im-portraet-der-zocker-aus-dem-sauerland/" target="_blank" rel="noreferrer">Photo: Imago / Hasenkopf · cutout</a>:null}
     {normalizedPortraitName(name)==="bernard tomic"&&sourceIndex===0?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Bernard_Tomic_2,_Wimbledon_2013_-_Diliff.jpg" target="_blank" rel="noreferrer">Photo: David Iliff · CC BY-SA 3.0 · cutout</a>:null}
     {id===990&&source?.includes("/players/cutouts/990.png")?<a className="portrait-credit" href="https://commons.wikimedia.org/wiki/File:Marcos_Giron_((SA)_at_2014_USOPEN.jpg" target="_blank" rel="noreferrer">Photo: Emmett Hume · CC BY-SA 4.0 · cutout</a>:null}
   </div>;
