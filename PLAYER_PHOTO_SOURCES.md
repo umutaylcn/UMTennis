@@ -16,7 +16,14 @@ These live-fixture portraits are edits of identified, genuine match photographs.
 | Martin Landaluce | `public/players/cutouts/15.png` | `landaluce-tennistv-2025.jpg` | https://www.tennistv.com/videos/4313276/gstaad-2025-r1-landaluce-goffin | Authentic Gstaad action photo; background removed. |
 | Vít Kopřiva | `public/players/cutouts/6146.png` | `kopriva-sportcz-2026.jpg` | https://www.sport.cz/clanek/sportovni-vysledky-online-vysledky-dne-13-cervence-2026-5504551 | Authentic clay-court action photo; background removed. |
 | Miomir Kecmanović | `public/players/cutouts/536.png` | `kecmanovic-tanjug-2026.jpg` | https://www.tanjug.rs/english/sports/239072/kecmanovic-defeated-in-miami-first-round/vest | Authentic match action photo; background removed. |
+| Moïse Kouamé | `public/players/cutouts/533.png` | `assets/player_sources_raw/533b.jpg` | https://commons.wikimedia.org/wiki/File:Mo%C3%AFse_Kouam%C3%A9_(2026_US_Open)_01.jpg | Hameltion, CC BY-SA 4.0. Real match photo edited to green screen, then transparent cutout. |
+| Zangar Nurlanuly | `public/players/cutouts/941.png` | `assets/player_sources_raw/941.jpg` | https://sport.orda.kz/kazahstanskij-tennisist-popal-v-top-10-mirovogo-juniorskogo-rejtinga-2000/ | Real action photo credited to ФТК; background removed. Reuse permission not established. |
+| David Goffin | `public/players/cutouts/523.png` | `assets/player_sources_raw/523.jpg` | https://commons.wikimedia.org/wiki/File:David_Goffin_(2024_DC_Open)_01.jpg | Hameltion, CC BY-SA 4.0. Real match photo edited to green screen, then transparent cutout. |
+| Rémy Bertola | `public/players/cutouts/93.png` | `assets/player_sources_raw/93.jpg` | https://commons.wikimedia.org/wiki/File:R%C3%A9my_Bertola_(2026_US_Open)_01.jpg | Hameltion, CC BY-SA 4.0. Real match photo edited to green screen, then transparent cutout. |
+| Clément Chidekh | `public/players/cutouts/678.png` | `assets/player_sources_raw/678.jpg` | https://commons.wikimedia.org/wiki/File:Cl%C3%A9ment_Chidekh_(2026_US_Open)_01_(cropped).jpg | Hameltion, CC BY-SA 4.0. Real match photo edited to transparent cutout. |
 
 Old portraits whose original match-photo provenance could not be verified are retained locally under `assets/player_sources/rejected-ai/` for review, but they are no longer used by the site or the cutout preparation script. This includes the six portraits replaced on 2026-10-07. Their synthetic origin is suspected, not proven.
+
+The Kouamé, Goffin, Bertola and Chidekh derivatives are shared under the same [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license as their source photographs. Nurlanuly's source is attributed to the Kazakhstan Tennis Federation by Sport Orda; an explicit reuse license was not found.
 
 For future additions, record the original source URL and preserve the original photograph before preparing a cutout. If there is no verifiable source photo, keep the silhouette instead of creating a player image from scratch.
