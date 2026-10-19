@@ -354,7 +354,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Nuno Borges":"right",
   "Tomas Machac":"right",
   "Cameron Norrie":"left",
-  "Francisco Cerundolo":"right",
+  "Francisco Cerundolo":"left",
   "Thanasi Kokkinakis":"left",
   "Kei Nishikori":"right",
   "Hubert Hurkacz":"left",
@@ -426,7 +426,12 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Titouan Droguet":"right",
   "Ethan Quinn":"left",
 };
-const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"240">={
+const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"160"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"240">={
+  "Francisco Cerundolo":"120",
+  "Pierre-Hugues Herbert":"160",
+  "Borna Gojo":"220",
+  "Clement Tabur":"220",
+  "Clément Tabur":"220",
   "Zangar Nurlanuly":"220",
   "Mattia Bellucci":"110",
   "Max Schoenhaus":"120",
@@ -571,7 +576,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const top100Slug=portraitValue(TOP100_PLAYER_CUTOUTS,name);
   const nameCutout=portraitValue(PLAYER_NAME_CUTOUTS,name);
   const portraitScale=portraitValue(PLAYER_PORTRAIT_SCALE,name);
-  const boundedPortrait=nameCutout==="225"||nameCutout==="1041"||name==="Marcos Giron";
+  const boundedPortrait=nameCutout==="225"||nameCutout==="1041"||name==="Marcos Giron"||normalizedPortraitName(name)==="francisco cerundolo";
   const mobilePortraitScale=portraitValue(PLAYER_MOBILE_PORTRAIT_SCALE,name);
   const portraitShift=portraitValue(PLAYER_PORTRAIT_SHIFT,name)??0;
   const portraitStyle=portraitShift?({"--portrait-shift":typeof portraitShift==="number"?`${portraitShift}%`:portraitShift} as CSSProperties):undefined;
