@@ -426,12 +426,12 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Titouan Droguet":"right",
   "Ethan Quinn":"left",
 };
-const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"160"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"240">={
+const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"145"|"150"|"157"|"160"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"240"|"242">={
   "Francisco Cerundolo":"120",
-  "Pierre-Hugues Herbert":"160",
-  "Borna Gojo":"220",
-  "Clement Tabur":"220",
-  "Clément Tabur":"220",
+  "Pierre-Hugues Herbert":"145",
+  "Borna Gojo":"242",
+  "Clement Tabur":"242",
+  "Clément Tabur":"242",
   "Zangar Nurlanuly":"220",
   "Mattia Bellucci":"110",
   "Max Schoenhaus":"120",
@@ -516,6 +516,8 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Dominic Stricker":"177",
 };
 const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
+  "Clement Tabur":"-20px",
+  "Clément Tabur":"-20px",
   "Michael Zheng":"-30px",
   "Quinn Vandecasteele":"70px",
   "Martin Damm":"5px",
@@ -576,7 +578,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const top100Slug=portraitValue(TOP100_PLAYER_CUTOUTS,name);
   const nameCutout=portraitValue(PLAYER_NAME_CUTOUTS,name);
   const portraitScale=portraitValue(PLAYER_PORTRAIT_SCALE,name);
-  const boundedPortrait=nameCutout==="225"||nameCutout==="1041"||name==="Marcos Giron"||normalizedPortraitName(name)==="francisco cerundolo";
+  const boundedPortrait=nameCutout==="225"||nameCutout==="1041"||nameCutout==="175"||name==="Marcos Giron"||normalizedPortraitName(name)==="francisco cerundolo";
   const mobilePortraitScale=portraitValue(PLAYER_MOBILE_PORTRAIT_SCALE,name);
   const portraitShift=portraitValue(PLAYER_PORTRAIT_SHIFT,name)??0;
   const portraitStyle=portraitShift?({"--portrait-shift":typeof portraitShift==="number"?`${portraitShift}%`:portraitShift} as CSSProperties):undefined;
