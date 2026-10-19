@@ -42,10 +42,18 @@ const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   1002:"https://media.prod.tennis.com/v1/tcf/images/players/9f7109a5-ca31-43ac-9b9a-c529bcd38d36/20260604_215936.png?fm=webp&q=80&w=1600",
   8730:"https://longform.atptour.com/meet-the-nextgenatp-class-of-2024/assets/djEb5QgRVw/mensik-v-1080x1920.jpg",
 };
-const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,94,101,105,109,115,117,132,159,163,164,173,177,179,183,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,445,447,472,480,494,503,511,521,527,536,539,576,578,604,623,652,653,658,659,664,670,840,842,844,878,990,1002,1041,1096,1104,1178,1179,1215,1253,1575,4872,6146,6316,7607,7638,8730,8745,9137,12825,13409,33875]);
+const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,93,94,101,105,109,115,117,132,159,163,164,173,177,179,183,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,445,447,472,480,494,503,511,521,523,527,533,536,539,576,578,604,623,652,653,658,659,664,670,678,840,842,844,878,941,990,1002,1041,1096,1104,1178,1179,1215,1253,1575,4872,6146,6316,7607,7638,8730,8745,9137,12825,13409,33875]);
 // Provider IDs can change or be temporarily unavailable in a cached fixture.
 // Resolve these locally prepared portraits by stable player name first.
 const PLAYER_NAME_CUTOUTS:Record<string,string>={
+  "Moise Kouame":"533",
+  "Moïse Kouamé":"533",
+  "Zangar Nurlanuly":"941",
+  "David Goffin":"523",
+  "Remy Bertola":"93",
+  "Rémy Bertola":"93",
+  "Clement Chidekh":"678",
+  "Clément Chidekh":"678",
   "Camilo Ugo Carabelli":"472",
   "Carlos Taberner":"12825",
   "Corentin Moutet":"33",
@@ -410,6 +418,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Ethan Quinn":"left",
 };
 const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220">={
+  "Zangar Nurlanuly":"220",
   "Mattia Bellucci":"110",
   "Max Schoenhaus":"120",
   "Max Schönhaus":"120",
