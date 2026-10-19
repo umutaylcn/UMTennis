@@ -42,10 +42,14 @@ const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   1002:"https://media.prod.tennis.com/v1/tcf/images/players/9f7109a5-ca31-43ac-9b9a-c529bcd38d36/20260604_215936.png?fm=webp&q=80&w=1600",
   8730:"https://longform.atptour.com/meet-the-nextgenatp-class-of-2024/assets/djEb5QgRVw/mensik-v-1080x1920.jpg",
 };
-const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,93,94,101,105,109,115,117,132,159,163,164,173,177,179,183,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,445,447,472,480,494,503,511,521,523,527,533,536,539,576,578,604,623,652,653,658,659,664,670,678,840,842,844,878,941,990,1002,1041,1096,1104,1178,1179,1215,1253,1575,4872,6146,6316,7607,7638,8730,8745,9137,12825,13409,33875]);
+const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,93,94,101,105,109,115,117,132,140,159,163,164,173,175,176,177,179,183,189,193,197,198,204,214,224,225,229,233,234,236,397,399,401,411,445,447,472,480,494,503,511,521,523,527,533,536,539,576,578,604,623,652,653,658,659,664,670,678,840,842,844,878,941,990,1002,1041,1096,1104,1178,1179,1215,1253,1575,4872,6146,6316,7607,7638,8730,8745,9137,12825,13409,33875]);
 // Provider IDs can change or be temporarily unavailable in a cached fixture.
 // Resolve these locally prepared portraits by stable player name first.
 const PLAYER_NAME_CUTOUTS:Record<string,string>={
+  "Pierre-Hugues Herbert":"176",
+  "Borna Gojo":"140",
+  "Clement Tabur":"175",
+  "Clément Tabur":"175",
   "Moise Kouame":"533",
   "Moïse Kouamé":"533",
   "Zangar Nurlanuly":"941",
@@ -268,6 +272,11 @@ const TOP100_PLAYER_CUTOUTS:Record<string,string>={
   "Ethan Quinn":"ethan-quinn",
 };
 const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
+  "Rei Sakamoto":"right",
+  "Nishesh Basavareddy":"right",
+  "Facundo Diaz Acosta":"right",
+  "Zangar Nurlanuly":"right",
+  "Stan Wawrinka":"right",
   "Ilia Simakin":"left",
   "Nicolas Mejia":"left",
   "Kimmer Coppejans":"left",
@@ -417,7 +426,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Titouan Droguet":"right",
   "Ethan Quinn":"left",
 };
-const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220">={
+const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"150"|"157"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"240">={
   "Zangar Nurlanuly":"220",
   "Mattia Bellucci":"110",
   "Max Schoenhaus":"120",
@@ -425,7 +434,7 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Adolfo Daniel Vallejo":"110",
   "Daniel Adolfo Vallejo":"110",
   "Valentin Royer":"200",
-  "Marcos Giron":"200",
+  "Marcos Giron":"240",
   "Martin Landaluce":"150",
   "Vit Kopriva":"200",
   "Miomir Kecmanovic":"200",
@@ -562,7 +571,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const top100Slug=portraitValue(TOP100_PLAYER_CUTOUTS,name);
   const nameCutout=portraitValue(PLAYER_NAME_CUTOUTS,name);
   const portraitScale=portraitValue(PLAYER_PORTRAIT_SCALE,name);
-  const boundedPortrait=nameCutout==="225"||nameCutout==="1041";
+  const boundedPortrait=nameCutout==="225"||nameCutout==="1041"||name==="Marcos Giron";
   const mobilePortraitScale=portraitValue(PLAYER_MOBILE_PORTRAIT_SCALE,name);
   const portraitShift=portraitValue(PLAYER_PORTRAIT_SHIFT,name)??0;
   const portraitStyle=portraitShift?({"--portrait-shift":typeof portraitShift==="number"?`${portraitShift}%`:portraitShift} as CSSProperties):undefined;
@@ -570,12 +579,12 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const shouldMirror=homeSide!=null&&homeSide!==side;
   const sources=[
     ...(top20Slug?[`/players/cutouts/top20/${top20Slug}.png`]:[]),
-    ...(top40Slug?[`/players/cutouts/top40/${top40Slug}.png`]:[]),
+    ...(top40Slug?[`/players/cutouts/top40/${top40Slug}.png${top40Slug==="francisco-cerundolo"?"?v=real-photo-oct19":""}`]:[]),
     ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
-    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
-    ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=${[225,183,1041].includes(id)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
+    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${["140","175","176"].includes(nameCutout)?"real-photo-oct19":["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
+    ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=${[140,175,176].includes(id)?"real-photo-oct19":[225,183,1041].includes(id)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
   ];

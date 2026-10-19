@@ -127,6 +127,8 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-200 img{transform:translateY(var(--portrait-shift,0%)) scale(2);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-220{overflow:visible}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-220 img{transform:translateY(var(--portrait-shift,0%)) scale(2.2);transform-origin:center bottom}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-240{overflow:visible}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-240 img{transform:translateY(var(--portrait-shift,0%)) scale(2.4);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-192{overflow:visible;clip-path:inset(-200% 0 -200% 0)}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-192 img{transform:translateY(var(--portrait-shift,0%)) scale(1.9167);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-mirrored img{transform:scaleX(-1)}
@@ -156,6 +158,7 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-186.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.8615) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-200.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(2) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-220.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(2.2) scaleX(-1);transform-origin:center bottom}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-240.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(2.4) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-192.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.9167) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-bounded{clip-path:inset(-200% 0 -200% 0)}
 .player-rank-overlay{position:absolute;z-index:4;right:18px;bottom:20px;width:auto;max-width:88%;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;text-shadow:0 3px 11px rgba(0,0,0,.98),0 0 22px rgba(0,0,0,.88)}
