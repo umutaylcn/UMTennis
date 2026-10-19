@@ -103,6 +103,8 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-140plain img{transform:translateY(var(--portrait-shift,0%)) scale(1.4);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-143{overflow:visible}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-143 img{transform:translateY(var(--portrait-shift,0%)) scale(1.43);transform-origin:center bottom}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-145{overflow:visible}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-145 img{transform:translateY(var(--portrait-shift,0%)) scale(1.45);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-150{overflow:visible}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-150 img{transform:translateY(var(--portrait-shift,0%)) scale(1.5);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-157{overflow:visible}
@@ -131,6 +133,8 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-220 img{transform:translateY(var(--portrait-shift,0%)) scale(2.2);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-240{overflow:visible}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-240 img{transform:translateY(var(--portrait-shift,0%)) scale(2.4);transform-origin:center bottom}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-242{overflow:visible}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-242 img{transform:translateY(var(--portrait-shift,0%)) scale(2.42);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-192{overflow:visible;clip-path:inset(-200% 0 -200% 0)}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-192 img{transform:translateY(var(--portrait-shift,0%)) scale(1.9167);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-mirrored img{transform:scaleX(-1)}
@@ -148,6 +152,7 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-140.portrait-mirrored img{transform:scale(1.4) translateY(16.33%) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-140plain.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.4) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-143.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.43) scaleX(-1);transform-origin:center bottom}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-145.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.45) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-150.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.5) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-157.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.57) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-160.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.6) scaleX(-1);transform-origin:center bottom}
@@ -162,6 +167,7 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-200.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(2) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-220.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(2.2) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-240.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(2.4) scaleX(-1);transform-origin:center bottom}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-242.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(2.42) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-192.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.9167) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-bounded{clip-path:inset(-200% 0 -200% 0)}
 .player-rank-overlay{position:absolute;z-index:4;right:18px;bottom:20px;width:auto;max-width:88%;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;backdrop-filter:none;text-shadow:0 3px 11px rgba(0,0,0,.98),0 0 22px rgba(0,0,0,.88)}
