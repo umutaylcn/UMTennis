@@ -272,6 +272,8 @@ const TOP100_PLAYER_CUTOUTS:Record<string,string>={
   "Ethan Quinn":"ethan-quinn",
 };
 const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
+  "Clement Chidekh":"right",
+  "Clément Chidekh":"right",
   "Rei Sakamoto":"right",
   "Nishesh Basavareddy":"right",
   "Facundo Diaz Acosta":"right",
