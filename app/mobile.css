@@ -374,13 +374,13 @@
     max-width: 100%;
   }
 
-  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-70 img {
-    transform: translateY(var(--portrait-shift, 0%)) scale(.7);
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-85 img {
+    transform: translateY(var(--portrait-shift, 0%)) scale(.85);
     transform-origin: center bottom;
   }
 
-  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-70.portrait-mirrored img {
-    transform: translateY(var(--portrait-shift, 0%)) scale(.7) scaleX(-1);
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-85.portrait-mirrored img {
+    transform: translateY(var(--portrait-shift, 0%)) scale(.85) scaleX(-1);
   }
 
   .player-rank-overlay,

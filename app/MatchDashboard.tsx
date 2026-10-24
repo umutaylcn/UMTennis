@@ -71,6 +71,8 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "Marco Trungelliti":"164",
   "Roman Andres Burruchaga":"109",
   "Stan Wawrinka":"527",
+  "Jerome Kym":"jerome-kym",
+  "Jérôme Kym":"jerome-kym",
   "Zachary Svajda":"198",
   "Dhakshineswar Suresh":"9137",
   "Quinn Vandecasteele":"604",
@@ -278,7 +280,9 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Nishesh Basavareddy":"right",
   "Facundo Diaz Acosta":"right",
   "Zangar Nurlanuly":"right",
-  "Stan Wawrinka":"right",
+  "Stan Wawrinka":"left",
+  "Jerome Kym":"left",
+  "Jérôme Kym":"left",
   "Ilia Simakin":"left",
   "Nicolas Mejia":"left",
   "Kimmer Coppejans":"left",
@@ -519,6 +523,8 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Dominic Stricker":"177",
 };
 const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
+  "Holger Rune":"-20px",
+  "H. Rune":"-20px",
   "Clement Tabur":"-20px",
   "Clément Tabur":"-20px",
   "Michael Zheng":"-30px",
@@ -546,9 +552,9 @@ const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
   "Jaume Munar":16,
   "Gabriel Diallo":"5px",
 };
-const PLAYER_MOBILE_PORTRAIT_SCALE:Record<string,"70">={
-  "Botic Van De Zandschulp":"70",
-  "Botic van de Zandschulp":"70",
+const PLAYER_MOBILE_PORTRAIT_SCALE:Record<string,"85">={
+  "Botic Van De Zandschulp":"85",
+  "Botic van de Zandschulp":"85",
 };
 const text={
   tr:{matches:"Maçlar",previous:"Geçmiş",previousHeading:"Geçmiş Maçlar",previousIntro:"Maç başlamadan kaydedilen model tahminleri ve gerçek sonuçlar.",ourPick:"Model tahmini",actualResult:"Gerçek sonuç",correct:"Doğru tahmin",wrong:"Yanlış tahmin",noPrevious:"Henüz sonuçlanmış ve arşivlenmiş tahmin yok.",upcoming:"Yaklaşan Maçlar",choose:"Tahmini görmek için bir maç seç.",noUpcoming:"Yaklaşan maç bulunmuyor.",loading:"Maçlar yükleniyor…",failed:"Maçlar yüklenemedi.",back:"Tüm maçlar",prediction:"Kazanma olasılığı",atp:"ATP Sıralaması",elo:"UMTennis Elo",surfaceElo:"Surface Elo",preMatch:"Maç Öncesi İstatistikler",h2h:"Tüm H2H",surfaceH2h:"Surface H2H",last5:"Son 5 Maç",last10:"Son 10 Maç",surface10:"Surface Son 10",career:"Kariyer Ortalamaları",record:"Galibiyet / Mağlubiyet",aces:"Maç başı ace",doubleFaults:"Maç başı double fault",serve:"Service points won",return:"Return points won",bpSaved:"Break points saved",noData:"Yeterli veri yok",modelPick:"MODELİN SEÇİMİ",calculating:"Model hesaplıyor…"},
@@ -588,12 +594,12 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const homeSide=portraitValue(PLAYER_PHOTO_HOME_SIDE,name);
   const shouldMirror=homeSide!=null&&homeSide!==side;
   const sources=[
-    ...(top20Slug?[`/players/cutouts/top20/${top20Slug}.png`]:[]),
+    ...(top20Slug?[`/players/cutouts/top20/${top20Slug}.png${top20Slug==="rafael-jodar"?"?v=action-oct25":""}`]:[]),
     ...(top40Slug?[`/players/cutouts/top40/${top40Slug}.png${top40Slug==="francisco-cerundolo"?"?v=real-photo-oct19":""}`]:[]),
     ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
-    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${["140","175","176"].includes(nameCutout)?"real-photo-oct19":["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
+    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${nameCutout==="527"||nameCutout==="jerome-kym"?"action-oct25":["140","175","176"].includes(nameCutout)?"real-photo-oct19":["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
     ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=${[140,175,176].includes(id)?"real-photo-oct19":[225,183,1041].includes(id)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
