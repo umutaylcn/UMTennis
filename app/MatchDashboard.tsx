@@ -9,7 +9,7 @@ type PlayerProfile = { atp_rank:number|null; elo:number; elo_rank:number|null; s
 type Match = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; };
 type HeadToHead = { matches:number; p1_wins:number; p2_wins:number; surface_matches:number; p1_surface_wins:number; p2_surface_wins:number; };
 type Prediction = Match & { p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; h2h:HeadToHead; state_as_of_utc:string; p1_profile:PlayerProfile; p2_profile:PlayerProfile; };
-type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; round_at_prediction?:string; round_verified_after_match?:boolean; p1_name:string; p2_name:string; p1_win_probability:number|null; p2_win_probability:number|null; predicted_side?:"p1"|"p2"|null; predicted_winner:string|null; confidence:number|null; prediction_available?:boolean; actual_side?:"p1"|"p2"; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean|null; winner_sets?:number; loser_sets?:number; };
+type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; round_at_prediction?:string; round_verified_after_match?:boolean; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_side?:"p1"|"p2"; predicted_winner:string; confidence:number; actual_side?:"p1"|"p2"; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean|null; winner_sets?:number; loser_sets?:number; };
 
 function roundPresentation(round:string){
   const normalized=round.trim().toUpperCase();
@@ -779,7 +779,6 @@ function ModelDetails({language}:{language:Language}){
 
 function PreviousMatches({matches,status,language,formatStart}:{matches:PreviousMatch[];status:"loading"|"ready"|"error";language:Language;formatStart:(value:string)=>string}){
   const t=text[language];
-  const unpredictedLabel={tr:"Maç öncesi tahmin yok",en:"No pre-match prediction",fr:"Aucune prédiction avant-match",es:"Sin predicción previa",de:"Keine Prognose vor dem Match",it:"Nessuna previsione pre-partita"}[language];
   const verifiedRoundNote={tr:"Tur maçtan sonra doğrulandı; tahmin yapılırken bilinmiyordu.",en:"Round verified after the match; it was unknown when the prediction was made.",fr:"Tour confirmé après le match ; il était inconnu lors de la prédiction.",es:"Ronda verificada después del partido; se desconocía al hacer la predicción.",de:"Runde erst nach dem Match bestätigt; bei der Prognose war sie unbekannt.",it:"Turno verificato dopo la partita; non era noto al momento del pronostico."}[language];
   const [query,setQuery]=useState("");
   const [tournament,setTournament]=useState("all");
@@ -813,12 +812,13 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
       return (!needle||searchable.includes(needle))
         &&(tournament==="all"||match.tournament_name===tournament)
         &&(round==="all"||match.round===round)
-        &&(result==="all"||(result==="unpredicted"?match.prediction_available===false:match.prediction_available!==false&&(result==="void"?match.match_status==="defaulted":match.match_status!=="defaulted"&&(result==="correct")===match.prediction_correct)))
-        &&(match.confidence===null?(confidenceRange[0]===50&&confidenceRange[1]===100):match.confidence*100>=confidenceRange[0]&&match.confidence*100<=confidenceRange[1]);
+        &&(result==="all"||(result==="void"?match.match_status==="defaulted":match.match_status!=="defaulted"&&(result==="correct")===match.prediction_correct))
+        &&match.confidence*100>=confidenceRange[0]
+        &&match.confidence*100<=confidenceRange[1];
     });
   },[matches,query,tournament,round,result,confidenceRange,language]);
   const filtersActive=Boolean(query)||tournament!=="all"||round!=="all"||result!=="all"||confidenceRange[0]!==50||confidenceRange[1]!==100;
-  const scoredMatches=filteredMatches.filter(match=>match.prediction_available!==false&&match.prediction_correct!==null);
+  const scoredMatches=filteredMatches.filter(match=>match.match_status!=="defaulted");
   const accuracy=scoredMatches.length?scoredMatches.filter(match=>match.prediction_correct).length/scoredMatches.length*100:null;
   const pageCount=Math.ceil(filteredMatches.length/pageSize);
   const currentPage=Math.min(page,Math.max(1,pageCount));
@@ -837,7 +837,7 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
         <CustomSelect label={labels.tournament} value={tournament} options={tournamentOptions} onChange={value=>{setTournament(value);setPage(1);}}/>
         <CustomSelect label={labels.round} value={round} options={roundOptions} onChange={value=>{setRound(value);setPage(1);}}/>
         <ConfidenceRange label={labels.confidence} value={confidenceRange} onChange={value=>{setConfidenceRange(value);setPage(1);}}/>
-        <CustomSelect label={labels.result} value={result} options={[{value:"all",label:labels.allResults},{value:"correct",label:labels.correct},{value:"wrong",label:labels.wrong},{value:"void",label:labels.void},{value:"unpredicted",label:unpredictedLabel}]} onChange={value=>{setResult(value);setPage(1);}}/>
+        <CustomSelect label={labels.result} value={result} options={[{value:"all",label:labels.allResults},{value:"correct",label:labels.correct},{value:"wrong",label:labels.wrong},{value:"void",label:labels.void}]} onChange={value=>{setResult(value);setPage(1);}}/>
       </div>
       <div className="history-filter-summary"><span><b>{filteredMatches.length}</b> / {matches.length} {labels.shown}</span>{filtersActive&&<button type="button" onClick={()=>{setQuery("");setTournament("all");setRound("all");setResult("all");setConfidenceRange([50,100]);setPage(1);}}>↺ {labels.clear}</button>}</div>
     </div>
@@ -846,23 +846,22 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
     {status==="ready"&&!matches.length&&<div className="message-card">{t.noPrevious}</div>}
     {status==="ready"&&matches.length>0&&!filteredMatches.length&&<div className="message-card history-empty">{labels.none}</div>}
     <div className="previous-list">{paginatedMatches.map(match=>{
-      const hasPrediction=match.prediction_available!==false;
-      const p1Picked=match.predicted_side?match.predicted_side==="p1":(match.p1_win_probability??0)>=(match.p2_win_probability??0);
+      const p1Picked=match.predicted_side?match.predicted_side==="p1":match.p1_win_probability>=match.p2_win_probability;
       const actualSide=match.actual_side??(match.actual_winner===match.p1_name?"p1":match.actual_winner===match.p2_name?"p2":null);
       const isVoid=match.match_status==="defaulted";
-      const statusLabel=!hasPrediction?unpredictedLabel:isVoid?labels.void:match.prediction_correct?t.correct:t.wrong;
-      return <article className={`previous-card ${!hasPrediction?"unpredicted":isVoid?"void":match.prediction_correct?"correct":"wrong"}`} key={match.match_id}>
+      const statusLabel=isVoid?labels.void:match.prediction_correct?t.correct:t.wrong;
+      return <article className={`previous-card ${isVoid?"void":match.prediction_correct?"correct":"wrong"}`} key={match.match_id}>
         <div className="previous-meta"><span>{match.tournament_name}</span><span className="previous-meta-center"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><small title={match.round_verified_after_match?verifiedRoundNote:undefined}>{match.round}{match.round_verified_after_match?"*":""}</small></span><span>{formatStart(match.start_time_utc)}</span></div>
         <div className="previous-matchup">
-          <div className={!isVoid&&actualSide==="p1"?"actual-winner":""}><b>{match.p1_name}</b><strong>{match.p1_win_probability===null?"—":probability(match.p1_win_probability)}</strong></div>
+          <div className={!isVoid&&actualSide==="p1"?"actual-winner":""}><b>{match.p1_name}</b><strong>{probability(match.p1_win_probability)}</strong></div>
           <div className="previous-vs"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><b>VS</b><small title={match.round_verified_after_match?verifiedRoundNote:undefined}>{match.round}{match.round_verified_after_match?"*":""}</small></div>
-          <div className={!isVoid&&actualSide==="p2"?"actual-winner":""}><b>{match.p2_name}</b><strong>{match.p2_win_probability===null?"—":probability(match.p2_win_probability)}</strong></div>
+          <div className={!isVoid&&actualSide==="p2"?"actual-winner":""}><b>{match.p2_name}</b><strong>{probability(match.p2_win_probability)}</strong></div>
         </div>
         <div className="previous-outcome">
-          <div><small>{t.ourPick}</small><b>{hasPrediction?(p1Picked?match.p1_name:match.p2_name):unpredictedLabel}</b><span>{match.confidence===null?"—":probability(match.confidence)}</span></div>
+          <div><small>{t.ourPick}</small><b>{p1Picked?match.p1_name:match.p2_name}</b><span>{probability(match.confidence)}</span></div>
           <i aria-hidden="true">→</i>
           <div><small>{t.actualResult}</small><b>{actualSide==="p1"?match.p1_name:actualSide==="p2"?match.p2_name:match.actual_winner}</b>{match.match_status==="retirement"&&<span>RET.</span>}{match.match_status==="defaulted"&&<span>DQ</span>}</div>
-          <strong className="result-badge">{!hasPrediction?"—":isVoid?"—":match.prediction_correct?"✓":"×"} {statusLabel}</strong>
+          <strong className="result-badge">{isVoid?"—":match.prediction_correct?"✓":"×"} {statusLabel}</strong>
         </div>
       </article>;
     })}</div>
