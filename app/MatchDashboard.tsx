@@ -467,6 +467,9 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Hugo Grenier":"108",
   "Adam Walton":"110",
   "Arthur Fils":"110",
+  "Jerome Kym":"120",
+  "Jérôme Kym":"120",
+  "Rafael Jodar":"220",
   "Holger Rune":"130",
   "H. Rune":"130",
   "Michael Zheng":"115",
@@ -523,6 +526,8 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Dominic Stricker":"177",
 };
 const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
+  "Jerome Kym":"-40px",
+  "Jérôme Kym":"-40px",
   "Holger Rune":"-20px",
   "H. Rune":"-20px",
   "Clement Tabur":"-20px",
@@ -552,9 +557,10 @@ const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
   "Jaume Munar":16,
   "Gabriel Diallo":"5px",
 };
-const PLAYER_MOBILE_PORTRAIT_SCALE:Record<string,"85">={
+const PLAYER_MOBILE_PORTRAIT_SCALE:Record<string,"85"|"160">={
   "Botic Van De Zandschulp":"85",
   "Botic van de Zandschulp":"85",
+  "Rafael Jodar":"160",
 };
 const text={
   tr:{matches:"Maçlar",previous:"Geçmiş",previousHeading:"Geçmiş Maçlar",previousIntro:"Maç başlamadan kaydedilen model tahminleri ve gerçek sonuçlar.",ourPick:"Model tahmini",actualResult:"Gerçek sonuç",correct:"Doğru tahmin",wrong:"Yanlış tahmin",noPrevious:"Henüz sonuçlanmış ve arşivlenmiş tahmin yok.",upcoming:"Yaklaşan Maçlar",choose:"Tahmini görmek için bir maç seç.",noUpcoming:"Yaklaşan maç bulunmuyor.",loading:"Maçlar yükleniyor…",failed:"Maçlar yüklenemedi.",back:"Tüm maçlar",prediction:"Kazanma olasılığı",atp:"ATP Sıralaması",elo:"UMTennis Elo",surfaceElo:"Surface Elo",preMatch:"Maç Öncesi İstatistikler",h2h:"Tüm H2H",surfaceH2h:"Surface H2H",last5:"Son 5 Maç",last10:"Son 10 Maç",surface10:"Surface Son 10",career:"Kariyer Ortalamaları",record:"Galibiyet / Mağlubiyet",aces:"Maç başı ace",doubleFaults:"Maç başı double fault",serve:"Service points won",return:"Return points won",bpSaved:"Break points saved",noData:"Yeterli veri yok",modelPick:"MODELİN SEÇİMİ",calculating:"Model hesaplıyor…"},

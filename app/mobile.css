@@ -383,6 +383,15 @@
     transform: translateY(var(--portrait-shift, 0%)) scale(.85) scaleX(-1);
   }
 
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-160 img {
+    transform: translateY(var(--portrait-shift, 0%)) scale(1.6);
+    transform-origin: center bottom;
+  }
+
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-160.portrait-mirrored img {
+    transform: translateY(var(--portrait-shift, 0%)) scale(1.6) scaleX(-1);
+  }
+
   .player-rank-overlay,
   .analysis-player.right .player-rank-overlay {
     bottom: 5px;
