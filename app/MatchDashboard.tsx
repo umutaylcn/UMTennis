@@ -6,7 +6,7 @@ type Language = "en" | "tr" | "fr" | "es" | "de" | "it";
 type View = "matches" | "previous" | "model";
 type FormSummary = { matches:number; wins:number; losses:number; form:string; win_rate:number|null; aces:number|null; double_faults:number|null; service_points_won_pct:number|null; return_points_won_pct:number|null; break_points_saved_pct:number|null; };
 type PlayerProfile = { atp_rank:number|null; elo:number; elo_rank:number|null; surface_elo:number; surface_elo_rank:number|null; last_5:FormSummary; last_10:FormSummary; surface_last_10:FormSummary; career:FormSummary; };
-type Match = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; };
+type Match = { match_id:number; start_time_utc:string; schedule_precision?:"time"|"not_before"|"date_only"|"tba"; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; };
 type HeadToHead = { matches:number; p1_wins:number; p2_wins:number; surface_matches:number; p1_surface_wins:number; p2_surface_wins:number; };
 type Prediction = Match & { p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; h2h:HeadToHead; state_as_of_utc:string; p1_profile:PlayerProfile; p2_profile:PlayerProfile; };
 type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; round_at_prediction?:string; round_verified_after_match?:boolean; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_side?:"p1"|"p2"; predicted_winner:string; confidence:number; actual_side?:"p1"|"p2"; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean|null; winner_sets?:number; loser_sets?:number; };
@@ -977,6 +977,24 @@ export function MatchDashboard(){
     setPreviousStatus("ready");
   }).catch(()=>setPreviousStatus("error"));},[view]);
   function formatStart(value:string){const locale:Record<Language,string>={en:"en-GB",tr:"tr-TR",fr:"fr-FR",es:"es-ES",de:"de-DE",it:"it-IT"};return new Intl.DateTimeFormat(locale[language],{timeZone:timezone==="local"?undefined:timezone,weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(value));}
+  function formatFixtureStart(match:Match){
+    const locale:Record<Language,string>={en:"en-GB",tr:"tr-TR",fr:"fr-FR",es:"es-ES",de:"de-DE",it:"it-IT"};
+    const labels:Record<Language,{tba:string,timeTba:string,notBefore:string}>={
+      en:{tba:"Schedule TBA",timeTba:"time TBA",notBefore:"Not before"},
+      tr:{tba:"Program bekleniyor",timeTba:"saat bekleniyor",notBefore:"En erken"},
+      fr:{tba:"Horaire à confirmer",timeTba:"heure à confirmer",notBefore:"Pas avant"},
+      es:{tba:"Horario por confirmar",timeTba:"hora por confirmar",notBefore:"No antes de"},
+      de:{tba:"Spielplan offen",timeTba:"Uhrzeit offen",notBefore:"Nicht vor"},
+      it:{tba:"Orario da confermare",timeTba:"ora da confermare",notBefore:"Non prima delle"},
+    };
+    if(match.schedule_precision==="tba")return labels[language].tba;
+    if(match.schedule_precision==="date_only"){
+      const date=new Intl.DateTimeFormat(locale[language],{timeZone:"UTC",weekday:"short",day:"numeric",month:"short"}).format(new Date(match.start_time_utc));
+      return `${date} · ${labels[language].timeTba}`;
+    }
+    if(match.schedule_precision==="not_before")return `${labels[language].notBefore} ${formatStart(match.start_time_utc)}`;
+    return formatStart(match.start_time_utc);
+  }
   async function openMatch(match:Match){setSelected(match);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});try{const response=await fetch(`${API_BASE}/api/matches/${match.match_id}/prediction`);if(!response.ok)throw new Error();setPrediction(await response.json());}catch{setPredictionError(true);}}
   function closeMatch(){setView("matches");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
   function showModel(){setView("model");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
@@ -1012,11 +1030,11 @@ export function MatchDashboard(){
       {status==="ready"&&availableMatches.length>0&&!visibleMatches.length&&<div className="message-card upcoming-empty">{upcomingLabels.none}</div>}
       <div className="fixture-list">{visibleMatches.map(match=>{
         const round=roundPresentation(match.round);
-        return <button className={`fixture-row round-${round.tier}`} type="button" key={match.match_id} onClick={()=>openMatch(match)}><div className="fixture-topline"><span>{match.tournament_name}</span><span>{formatStart(match.start_time_utc)}</span></div><div className="fixture-mainline"><div className="fixture-player"><small>{match.p1_rank?`#${match.p1_rank}`:"—"}</small><b>{match.p1_name}</b></div><strong className="fixture-probability" style={probabilityTone(match.p1_win_probability)}>{probability(match.p1_win_probability)}</strong><div className="versus"><b>VS</b><MatchStrength value={match.match_strength}/><div className="mobile-fixture-meta"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div></div><strong className="fixture-probability" style={probabilityTone(match.p2_win_probability)}>{probability(match.p2_win_probability)}</strong><div className="fixture-player right"><small>{match.p2_rank?`#${match.p2_rank}`:"—"}</small><b>{match.p2_name}</b></div></div><div className="fixture-footer"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div></button>;
+        return <button className={`fixture-row round-${round.tier}`} type="button" key={match.match_id} onClick={()=>openMatch(match)}><div className="fixture-topline"><span>{match.tournament_name}</span><span>{formatFixtureStart(match)}</span></div><div className="fixture-mainline"><div className="fixture-player"><small>{match.p1_rank?`#${match.p1_rank}`:"—"}</small><b>{match.p1_name}</b></div><strong className="fixture-probability" style={probabilityTone(match.p1_win_probability)}>{probability(match.p1_win_probability)}</strong><div className="versus"><b>VS</b><MatchStrength value={match.match_strength}/><div className="mobile-fixture-meta"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div></div><strong className="fixture-probability" style={probabilityTone(match.p2_win_probability)}>{probability(match.p2_win_probability)}</strong><div className="fixture-player right"><small>{match.p2_rank?`#${match.p2_rank}`:"—"}</small><b>{match.p2_name}</b></div></div><div className="fixture-footer"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div></button>;
       })}</div>
     </section>:<section className="match-detail">
       <button className="back-button" onClick={closeMatch}>← {t.back}</button>
-      <div className="match-kicker"><span className={`surface-tag ${selected.surface.toLowerCase()}`}>{selected.surface}</span><b>{selected.tournament_name}</b><span>{roundPresentation(selected.round).label} · {formatStart(selected.start_time_utc)}</span></div>
+      <div className="match-kicker"><span className={`surface-tag ${selected.surface.toLowerCase()}`}>{selected.surface}</span><b>{selected.tournament_name}</b><span>{roundPresentation(selected.round).label} · {formatFixtureStart(selected)}</span></div>
       {!prediction&&!predictionError?<div className="prediction-loader"><span/>{t.calculating}</div>:predictionError?<div className="prediction-loader error">{t.failed}</div>:prediction&&<>
         <div className="analysis-stage">
           <article className="analysis-player left">
