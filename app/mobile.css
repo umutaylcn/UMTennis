@@ -374,13 +374,13 @@
     max-width: 100%;
   }
 
-  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-85 img {
-    transform: translateY(var(--portrait-shift, 0%)) scale(.85);
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-kym img {
+    transform: translateY(calc(var(--portrait-shift, 0px) + 50px)) scale(1.2);
     transform-origin: center bottom;
   }
 
-  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-85.portrait-mirrored img {
-    transform: translateY(var(--portrait-shift, 0%)) scale(.85) scaleX(-1);
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-kym.portrait-mirrored img {
+    transform: translateY(calc(var(--portrait-shift, 0px) + 50px)) scale(1.2) scaleX(-1);
   }
 
   .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-160 img {

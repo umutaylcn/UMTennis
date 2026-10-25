@@ -113,7 +113,7 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "Hugo Gaston":"233",
   "Jack Kennedy":"878",
   "Jacob Fearnley":"1179",
-  "Jurij Rodionov":"224",
+  "Jurij Rodionov":"jurij-rodionov-action",
   "Lloyd Harris":"177",
   "Holger Rune":"holger-rune",
   "H. Rune":"holger-rune",
@@ -283,6 +283,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Stan Wawrinka":"left",
   "Jerome Kym":"left",
   "Jérôme Kym":"left",
+  "Jurij Rodionov":"right",
   "Ilia Simakin":"left",
   "Nicolas Mejia":"left",
   "Kimmer Coppejans":"left",
@@ -470,6 +471,7 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Jerome Kym":"120",
   "Jérôme Kym":"120",
   "Rafael Jodar":"220",
+  "Jurij Rodionov":"180",
   "Holger Rune":"130",
   "H. Rune":"130",
   "Michael Zheng":"115",
@@ -557,10 +559,9 @@ const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
   "Jaume Munar":16,
   "Gabriel Diallo":"5px",
 };
-const PLAYER_MOBILE_PORTRAIT_SCALE:Record<string,"85"|"160">={
-  "Botic Van De Zandschulp":"85",
-  "Botic van de Zandschulp":"85",
+const PLAYER_MOBILE_PORTRAIT_SCALE:Record<string,"160">={
   "Rafael Jodar":"160",
+  "Jurij Rodionov":"160",
 };
 const text={
   tr:{matches:"Maçlar",previous:"Geçmiş",previousHeading:"Geçmiş Maçlar",previousIntro:"Maç başlamadan kaydedilen model tahminleri ve gerçek sonuçlar.",ourPick:"Model tahmini",actualResult:"Gerçek sonuç",correct:"Doğru tahmin",wrong:"Yanlış tahmin",noPrevious:"Henüz sonuçlanmış ve arşivlenmiş tahmin yok.",upcoming:"Yaklaşan Maçlar",choose:"Tahmini görmek için bir maç seç.",noUpcoming:"Yaklaşan maç bulunmuyor.",loading:"Maçlar yükleniyor…",failed:"Maçlar yüklenemedi.",back:"Tüm maçlar",prediction:"Kazanma olasılığı",atp:"ATP Sıralaması",elo:"UMTennis Elo",surfaceElo:"Surface Elo",preMatch:"Maç Öncesi İstatistikler",h2h:"Tüm H2H",surfaceH2h:"Surface H2H",last5:"Son 5 Maç",last10:"Son 10 Maç",surface10:"Surface Son 10",career:"Kariyer Ortalamaları",record:"Galibiyet / Mağlubiyet",aces:"Maç başı ace",doubleFaults:"Maç başı double fault",serve:"Service points won",return:"Return points won",bpSaved:"Break points saved",noData:"Yeterli veri yok",modelPick:"MODELİN SEÇİMİ",calculating:"Model hesaplıyor…"},
@@ -605,7 +606,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
-    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${nameCutout==="527"||nameCutout==="jerome-kym"?"action-oct25":["140","175","176"].includes(nameCutout)?"real-photo-oct19":["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
+    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${nameCutout==="jurij-rodionov-action"?"action-oct25b":nameCutout==="527"||nameCutout==="jerome-kym"?"action-oct25":["140","175","176"].includes(nameCutout)?"real-photo-oct19":["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
     ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=${[140,175,176].includes(id)?"real-photo-oct19":[225,183,1041].includes(id)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
@@ -618,7 +619,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     [playerKey]:(current[playerKey]??0)+1,
   }));
   const source=sources[sourceIndex]??null;
-  return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${boundedPortrait?" portrait-bounded":""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
+  return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${boundedPortrait?" portrait-bounded":""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${nameCutout==="jerome-kym"?" portrait-mobile-kym":""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
     {source?<img src={source} alt={name} onError={failCurrentSource}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
   </div>;
 }
