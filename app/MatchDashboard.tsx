@@ -70,7 +70,7 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "J J Wolf":"623",
   "Marco Trungelliti":"164",
   "Roman Andres Burruchaga":"109",
-  "Stan Wawrinka":"527",
+  "Stan Wawrinka":"stan-wawrinka-wimbledon",
   "Jerome Kym":"jerome-kym",
   "Jérôme Kym":"jerome-kym",
   "Zachary Svajda":"198",
@@ -434,6 +434,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Ethan Quinn":"left",
 };
 const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"145"|"150"|"157"|"160"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"240"|"242">={
+  "Carlos Alcaraz":"110",
   "Nikoloz Basilashvili":"110",
   "Francisco Cerundolo":"120",
   "Pierre-Hugues Herbert":"145",
@@ -606,7 +607,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
-    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${nameCutout==="jurij-rodionov-action"?"action-oct25b":nameCutout==="527"||nameCutout==="jerome-kym"?"action-oct25":["140","175","176"].includes(nameCutout)?"real-photo-oct19":["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
+    ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${nameCutout==="stan-wawrinka-wimbledon"?"face-action-oct25":nameCutout==="jurij-rodionov-action"?"action-oct25b":nameCutout==="527"||nameCutout==="jerome-kym"?"action-oct25":["140","175","176"].includes(nameCutout)?"real-photo-oct19":["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
     ...(id&&PLAYER_CUTOUT_IDS.has(id)?[`/players/cutouts/${id}.png?v=${[140,175,176].includes(id)?"real-photo-oct19":[225,183,1041].includes(id)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),
     ...(id&&id!==19?[`/players/${id}.jpg`]:[]),
     ...(fallback?[fallback]:[]),
