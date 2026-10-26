@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { matchesSearch } from "./search";
 
 type Language = "en" | "tr" | "fr" | "es" | "de" | "it";
 type View = "matches" | "previous" | "model";
@@ -308,7 +309,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Felix Balshaw":"left",
   "Aleksandar Kovacevic":"right",
   "Hugo Grenier":"left",
-  "Giovanni Mpetshi Perricard":"left",
+  "Giovanni Mpetshi Perricard":"right",
   "Cruz Hewitt":"left",
   "Sho Shimabukuro":"left",
   "Miomir Kecmanovic":"right",
@@ -827,17 +828,15 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
     return [{value:"all",label:labels.allRounds},...rounds.map(value=>({value,label:value}))];
   },[matches,labels.allRounds]);
   const filteredMatches=useMemo(()=>{
-    const needle=query.trim().toLocaleLowerCase(language);
     return matches.filter(match=>{
-      const searchable=`${match.p1_name} ${match.p2_name} ${match.tournament_name} ${match.round}`.toLocaleLowerCase(language);
-      return (!needle||searchable.includes(needle))
+      return matchesSearch(query,[match.p1_name,match.p2_name,match.tournament_name,match.round])
         &&(tournament==="all"||match.tournament_name===tournament)
         &&(round==="all"||match.round===round)
         &&(result==="all"||(result==="void"?match.match_status==="defaulted":match.match_status!=="defaulted"&&(result==="correct")===match.prediction_correct))
         &&match.confidence*100>=confidenceRange[0]
         &&match.confidence*100<=confidenceRange[1];
     });
-  },[matches,query,tournament,round,result,confidenceRange,language]);
+  },[matches,query,tournament,round,result,confidenceRange]);
   const filtersActive=Boolean(query)||tournament!=="all"||round!=="all"||result!=="all"||confidenceRange[0]!==50||confidenceRange[1]!==100;
   const scoredMatches=filteredMatches.filter(match=>match.match_status!=="defaulted");
   const accuracy=scoredMatches.length?scoredMatches.filter(match=>match.prediction_correct).length/scoredMatches.length*100:null;
@@ -947,16 +946,14 @@ export function MatchDashboard(){
   const upcomingTournamentOptions=useMemo(()=>[{value:"all",label:upcomingLabels.allTournaments},...Array.from(new Set(availableMatches.map(match=>match.tournament_name))).sort().map(value=>({value,label:value}))],[availableMatches,upcomingLabels.allTournaments]);
   const activeUpcomingTournament=upcomingTournament==="all"||availableMatches.some(match=>match.tournament_name===upcomingTournament)?upcomingTournament:"all";
   const visibleMatches=useMemo(()=>{
-    const needle=upcomingQuery.trim().toLocaleLowerCase(language);
     return availableMatches.filter(match=>{
-      const searchable=`${match.p1_name} ${match.p2_name} ${match.tournament_name}`.toLocaleLowerCase(language);
       const confidence=(match.confidence??.5)*100;
-      return (!needle||searchable.includes(needle))
+      return matchesSearch(upcomingQuery,[match.p1_name,match.p2_name,match.tournament_name])
         &&(activeUpcomingTournament==="all"||match.tournament_name===activeUpcomingTournament)
         &&confidence>=upcomingConfidence[0]
         &&confidence<=upcomingConfidence[1];
     });
-  },[availableMatches,upcomingQuery,activeUpcomingTournament,upcomingConfidence,language]);
+  },[availableMatches,upcomingQuery,activeUpcomingTournament,upcomingConfidence]);
   const upcomingFiltersActive=Boolean(upcomingQuery)||activeUpcomingTournament!=="all"||upcomingConfidence[0]!==50||upcomingConfidence[1]!==100;
 
   useEffect(()=>{
