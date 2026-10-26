@@ -289,3 +289,9 @@
 .upcoming-filter-bar>.upcoming-tournament-field{width:100%;height:42px;padding:0 11px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.035)}.upcoming-filter-bar>.upcoming-tournament-field.is-open{z-index:12}.upcoming-tournament-field .custom-options{right:0;width:max(180px,100%)}
 @media(min-width:701px){.upcoming-filter-bar{grid-template-columns:minmax(0,1fr) 180px 190px}}
 @media(min-width:701px){.history-filter-selects .control-field>button .control-label,.upcoming-filter-bar>.control-field>button .control-label{font-size:9px;letter-spacing:.1em}.history-filter-selects .control-field>button b,.upcoming-filter-bar>.control-field>button b{font-size:10px;font-weight:750;color:rgba(255,255,255,.82)}}
+
+/* Mannarino sits 50px higher on mobile without changing his desktop position. */
+@media(max-width:850px){
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-130.portrait-mobile-mannarino img{transform:translateY(80px) scale(1.3)}
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-130.portrait-mobile-mannarino.portrait-mirrored img{transform:translateY(80px) scale(1.3) scaleX(-1)}
+}

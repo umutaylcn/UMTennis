@@ -56,6 +56,8 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "David Goffin":"523",
   "Remy Bertola":"93",
   "Rémy Bertola":"93",
+  "Mika Brunold":"mika-brunold-action",
+  "Giovanni Mpetshi Perricard":"giovanni-mpetshi-perricard-action",
   "Clement Chidekh":"678",
   "Clément Chidekh":"678",
   "Camilo Ugo Carabelli":"472",
@@ -112,7 +114,8 @@ const PLAYER_NAME_CUTOUTS:Record<string,string>={
   "Harry Wendelken":"73",
   "Hugo Gaston":"233",
   "Jack Kennedy":"878",
-  "Jacob Fearnley":"1179",
+  "Jacob Fearnley":"jacob-fearnley-action",
+  "Lukas Neumayer":"lukas-neumayer-action",
   "Jurij Rodionov":"jurij-rodionov-action",
   "Lloyd Harris":"177",
   "Holger Rune":"holger-rune",
@@ -171,7 +174,7 @@ const TOP20_PLAYER_CUTOUTS:Record<string,string>={
   "Brandon Nakashima":"brandon-nakashima",
   "Daniil Medvedev":"daniil-medvedev",
   "Learner Tien":"learner-tien",
-  "Jakub Mensik":"jakub-mensik",
+  "Jakub Mensik":"jakub-mensik-action",
   "Sebastian Korda":"sebastian-korda",
   "Jiri Lehecka":"jiri-lehecka",
 };
@@ -274,6 +277,8 @@ const TOP100_PLAYER_CUTOUTS:Record<string,string>={
   "Ethan Quinn":"ethan-quinn",
 };
 const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
+  "Remy Bertola":"right",
+  "Rémy Bertola":"right",
   "Clement Chidekh":"right",
   "Clément Chidekh":"right",
   "Rei Sakamoto":"right",
@@ -331,7 +336,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Novak Djokovic":"left",
   "Alexander Zverev":"right",
   "Arthur Fils":"right",
-  "Rafael Jodar":"left",
+  "Rafael Jodar":"right",
   "Casper Ruud":"right",
   "Taylor Fritz":"right",
   "Lorenzo Musetti":"right",
@@ -621,7 +626,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
     [playerKey]:(current[playerKey]??0)+1,
   }));
   const source=sources[sourceIndex]??null;
-  return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${boundedPortrait?" portrait-bounded":""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${nameCutout==="jerome-kym"?" portrait-mobile-kym":""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
+  return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${boundedPortrait?" portrait-bounded":""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${nameCutout==="jerome-kym"?" portrait-mobile-kym":""}${normalizedPortraitName(name)==="adrian mannarino"?" portrait-mobile-mannarino":""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
     {source?<img src={source} alt={name} onError={failCurrentSource}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
   </div>;
 }
