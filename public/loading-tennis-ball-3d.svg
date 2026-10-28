@@ -13,11 +13,11 @@
   </defs>
   <circle cx="50" cy="50" r="48" fill="url(#felt)"/>
   <g clip-path="url(#ball)" fill="none" stroke="#e8ecd9" stroke-width="5.2" stroke-linecap="round">
-    <path d="M-12 81 C9 66 20 57 37 54 C65 49 78 31 78 -10">
-      <animate attributeName="d" dur="4s" repeatCount="indefinite" keyTimes="0;.25;.5;.75;1" values="M-12 81 C9 66 20 57 37 54 C65 49 78 31 78 -10;M45 110 C60 84 70 67 78 52 C89 31 91 13 85 -10;M110 81 C87 66 77 57 61 54 C35 49 22 31 22 -10;M55 110 C40 84 30 67 22 52 C11 31 9 13 15 -10;M-12 81 C9 66 20 57 37 54 C65 49 78 31 78 -10"/>
+    <path data-seam="lower" d="M-10 78 C14 72 34 65 47 58 C65 49 79 42 103 37">
+      <animate attributeName="d" dur="4s" repeatCount="indefinite" keyTimes="0;.25;.5;.75;1" values="M-10 78 C14 72 34 65 47 58 C65 49 79 42 103 37;M-10 68 C18 72 32 62 49 54 C68 45 81 36 103 29;M110 78 C86 72 66 65 53 58 C35 49 21 42 -3 37;M110 68 C82 72 68 62 51 54 C32 45 19 36 -3 29;M-10 78 C14 72 34 65 47 58 C65 49 79 42 103 37"/>
     </path>
-    <path d="M57 113 C61 91 72 76 91 73 C107 70 119 73 130 81">
-      <animate attributeName="d" dur="4s" repeatCount="indefinite" keyTimes="0;.25;.5;.75;1" values="M57 113 C61 91 72 76 91 73 C107 70 119 73 130 81;M-12 22 C15 28 28 42 36 54 C48 71 47 89 45 112;M43 113 C39 91 28 76 9 73 C-7 70 -19 73 -30 81;M112 22 C85 28 72 42 64 54 C52 71 53 89 55 112;M57 113 C61 91 72 76 91 73 C107 70 119 73 130 81"/>
+    <path data-seam="upper" d="M23 20 C38 8 60 7 76 18">
+      <animate attributeName="d" dur="4s" repeatCount="indefinite" keyTimes="0;.25;.5;.75;1" values="M23 20 C38 8 60 7 76 18;M26 17 C43 8 59 8 74 18;M77 20 C62 8 40 7 24 18;M74 17 C57 8 41 8 26 18;M23 20 C38 8 60 7 76 18"/>
     </path>
   </g>
   <circle cx="50" cy="50" r="48" fill="url(#volume)"/>

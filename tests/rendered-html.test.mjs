@@ -82,7 +82,16 @@ test("loading ball keeps its silhouette fixed while surface seams move", async (
   assert.doesNotMatch(css, /tennis-ball-roll/);
   assert.match(css, /tennis-ball-shadow/);
   assert.match(css, /height:17px;flex:none/);
+  assert.match(css, /width:30px;height:7px;.*box-shadow:/);
   assert.match(ball, /attributeName="d"/);
   assert.doesNotMatch(ball, /attributeName="opacity"/);
   assert.match(ball, /url\(#volume\)/);
+  const seamYValues = (zone) => {
+    const match = ball.match(new RegExp(`<path data-seam="${zone}"[^>]*>\\s*<animate[^>]*values="([^"]+)"`));
+    assert.ok(match, `missing ${zone} seam animation`);
+    return match[1].split(";").flatMap(frame =>
+      [...frame.matchAll(/-?\d+(?:\.\d+)?/g)].map(value => Number(value[0])).filter((_, index) => index % 2 === 1)
+    );
+  };
+  assert.ok(Math.max(...seamYValues("upper")) + 5.2 < Math.min(...seamYValues("lower")));
 });
