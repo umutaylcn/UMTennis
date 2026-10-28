@@ -350,7 +350,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Alex de Minaur":"right",
   "Brandon Nakashima":"left",
   "Daniil Medvedev":"left",
-  "Jakub Mensik":"right",
+  "Jakub Mensik":"left",
   "Learner Tien":"right",
   "Sebastian Korda":"left",
   "Jiri Lehecka":"right",
