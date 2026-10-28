@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { rotatePoint, seamPoint, visibleSeam } from "../app/tennisBallGeometry.ts";
 
 async function render() {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -52,7 +53,7 @@ test("keeps production API and model presentation in source", async () => {
   assert.match(dashboard, /https:\/\/umtennis-api\.onrender\.com/);
   assert.match(dashboard, /fetch\(`\$\{API_BASE\}\/api\/matches`/);
   assert.match(dashboard, /match-loading-inline/);
-  assert.match(dashboard, /match-loading-ball/);
+  assert.match(dashboard, /LoadingTennisBall/);
   assert.match(dashboard, /"Jakub Mensik":"110"/);
   assert.doesNotMatch(dashboard, /match-loading-spinner/);
   assert.match(dashboard, /loadingPercent/);
@@ -73,25 +74,31 @@ test("ships the generated upcoming snapshot as a static asset", async () => {
   assert.ok(snapshot.matches.every(match => Number.isFinite(Date.parse(match.start_time_utc))));
 });
 
-test("loading ball keeps its silhouette fixed while surface seams move", async () => {
+test("loading ball projects a rotating 3D seam onto the visible hemisphere", async () => {
   const [css, ball] = await Promise.all([
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
-    readFile(new URL("../public/loading-tennis-ball-3d.svg", import.meta.url), "utf8"),
+    readFile(new URL("../app/LoadingTennisBall.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(css, /loading-tennis-ball-3d\.svg/);
+  assert.match(css, /match-loading-ball canvas/);
   assert.doesNotMatch(css, /tennis-ball-roll/);
   assert.match(css, /tennis-ball-shadow/);
   assert.match(css, /height:17px;flex:none/);
   assert.match(css, /width:30px;height:7px;.*box-shadow:/);
-  assert.match(ball, /attributeName="d"/);
-  assert.doesNotMatch(ball, /attributeName="opacity"/);
-  assert.match(ball, /url\(#volume\)/);
-  const seamYValues = (zone) => {
-    const match = ball.match(new RegExp(`<path data-seam="${zone}"[^>]*>\\s*<animate[^>]*values="([^"]+)"`));
-    assert.ok(match, `missing ${zone} seam animation`);
-    return match[1].split(";").flatMap(frame =>
-      [...frame.matchAll(/-?\d+(?:\.\d+)?/g)].map(value => Number(value[0])).filter((_, index) => index % 2 === 1)
-    );
-  };
-  assert.ok(Math.max(...seamYValues("upper")) + 5.2 < Math.min(...seamYValues("lower")));
+  assert.match(ball, /requestAnimationFrame/);
+  assert.match(ball, /visibleSeam\(angle\)/);
+  assert.match(ball, /prefers-reduced-motion/);
+
+  for (const angle of [0, 0.4, 1.1, 2.2, 3.7, 5.8]) {
+    for (let index = 0; index < 256; index += 1) {
+      const point = rotatePoint(seamPoint((index / 256) * Math.PI * 2), angle);
+      assert.ok(Math.abs(Math.hypot(point.x, point.y, point.z) - 1) < 1e-10);
+    }
+    const segments = visibleSeam(angle);
+    assert.ok(segments.length > 0);
+    for (const segment of segments) {
+      assert.ok(segment.length > 1);
+      assert.ok(segment.every(point => point.z >= -1e-10));
+      assert.ok(segment.every(point => Math.hypot(point.x, point.y) <= 1.0001));
+    }
+  }
 });
