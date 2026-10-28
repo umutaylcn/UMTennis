@@ -392,6 +392,15 @@
     transform: translateY(var(--portrait-shift, 0%)) scale(1.6) scaleX(-1);
   }
 
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-200 img {
+    transform: translateY(var(--portrait-shift, 0%)) scale(2);
+    transform-origin: center bottom;
+  }
+
+  .analysis-player .analysis-photo-zone .portrait-shell.portrait-mobile-scale-200.portrait-mirrored img {
+    transform: translateY(var(--portrait-shift, 0%)) scale(2) scaleX(-1);
+  }
+
   .player-rank-overlay,
   .analysis-player.right .player-rank-overlay {
     bottom: 5px;

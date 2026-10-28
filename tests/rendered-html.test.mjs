@@ -45,9 +45,10 @@ test("server-renders the UMTennis application shell", async () => {
 });
 
 test("keeps production API and model presentation in source", async () => {
-  const [dashboard, layout] = await Promise.all([
+  const [dashboard, layout, mobile] = await Promise.all([
     readFile(new URL("../app/MatchDashboard.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/mobile.css", import.meta.url), "utf8"),
   ]);
 
   assert.match(dashboard, /https:\/\/umtennis-api\.onrender\.com/);
@@ -58,6 +59,10 @@ test("keeps production API and model presentation in source", async () => {
   assert.match(dashboard, /match-loading-caption/);
   assert.match(dashboard, /LoadingTennisBall/);
   assert.match(dashboard, /"Jakub Mensik":"110"/);
+  assert.match(dashboard, /"Arthur Fils":"121"/);
+  assert.match(dashboard, /"Rafael Jodar":"220"/);
+  assert.match(dashboard, /"Rafael Jodar":"200"/);
+  assert.match(mobile, /portrait-mobile-scale-200 img\s*\{[^}]*scale\(2\)/);
   assert.doesNotMatch(dashboard, /match-loading-spinner/);
   assert.match(dashboard, /loadingPercent/);
   assert.doesNotMatch(dashboard, /match-loading-card|match-loading-track/);

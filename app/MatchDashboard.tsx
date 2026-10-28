@@ -477,7 +477,7 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Sebastian Gorzny":"130",
   "Hugo Grenier":"108",
   "Adam Walton":"110",
-  "Arthur Fils":"110",
+  "Arthur Fils":"121",
   "Jerome Kym":"120",
   "Jérôme Kym":"120",
   "Rafael Jodar":"220",
@@ -569,8 +569,8 @@ const PLAYER_PORTRAIT_SHIFT:Record<string,number|string>={
   "Jaume Munar":16,
   "Gabriel Diallo":"5px",
 };
-const PLAYER_MOBILE_PORTRAIT_SCALE:Record<string,"160">={
-  "Rafael Jodar":"160",
+const PLAYER_MOBILE_PORTRAIT_SCALE:Record<string,"160"|"200">={
+  "Rafael Jodar":"200",
   "Jurij Rodionov":"160",
 };
 const text={
