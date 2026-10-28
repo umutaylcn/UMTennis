@@ -309,13 +309,13 @@
 }
 .match-loading-caption{display:inline-flex;align-items:baseline;justify-content:center;gap:8px;font-size:15px;line-height:22px;white-space:nowrap}
 .match-loading-caption strong{margin:0;font-size:15px}
-@keyframes tennis-ball-bounce-large{0%,100%{transform:translateY(0) scale(1.04,.92)}48%{transform:translateY(-45px) scale(.96,1.04)}}
+@keyframes tennis-ball-bounce-large{0%,100%{transform:translateY(0) scale(1.04,.92)}48%{transform:translateY(-90px) scale(.96,1.04)}}
 @keyframes tennis-ball-bounce-desktop{0%,100%{transform:translateY(0) scale(1.04,.92)}48%{transform:translateY(-180px) scale(.96,1.04)}}
 @media(min-width:761px){
   .fixture-column.is-loading .match-loading-inline{gap:22px;transform:translateY(50px)}
   .fixture-column.is-loading .match-loading-ball,.fixture-column.is-loading .match-loading-ball canvas{width:64px;height:64px}
   .fixture-column.is-loading .match-loading-ball canvas{animation-name:tennis-ball-bounce-desktop}
-  .fixture-column.is-loading .match-loading-ball:after{left:-10px;bottom:-5px;width:84px;height:14px;filter:blur(6px)}
+  .fixture-column.is-loading .match-loading-ball:after{left:-16px;bottom:-7px;width:96px;height:19px;background:radial-gradient(ellipse at center,rgba(2,7,5,.94) 0 25%,rgba(201,255,69,.55) 55%,rgba(201,255,69,0) 82%);box-shadow:0 0 14px 5px rgba(201,255,69,.28),0 0 28px 8px rgba(201,255,69,.14);filter:blur(2px)}
   .fixture-column.is-loading .match-loading-caption,.fixture-column.is-loading .match-loading-caption strong{font-size:17px}
 }
 @media(prefers-reduced-motion:reduce){.fixture-column.is-loading .match-loading-ball canvas{animation:none}}
