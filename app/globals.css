@@ -304,6 +304,9 @@
 .fixture-column.is-loading .match-loading-ball{width:50px;height:50px}
 .fixture-column.is-loading .match-loading-ball canvas{width:50px;height:50px;animation-name:tennis-ball-bounce-large;background:radial-gradient(circle closest-side at 50% 50%,#dce99b 0%,#b8cc6a 58%,#728b3d 94%,transparent 95%)}
 .fixture-column.is-loading .match-loading-ball:after{left:-9px;bottom:-4px;width:68px;height:12px;filter:blur(5px)}
+@media(max-width:760px){
+  .fixture-column.is-loading .match-loading-ball:after{left:-15px;bottom:-6px;width:80px;height:16px;background:radial-gradient(ellipse at center,rgba(2,7,5,.94) 0 25%,rgba(201,255,69,.55) 55%,rgba(201,255,69,0) 82%);box-shadow:0 0 14px 5px rgba(201,255,69,.28),0 0 28px 8px rgba(201,255,69,.14);filter:blur(2px)}
+}
 .match-loading-caption{display:inline-flex;align-items:baseline;justify-content:center;gap:8px;font-size:15px;line-height:22px;white-space:nowrap}
 .match-loading-caption strong{margin:0;font-size:15px}
 @keyframes tennis-ball-bounce-large{0%,100%{transform:translateY(0) scale(1.04,.92)}48%{transform:translateY(-45px) scale(.96,1.04)}}
