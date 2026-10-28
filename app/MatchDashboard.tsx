@@ -902,6 +902,7 @@ export function MatchDashboard(){
   const [selected,setSelected]=useState<Match|null>(null);
   const [prediction,setPrediction]=useState<Prediction|null>(null);
   const [status,setStatus]=useState<"loading"|"ready"|"error">("loading");
+  const [loadingElapsed,setLoadingElapsed]=useState(0);
   const [loadAttempt,setLoadAttempt]=useState(0);
   const [previousStatus,setPreviousStatus]=useState<"loading"|"ready"|"error">("loading");
   const previousRequested=useRef(false);
@@ -936,6 +937,8 @@ export function MatchDashboard(){
   },[]);
   const t=text[language];
   const retryLabel={tr:"Tekrar dene",en:"Try again",fr:"Réessayer",es:"Reintentar",de:"Erneut versuchen",it:"Riprova"}[language];
+  const estimateLabel={tr:"Tahmini ilerleme",en:"Estimated progress",fr:"Progression estimée",es:"Progreso estimado",de:"Geschätzter Fortschritt",it:"Avanzamento stimato"}[language];
+  const loadingPercent=Math.min(95,Math.round(95*(1-Math.exp(-loadingElapsed/48))));
   const upcomingLabels={
     tr:{search:"Oyuncu veya turnuva ara",tournament:"TURNUVA",allTournaments:"Tüm turnuvalar",confidence:"TAHMİN GÜVENİ",shown:"maç gösteriliyor",none:"Bu filtrelere uyan yaklaşan maç yok.",clear:"Filtreleri temizle"},
     en:{search:"Search player or tournament",tournament:"TOURNAMENT",allTournaments:"All tournaments",confidence:"CONFIDENCE",shown:"matches shown",none:"No upcoming matches match these filters.",clear:"Clear filters"},
@@ -976,12 +979,15 @@ export function MatchDashboard(){
 
   useEffect(()=>{
     const controller=new AbortController();
+    const startedAt=Date.now();
     setStatus("loading");
+    setLoadingElapsed(0);
+    const timer=window.setInterval(()=>setLoadingElapsed(Math.floor((Date.now()-startedAt)/1000)),1000);
     fetch(`${API_BASE}/api/matches`,{signal:controller.signal})
       .then(r=>{if(!r.ok)throw new Error();return r.json();})
-      .then(data=>{setMatches(data.matches??[]);setStatus("ready");})
-      .catch(()=>{if(!controller.signal.aborted)setStatus("error");});
-    return()=>controller.abort();
+      .then(data=>{window.clearInterval(timer);setMatches(data.matches??[]);setStatus("ready");})
+      .catch(()=>{window.clearInterval(timer);if(!controller.signal.aborted)setStatus("error");});
+    return()=>{controller.abort();window.clearInterval(timer);};
   },[loadAttempt]);
   useEffect(()=>{if(view!=="previous"||previousRequested.current)return;previousRequested.current=true;fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
     const history:PreviousMatch[]=Array.isArray(data.matches)?data.matches:[];
@@ -1032,7 +1038,7 @@ export function MatchDashboard(){
 
     {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart}/>:!selected?<section className="fixture-column">
       <div className="fixture-heading"><div><span className="live-dot"/>ATP TOUR</div><h1>{t.upcoming}</h1><p>{status==="ready"&&!availableMatches.length?t.noUpcoming:t.choose}</p></div>
-      {status==="loading"&&<div className="match-loading-inline" role="status"><span className="match-loading-spinner" aria-hidden="true"/>{t.loading}</div>}
+      {status==="loading"&&<div className="match-loading-inline"><span className="match-loading-spinner" aria-hidden="true"/><span>{t.loading}</span><strong title={estimateLabel}>≈{loadingPercent}%</strong></div>}
       {status==="error"&&<div className="match-loading-inline match-load-error"><span>{t.failed}</span><button type="button" onClick={()=>setLoadAttempt(current=>current+1)}>{retryLabel}</button></div>}
       {status==="ready"&&availableMatches.length>0&&<div className="upcoming-filter-bar">
         <label className="upcoming-search"><span aria-hidden="true"/><input type="search" value={upcomingQuery} onChange={event=>setUpcomingQuery(event.target.value)} placeholder={upcomingLabels.search} aria-label={upcomingLabels.search}/>{upcomingQuery&&<button type="button" onClick={()=>setUpcomingQuery("")} aria-label={upcomingLabels.clear}>×</button>}</label>
