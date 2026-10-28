@@ -51,8 +51,8 @@ test("keeps production API and model presentation in source", async () => {
 
   assert.match(dashboard, /https:\/\/umtennis-api\.onrender\.com/);
   assert.match(dashboard, /fetch\(`\$\{API_BASE\}\/api\/matches`/);
-  assert.match(dashboard, /Math\.min\(95,Math\.round\(95\*/);
-  assert.match(dashboard, /aria-valuenow=\{loadingPercent\}/);
+  assert.match(dashboard, /match-loading-inline/);
+  assert.doesNotMatch(dashboard, /loadingPercent|match-loading-card/);
   assert.match(dashboard, /setLoadAttempt\(current=>current\+1\)/);
   assert.doesNotMatch(dashboard, /fetch\("\/data\/upcoming\.json"/);
   assert.match(dashboard, /view!=="previous"\|\|previousRequested\.current/);
