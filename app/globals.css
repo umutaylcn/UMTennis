@@ -309,7 +309,7 @@
 @keyframes tennis-ball-bounce-large{0%,100%{transform:translateY(0) scale(1.04,.92)}48%{transform:translateY(-45px) scale(.96,1.04)}}
 @keyframes tennis-ball-bounce-desktop{0%,100%{transform:translateY(0) scale(1.04,.92)}48%{transform:translateY(-180px) scale(.96,1.04)}}
 @media(min-width:761px){
-  .fixture-column.is-loading .match-loading-inline{gap:22px}
+  .fixture-column.is-loading .match-loading-inline{gap:22px;transform:translateY(50px)}
   .fixture-column.is-loading .match-loading-ball,.fixture-column.is-loading .match-loading-ball canvas{width:64px;height:64px}
   .fixture-column.is-loading .match-loading-ball canvas{animation-name:tennis-ball-bounce-desktop}
   .fixture-column.is-loading .match-loading-ball:after{left:-10px;bottom:-5px;width:84px;height:14px;filter:blur(6px)}
