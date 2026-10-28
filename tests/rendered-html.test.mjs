@@ -80,6 +80,9 @@ test("loading ball keeps its silhouette fixed while surface seams move", async (
   ]);
   assert.match(css, /loading-tennis-ball-3d\.svg/);
   assert.doesNotMatch(css, /tennis-ball-roll/);
+  assert.match(css, /tennis-ball-shadow/);
+  assert.match(css, /height:17px;flex:none/);
   assert.match(ball, /attributeName="d"/);
+  assert.doesNotMatch(ball, /attributeName="opacity"/);
   assert.match(ball, /url\(#volume\)/);
 });
