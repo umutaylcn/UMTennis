@@ -88,7 +88,7 @@ test("loading ball projects a rotating 3D seam onto the visible hemisphere", asy
   assert.doesNotMatch(css, /\.fixture-column\.is-loading \.match-loading-ball:before\{/);
   assert.match(css, /\.fixture-column\.is-loading \.match-loading-ball canvas\{width:50px;height:50px/);
   assert.match(css, /@media\(min-width:761px\)\{[\s\S]*?match-loading-ball canvas\{width:64px;height:64px\}/);
-  assert.match(css, /@keyframes tennis-ball-bounce-desktop\{[\s\S]*?translateY\(-90px\)/);
+  assert.match(css, /@keyframes tennis-ball-bounce-desktop\{[\s\S]*?translateY\(-180px\)/);
   assert.match(css, /@media\(min-width:761px\)\{[\s\S]*?animation-name:tennis-ball-bounce-desktop/);
   assert.doesNotMatch(css, /tennis-ball-roll/);
   assert.match(css, /tennis-ball-shadow/);
