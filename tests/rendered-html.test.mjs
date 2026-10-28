@@ -72,3 +72,14 @@ test("ships the generated upcoming snapshot as a static asset", async () => {
   assert.ok(Number.isFinite(Date.parse(snapshot.generated_at_utc)));
   assert.ok(snapshot.matches.every(match => Number.isFinite(Date.parse(match.start_time_utc))));
 });
+
+test("loading ball keeps its silhouette fixed while surface seams move", async () => {
+  const [css, ball] = await Promise.all([
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../public/loading-tennis-ball-3d.svg", import.meta.url), "utf8"),
+  ]);
+  assert.match(css, /loading-tennis-ball-3d\.svg/);
+  assert.doesNotMatch(css, /tennis-ball-roll/);
+  assert.match(ball, /attributeName="d"/);
+  assert.match(ball, /url\(#volume\)/);
+});
