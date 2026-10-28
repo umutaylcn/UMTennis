@@ -1038,9 +1038,9 @@ export function MatchDashboard(){
       </div>
     </header>
 
-    {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart}/>:!selected?<section className="fixture-column">
-      <div className="fixture-heading"><div><span className="live-dot"/>ATP TOUR</div><h1>{t.upcoming}</h1><p>{status==="ready"&&!availableMatches.length?t.noUpcoming:t.choose}</p></div>
-      {status==="loading"&&<div className="match-loading-inline"><LoadingTennisBall/><span>{t.loading}</span><strong title={estimateLabel}>{loadingPercent}%</strong></div>}
+    {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart}/>:!selected?<section className={`fixture-column${status==="loading"?" is-loading":""}`}>
+      {status!=="loading"&&<div className="fixture-heading"><div><span className="live-dot"/>ATP TOUR</div><h1>{t.upcoming}</h1><p>{status==="ready"&&!availableMatches.length?t.noUpcoming:t.choose}</p></div>}
+      {status==="loading"&&<div className="match-loading-inline" role="status" aria-live="polite"><LoadingTennisBall/><span className="match-loading-caption"><span>{t.loading}</span><strong title={estimateLabel}>{loadingPercent}%</strong></span></div>}
       {status==="error"&&<div className="match-loading-inline match-load-error"><span>{t.failed}</span><button type="button" onClick={()=>setLoadAttempt(current=>current+1)}>{retryLabel}</button></div>}
       {status==="ready"&&availableMatches.length>0&&<div className="upcoming-filter-bar">
         <label className="upcoming-search"><span aria-hidden="true"/><input type="search" value={upcomingQuery} onChange={event=>setUpcomingQuery(event.target.value)} placeholder={upcomingLabels.search} aria-label={upcomingLabels.search}/>{upcomingQuery&&<button type="button" onClick={()=>setUpcomingQuery("")} aria-label={upcomingLabels.clear}>×</button>}</label>

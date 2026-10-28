@@ -39,7 +39,7 @@ test("server-renders the UMTennis application shell", async () => {
   const html = await response.text();
   assert.match(html, /<title>UMTennis.*ATP Match Predictions<\/title>/i);
   assert.match(html, /UMTennis/);
-  assert.match(html, /Yaklaşan Maçlar|Upcoming Matches/);
+  assert.match(html, /fixture-column is-loading/);
   assert.match(html, /Maçlar yükleniyor|Loading matches/);
   assert.doesNotMatch(html, /vinext-starter|Starter Project/i);
 });
@@ -53,6 +53,9 @@ test("keeps production API and model presentation in source", async () => {
   assert.match(dashboard, /https:\/\/umtennis-api\.onrender\.com/);
   assert.match(dashboard, /fetch\(`\$\{API_BASE\}\/api\/matches`/);
   assert.match(dashboard, /match-loading-inline/);
+  assert.match(dashboard, /fixture-column\$\{status==="loading"\?" is-loading"/);
+  assert.match(dashboard, /status!=="loading"&&<div className="fixture-heading"/);
+  assert.match(dashboard, /match-loading-caption/);
   assert.match(dashboard, /LoadingTennisBall/);
   assert.match(dashboard, /"Jakub Mensik":"110"/);
   assert.doesNotMatch(dashboard, /match-loading-spinner/);
@@ -80,6 +83,10 @@ test("loading ball projects a rotating 3D seam onto the visible hemisphere", asy
     readFile(new URL("../app/LoadingTennisBall.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(css, /match-loading-ball canvas/);
+  assert.match(css, /\.fixture-column\.is-loading\{position:fixed;inset:0/);
+  assert.match(css, /\.fixture-column\.is-loading \.fixture-list\{display:none\}/);
+  assert.doesNotMatch(css, /\.fixture-column\.is-loading \.match-loading-ball:before\{/);
+  assert.match(css, /\.fixture-column\.is-loading \.match-loading-ball canvas\{width:50px;height:50px/);
   assert.doesNotMatch(css, /tennis-ball-roll/);
   assert.match(css, /tennis-ball-shadow/);
   assert.match(css, /height:17px;flex:none/);

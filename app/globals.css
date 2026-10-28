@@ -296,3 +296,15 @@
   .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-130.portrait-mobile-mannarino img{transform:translateY(80px) scale(1.3)}
   .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-130.portrait-mobile-mannarino.portrait-mirrored img{transform:translateY(80px) scale(1.3) scaleX(-1)}
 }
+
+/* Center the larger 3D ball while fixtures are loading. */
+.fixture-column.is-loading{position:fixed;inset:0;z-index:2;width:100%;min-height:100dvh;margin:0;padding:0;display:grid;place-items:center;pointer-events:none}
+.fixture-column.is-loading .fixture-list{display:none}
+.fixture-column.is-loading .match-loading-inline{margin:0;display:flex;flex-direction:column;align-items:center;gap:18px;color:#fff}
+.fixture-column.is-loading .match-loading-ball{width:50px;height:50px}
+.fixture-column.is-loading .match-loading-ball canvas{width:50px;height:50px;animation-name:tennis-ball-bounce-large;background:radial-gradient(circle closest-side at 50% 50%,#dce99b 0%,#b8cc6a 58%,#728b3d 94%,transparent 95%)}
+.fixture-column.is-loading .match-loading-ball:after{left:-9px;bottom:-4px;width:68px;height:12px;filter:blur(5px)}
+.match-loading-caption{display:inline-flex;align-items:baseline;justify-content:center;gap:8px;font-size:15px;line-height:22px;white-space:nowrap}
+.match-loading-caption strong{margin:0;font-size:15px}
+@keyframes tennis-ball-bounce-large{0%,100%{transform:translateY(0) scale(1.04,.92)}48%{transform:translateY(-45px) scale(.96,1.04)}}
+@media(prefers-reduced-motion:reduce){.fixture-column.is-loading .match-loading-ball canvas{animation:none}}
