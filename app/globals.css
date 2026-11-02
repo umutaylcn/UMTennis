@@ -118,6 +118,8 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-166 img{transform:translateY(var(--portrait-shift,0%)) scale(1.66);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-169{overflow:visible}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-169 img{transform:translateY(var(--portrait-shift,0%)) scale(1.69);transform-origin:center bottom}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-176{overflow:visible}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-176 img{transform:translateY(var(--portrait-shift,0%)) scale(1.76);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-177{overflow:visible}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-177 img{transform:translateY(var(--portrait-shift,0%)) scale(1.77);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-180{overflow:visible}
@@ -160,6 +162,7 @@
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-164.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.64) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-166.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.66) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-169.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.69) scaleX(-1);transform-origin:center bottom}
+.analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-176.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.76) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-177.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.77) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-180.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.8) scaleX(-1);transform-origin:center bottom}
 .analysis-player .analysis-photo-zone .portrait-shell.portrait-scale-182.portrait-mirrored img{transform:translateY(var(--portrait-shift,0%)) scale(1.82) scaleX(-1);transform-origin:center bottom}

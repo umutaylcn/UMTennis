@@ -440,7 +440,16 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Titouan Droguet":"right",
   "Ethan Quinn":"left",
 };
-const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"145"|"150"|"157"|"160"|"164"|"166"|"169"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"240"|"242">={
+const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"145"|"150"|"157"|"160"|"164"|"166"|"169"|"176"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"240"|"242">={
+  "Luciano Darderi":"160",
+  "Daniel Merida Aguilar":"176",
+  "Casper Ruud":"160",
+  "Tomas Machac":"160",
+  "Alejandro Davidovich Fokina":"160",
+  "Quentin Halys":"160",
+  "Matteo Berrettini":"160",
+  "Andrey Rublev":"160",
+  "Stefanos Tsitsipas":"160",
   "Stan Wawrinka":"160",
   "Daniil Medvedev":"110",
   "Carlos Alcaraz":"110",
@@ -494,7 +503,6 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"1
   "Novak Djokovic":"120",
   "Sebastian Korda":"120",
   "Mariano Navone":"109",
-  "Daniel Merida Aguilar":"110",
   "Jaume Munar":"120",
   "Alexander Blockx":"130",
   "Alex Molcan":"130",
