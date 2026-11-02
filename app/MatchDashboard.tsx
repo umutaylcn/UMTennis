@@ -440,16 +440,14 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Titouan Droguet":"right",
   "Ethan Quinn":"left",
 };
-const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"140"|"140plain"|"143"|"145"|"150"|"157"|"160"|"164"|"166"|"169"|"176"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"240"|"242">={
+const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"1143"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"1333"|"140"|"140plain"|"143"|"145"|"150"|"157"|"160"|"164"|"166"|"169"|"176"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"224"|"240"|"242">={
   "Luciano Darderi":"160",
   "Daniel Merida Aguilar":"176",
-  "Casper Ruud":"160",
-  "Tomas Machac":"160",
-  "Alejandro Davidovich Fokina":"160",
-  "Quentin Halys":"160",
-  "Matteo Berrettini":"160",
-  "Andrey Rublev":"160",
-  "Stefanos Tsitsipas":"160",
+  "Casper Ruud":"224",
+  "Tomas Machac":"1333",
+  "Alejandro Davidovich Fokina":"1143",
+  "Quentin Halys":"1143",
+  "Matteo Berrettini":"176",
   "Stan Wawrinka":"160",
   "Daniil Medvedev":"110",
   "Carlos Alcaraz":"110",
@@ -622,7 +620,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const sources=[
     ...(top20Slug?[`/players/cutouts/top20/${top20Slug}.png${top20Slug==="rafael-jodar"?"?v=action-oct25":top20Slug==="casper-ruud"?"?v=real-photo-nov2":""}`]:[]),
     ...(top40Slug?[`/players/cutouts/top40/${top40Slug}.png${top40Slug==="francisco-cerundolo"?"?v=real-photo-oct19":["luciano-darderi","tomas-machac","alejandro-davidovich-fokina","quentin-halys","matteo-berrettini","andrey-rublev","stefanos-tsitsipas"].includes(top40Slug)?"?v=real-photo-nov2":""}`]:[]),
-    ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png${top60Slug==="daniel-merida-aguilar"?"?v=real-photo-nov2":""}`]:[]),
+    ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png${top60Slug==="daniel-merida-aguilar"?"?v=real-photo-nov2b":""}`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
     ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${nameCutout==="stan-wawrinka-wimbledon"?"face-action-oct25":nameCutout==="jurij-rodionov-action"?"action-oct25b":nameCutout==="527"||nameCutout==="jerome-kym"?"action-oct25":["140","175","176"].includes(nameCutout)?"real-photo-oct19":["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),

@@ -20,7 +20,7 @@ DESTINATIONS = PROJECT / "web" / "public" / "players" / "cutouts"
 
 PHOTOS = {
     "luciano-darderi": ("top40_references/luciano-darderi.jpg", "top40"),
-    "daniel-merida-aguilar": ("top60_references/daniel-merida-telemadrid2026.jpg", "top60"),
+    "daniel-merida-aguilar": ("top60_references/daniel-merida-eurosport2026.jpg", "top60"),
     "casper-ruud": ("top20_references/casper-ruud.jpg", "top20"),
     "tomas-machac": ("top40_references/tomas-machac-alternate.jpg", "top40"),
     "alejandro-davidovich-fokina": ("top40_references/alejandro-davidovich-fokina.jpg", "top40"),
