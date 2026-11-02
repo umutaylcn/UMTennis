@@ -612,9 +612,9 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const homeSide=portraitValue(PLAYER_PHOTO_HOME_SIDE,name);
   const shouldMirror=homeSide!=null&&homeSide!==side;
   const sources=[
-    ...(top20Slug?[`/players/cutouts/top20/${top20Slug}.png${top20Slug==="rafael-jodar"?"?v=action-oct25":""}`]:[]),
-    ...(top40Slug?[`/players/cutouts/top40/${top40Slug}.png${top40Slug==="francisco-cerundolo"?"?v=real-photo-oct19":""}`]:[]),
-    ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png`]:[]),
+    ...(top20Slug?[`/players/cutouts/top20/${top20Slug}.png${top20Slug==="rafael-jodar"?"?v=action-oct25":top20Slug==="casper-ruud"?"?v=real-photo-nov2":""}`]:[]),
+    ...(top40Slug?[`/players/cutouts/top40/${top40Slug}.png${top40Slug==="francisco-cerundolo"?"?v=real-photo-oct19":["luciano-darderi","tomas-machac","alejandro-davidovich-fokina","quentin-halys","matteo-berrettini","andrey-rublev","stefanos-tsitsipas"].includes(top40Slug)?"?v=real-photo-nov2":""}`]:[]),
+    ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png${top60Slug==="daniel-merida-aguilar"?"?v=real-photo-nov2":""}`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
     ...(top100Slug?[`/players/cutouts/top100/${top100Slug}.png?v=top100-5`]:[]),
     ...(nameCutout?[`/players/cutouts/${nameCutout}.png?v=${nameCutout==="stan-wawrinka-wimbledon"?"face-action-oct25":nameCutout==="jurij-rodionov-action"?"action-oct25b":nameCutout==="527"||nameCutout==="jerome-kym"?"action-oct25":["140","175","176"].includes(nameCutout)?"real-photo-oct19":["225","183","1041"].includes(nameCutout)?"real-photo-oct17":"sourced-34b67e4"}`]:[]),

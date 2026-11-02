@@ -21,3 +21,19 @@ The following cutouts were edited from the linked real photographs by removing t
 | `cutouts/jacob-fearnley-action.png` | [Jacob Fearnley, HSBC Championships 2025](https://www.lta.org.uk/fan-zone/british-tennis-players/jacob-fearnley/) | LTA; reuse terms not stated on the source page. |
 | `cutouts/top20/jakub-mensik-action.png` | [Jakub Menšík, Swiss Indoors Basel](https://commons.wikimedia.org/wiki/File:Jakub_Men%C5%A1%C3%ADk,_Swiss_Indoors_Basel_(cropped).jpg) | Skyscraper2010; cropped by Kacir, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
 | `cutouts/lukas-neumayer-action.png` | [Lukas Neumayer, 2026 US Open](https://commons.wikimedia.org/wiki/File:Lukas_Neumayer_(2026_US_Open)_02.jpg) | Hameltion, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+
+## 2 November 2026: real-photo replacements
+
+These nine portraits were rebuilt using alpha extraction from the **original photographed pixels**. No new pose, face, clothing, body part, or racket was generated. The input files used for local regeneration are listed in `scripts/extract_real_photo_cutouts.py`. Source-image usage rights that are not stated below still need review before commercial use.
+
+| Portrait | Source | Credit / terms |
+| --- | --- | --- |
+| `cutouts/top20/casper-ruud.png` | Archived real match photo `assets/player_sources/top20_references/casper-ruud.jpg` | Source attribution not yet verified. |
+| `cutouts/top40/luciano-darderi.png` | Archived real match photo `assets/player_sources/top40_references/luciano-darderi.jpg` | Source attribution not yet verified. |
+| `cutouts/top40/alejandro-davidovich-fokina.png` | Archived real match photo `assets/player_sources/top40_references/alejandro-davidovich-fokina.jpg` | Source attribution not yet verified. |
+| `cutouts/top40/quentin-halys.png` | Archived real match photo `assets/player_sources/top40_references/quentin-halys.jpg` | Source attribution not yet verified. |
+| `cutouts/top40/matteo-berrettini.png` | Archived real match photo `assets/player_sources/top40_references/matteo-berrettini.jpg` | Source attribution not yet verified. |
+| `cutouts/top40/tomas-machac.png` | [Miami Open action photograph](https://www.sportskeeda.com/tennis/miami-open-2024-jannik-sinner-vs-tomas-machac-preview-head-to-head-prediction-pick) | Sportskeeda / original photographer not confirmed; reuse terms not stated. |
+| `cutouts/top40/andrey-rublev.png` | [2023 US Open action photograph 03](https://commons.wikimedia.org/wiki/File:Andrey_Rublev_(2023_US_Open)_03.jpg) | Hameltion, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). |
+| `cutouts/top40/stefanos-tsitsipas.png` | [2024 Swiss Indoors Basel action photograph](https://commons.wikimedia.org/wiki/File:Stefanos_Tsitsipas,_Swiss_Indoors_Basel_2024.jpg) | Skyscraper2010, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). |
+| `cutouts/top60/daniel-merida-aguilar.png` | [Telemadrid action photograph](https://www.telemadrid.es/deportes/Dani-Merida-pasa-a-tercera-ronda-del-Mutua-Madrid-Open-tras-batir-a-Moutet-0-2883011673--20260425050000.html) | Telemadrid / original photographer not confirmed; reuse terms not stated. |
