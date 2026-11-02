@@ -27,7 +27,7 @@ PHOTOS = {
     "quentin-halys": ("top40_references/quentin-halys.jpg", "top40"),
     "matteo-berrettini": ("top40_references/matteo-berrettini.jpg", "top40"),
     "andrey-rublev": ("top40_references/rublev-usopen-03.jpg", "top40"),
-    "stefanos-tsitsipas": ("top40_references/stefanos-tsitsipas-basel2024.jpg", "top40"),
+    "stefanos-tsitsipas": ("top40_references/stefanos-tsitsipas-indianwells2025.jpg", "top40"),
 }
 
 
@@ -69,6 +69,28 @@ def normalize(image: Image.Image) -> Image.Image:
     return canvas
 
 
+def clean_clay_fringe(image: Image.Image) -> Image.Image:
+    """Drop clay-coloured antialias pixels at the cutout edge, without repainting."""
+    pixels = np.asarray(image).copy()
+    alpha = pixels[:, :, 3]
+    edge_depth = ndimage.distance_transform_edt(alpha > 0)
+    red = pixels[:, :, 0].astype(np.float32)
+    green = pixels[:, :, 1].astype(np.float32)
+    blue = pixels[:, :, 2].astype(np.float32)
+    clay_spill = (
+        (alpha > 0)
+        & (edge_depth <= 8)
+        & (red > 110)
+        & (red > green * 1.3)
+        & (green > blue * 1.05)
+    )
+    pixels[:, :, 3][clay_spill] = 0
+    # A narrow second trim removes source-photo colour bleeding that survives
+    # the hue check (notably around dark shoes and the racket frame).
+    pixels[:, :, 3] = ndimage.grey_erosion(pixels[:, :, 3], size=(5, 5))
+    return Image.fromarray(pixels, "RGBA")
+
+
 def main(slugs: list[str]) -> None:
     requested = slugs or list(PHOTOS)
     unknown = set(requested) - PHOTOS.keys()
@@ -81,6 +103,8 @@ def main(slugs: list[str]) -> None:
         if not source.is_file():
             raise FileNotFoundError(source)
         output = normalize(extract(source, session))
+        if slug in {"alejandro-davidovich-fokina", "quentin-halys"}:
+            output = clean_clay_fringe(output)
         destination = DESTINATIONS / group / f"{slug}.png"
         output.save(destination, optimize=True)
         alpha = np.asarray(output.getchannel("A"))
