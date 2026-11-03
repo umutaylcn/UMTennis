@@ -50,7 +50,8 @@ def extract(source: Path, session: object) -> Image.Image:
         sizes[0] = 0
         subject = labels == sizes.argmax()
         # Remove detached background people/signage while preserving a soft edge.
-        subject = ndimage.binary_fill_holes(subject)
+        if source.name != "stefanos-tsitsipas-rome2023-proxy.jpg":
+            subject = ndimage.binary_fill_holes(subject)
         refined_alpha = np.minimum(alpha_array, ndimage.gaussian_filter(subject.astype(np.float32), 0.65) * 255)
         alpha = Image.fromarray(refined_alpha.astype(np.uint8), "L")
     output = original.convert("RGBA")
@@ -74,21 +75,53 @@ def normalize(image: Image.Image) -> Image.Image:
 
 
 def clean_clay_fringe(image: Image.Image) -> Image.Image:
-    """Remove only obvious clay-coloured spill; keep the photographed limbs intact."""
+    """Decontaminate red clay in the thin outer RGB edge without cutting alpha."""
     pixels = np.asarray(image).copy()
     alpha = pixels[:, :, 3]
-    edge_depth = ndimage.distance_transform_edt(alpha > 0)
-    red = pixels[:, :, 0].astype(np.float32)
-    green = pixels[:, :, 1].astype(np.float32)
-    blue = pixels[:, :, 2].astype(np.float32)
+    visible = alpha > 0
+    edge_depth = ndimage.distance_transform_edt(visible)
+    core = (edge_depth >= 10) & (alpha >= 220)
+    distance, nearest = ndimage.distance_transform_edt(~core, return_indices=True)
+    interior = pixels[nearest[0], nearest[1], :3].astype(np.float32)
+    rgb = pixels[:, :, :3].astype(np.float32)
+    red, green, blue = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
     clay_spill = (
-        (alpha > 0)
-        & (edge_depth <= 4)
+        visible
+        & (edge_depth <= 8)
+        & (distance <= 15)
         & (red > 120)
-        & (red > green * 1.7)
-        & (green > blue * 1.15)
+        & (red > green * 1.12)
+        & (green > blue * 1.02)
     )
-    pixels[:, :, 3][clay_spill] = 0
+    strength = np.clip((9 - edge_depth) / 4, 0, 1)
+    blended = rgb * (1 - strength[:, :, None]) + interior * strength[:, :, None]
+    pixels[:, :, :3][clay_spill] = np.clip(blended[clay_spill], 0, 255).astype(np.uint8)
+    # The remaining clay outline is at most two edge pixels wide. Remove only
+    # the warm-colored outer rim, not a uniform band around the player.
+    pixels[:, :, 3][clay_spill & (edge_depth <= 2)] = 0
+    return Image.fromarray(pixels, "RGBA")
+
+
+def clear_tsitsipas_clay_gap(image: Image.Image) -> Image.Image:
+    """Clear clay erroneously kept between the photographed sleeve and torso."""
+    pixels = np.asarray(image).copy()
+    region = pixels[480:600, 225:385]
+    red = region[:, :, 0].astype(np.float32)
+    green = region[:, :, 1].astype(np.float32)
+    blue = region[:, :, 2].astype(np.float32)
+    clay = (
+        (region[:, :, 3] > 0)
+        & (red > 130)
+        & (red > green * 1.32)
+        & (green > blue * 1.1)
+        & (blue < 110)
+    )
+    labels, count = ndimage.label(clay)
+    if count:
+        sizes = np.bincount(labels.ravel())
+        sizes[0] = 0
+        gap = ndimage.binary_dilation(labels == sizes.argmax(), iterations=2)
+        region[:, :, 3][gap] = 0
     return Image.fromarray(pixels, "RGBA")
 
 
@@ -104,7 +137,9 @@ def main(slugs: list[str]) -> None:
         if not source.is_file():
             raise FileNotFoundError(source)
         output = normalize(extract(source, session))
-        if slug in {"alejandro-davidovich-fokina", "quentin-halys"}:
+        if slug == "stefanos-tsitsipas":
+            output = clear_tsitsipas_clay_gap(output)
+        if slug in {"alejandro-davidovich-fokina", "quentin-halys", "stefanos-tsitsipas"}:
             output = clean_clay_fringe(output)
         destination = DESTINATIONS / group / f"{slug}.png"
         output.save(destination, optimize=True)
