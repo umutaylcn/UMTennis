@@ -80,25 +80,26 @@ def clean_clay_fringe(image: Image.Image) -> Image.Image:
     alpha = pixels[:, :, 3]
     visible = alpha > 0
     edge_depth = ndimage.distance_transform_edt(visible)
-    core = (edge_depth >= 10) & (alpha >= 220)
+    core = (edge_depth >= 20) & (alpha >= 220)
     distance, nearest = ndimage.distance_transform_edt(~core, return_indices=True)
     interior = pixels[nearest[0], nearest[1], :3].astype(np.float32)
     rgb = pixels[:, :, :3].astype(np.float32)
     red, green, blue = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
     clay_spill = (
         visible
-        & (edge_depth <= 8)
-        & (distance <= 15)
+        & (edge_depth <= 16)
+        & (distance <= 25)
         & (red > 120)
         & (red > green * 1.12)
         & (green > blue * 1.02)
     )
-    strength = np.clip((9 - edge_depth) / 4, 0, 1)
+    strength = np.clip((17 - edge_depth) / 7, 0, 1)
     blended = rgb * (1 - strength[:, :, None]) + interior * strength[:, :, None]
     pixels[:, :, :3][clay_spill] = np.clip(blended[clay_spill], 0, 255).astype(np.uint8)
-    # The remaining clay outline is at most two edge pixels wide. Remove only
-    # the warm-colored outer rim, not a uniform band around the player.
-    pixels[:, :, 3][clay_spill & (edge_depth <= 2)] = 0
+    # The original clay spill penetrates several pixels into the mask. A
+    # two-pixel trim still leaves a conspicuous red outline at website size.
+    # Trim only clay-coloured edge pixels, never an entire silhouette band.
+    pixels[:, :, 3][clay_spill & (edge_depth <= 8)] = 0
     return Image.fromarray(pixels, "RGBA")
 
 
