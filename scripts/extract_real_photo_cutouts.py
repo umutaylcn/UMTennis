@@ -27,7 +27,7 @@ PHOTOS = {
     "quentin-halys": ("top40_references/quentin-halys.jpg", "top40"),
     "matteo-berrettini": ("top40_references/matteo-berrettini.jpg", "top40"),
     "andrey-rublev": ("top40_references/rublev-usopen-03.jpg", "top40"),
-    "stefanos-tsitsipas": ("top40_references/stefanos-tsitsipas-indianwells2025.jpg", "top40"),
+    "stefanos-tsitsipas": ("top40_references/stefanos-tsitsipas-rome2023-proxy.jpg", "top40"),
 }
 
 
@@ -39,7 +39,11 @@ def extract(source: Path, session: object) -> Image.Image:
     alpha = segmented.getchannel("A")
     if alpha.getbbox() is None:
         raise ValueError(f"Empty segmentation: {source}")
-    alpha_array = np.asarray(alpha)
+    alpha_array = np.asarray(alpha).copy()
+    if source.name == "stefanos-tsitsipas-rome2023-proxy.jpg":
+        # The automated mask also selects a court line behind his left side.
+        # This rectangle contains no part of the photographed player or racket.
+        alpha_array[330:365, :720] = 0
     labels, count = ndimage.label(alpha_array > 128, structure=np.ones((3, 3)))
     if count:
         sizes = np.bincount(labels.ravel())
@@ -70,7 +74,7 @@ def normalize(image: Image.Image) -> Image.Image:
 
 
 def clean_clay_fringe(image: Image.Image) -> Image.Image:
-    """Drop clay-coloured antialias pixels at the cutout edge, without repainting."""
+    """Remove only obvious clay-coloured spill; keep the photographed limbs intact."""
     pixels = np.asarray(image).copy()
     alpha = pixels[:, :, 3]
     edge_depth = ndimage.distance_transform_edt(alpha > 0)
@@ -79,15 +83,12 @@ def clean_clay_fringe(image: Image.Image) -> Image.Image:
     blue = pixels[:, :, 2].astype(np.float32)
     clay_spill = (
         (alpha > 0)
-        & (edge_depth <= 8)
-        & (red > 110)
-        & (red > green * 1.3)
-        & (green > blue * 1.05)
+        & (edge_depth <= 4)
+        & (red > 120)
+        & (red > green * 1.7)
+        & (green > blue * 1.15)
     )
     pixels[:, :, 3][clay_spill] = 0
-    # A narrow second trim removes source-photo colour bleeding that survives
-    # the hue check (notably around dark shoes and the racket frame).
-    pixels[:, :, 3] = ndimage.grey_erosion(pixels[:, :, 3], size=(5, 5))
     return Image.fromarray(pixels, "RGBA")
 
 
