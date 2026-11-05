@@ -19,12 +19,13 @@ SOURCES = PROJECT / "assets" / "player_sources"
 DESTINATIONS = PROJECT / "web" / "public" / "players" / "cutouts"
 
 PHOTOS = {
+    # Quentin Halys is intentionally excluded: his Wimbledon 2024 photo uses
+    # a manually reviewed cutout; automatic extraction fills the racket with grass.
     "luciano-darderi": ("top40_references/luciano-darderi.jpg", "top40"),
     "daniel-merida-aguilar": ("top60_references/daniel-merida-eurosport2026.jpg", "top60"),
     "casper-ruud": ("top20_references/casper-ruud.jpg", "top20"),
     "tomas-machac": ("top40_references/tomas-machac-alternate.jpg", "top40"),
     "alejandro-davidovich-fokina": ("top40_references/alejandro-davidovich-fokina.jpg", "top40"),
-    "quentin-halys": ("top40_references/quentin-halys.jpg", "top40"),
     "matteo-berrettini": ("top40_references/matteo-berrettini.jpg", "top40"),
     "andrey-rublev": ("top40_references/rublev-usopen-03.jpg", "top40"),
     "stefanos-tsitsipas": ("top40_references/stefanos-tsitsipas-rome2023-proxy.jpg", "top40"),
@@ -140,7 +141,7 @@ def main(slugs: list[str]) -> None:
         output = normalize(extract(source, session))
         if slug == "stefanos-tsitsipas":
             output = clear_tsitsipas_clay_gap(output)
-        if slug in {"alejandro-davidovich-fokina", "quentin-halys", "stefanos-tsitsipas"}:
+        if slug in {"alejandro-davidovich-fokina", "stefanos-tsitsipas"}:
             output = clean_clay_fringe(output)
         destination = DESTINATIONS / group / f"{slug}.png"
         output.save(destination, optimize=True)
