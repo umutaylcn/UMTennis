@@ -29,8 +29,6 @@ function MatchStrength({value}:{value:number}){
   })}</div></div>;
 }
 
-const API_BASE=
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "https://umtennis-api.onrender.com";
 const PLAYER_IMAGE_FALLBACKS:Record<number,string>={
   19:"https://media.prod.tennis.com/v1/tcf/images/headshots/cb77df64-7fd7-459a-923e-9b909d964f2d.png?fm=webp&q=80&w=1200",
   115:"https://images.prismic.io/fft-rg-site/ZksBuyol0Zci9Rk0_47931_J.FARIA.png?auto=format%2Ccompress&h=900&w=900",
@@ -907,6 +905,7 @@ export function MatchDashboard(){
   const [view,setView]=useState<View>("matches");
   const [timezone,setTimezone]=useState("local");
   const [matches,setMatches]=useState<Match[]>([]);
+  const [precomputedPredictions,setPrecomputedPredictions]=useState<Record<string,Prediction>>({});
   const [previousMatches,setPreviousMatches]=useState<PreviousMatch[]>([]);
   const [selected,setSelected]=useState<Match|null>(null);
   const [prediction,setPrediction]=useState<Prediction|null>(null);
@@ -992,13 +991,19 @@ export function MatchDashboard(){
     setStatus("loading");
     setLoadingElapsed(0);
     const timer=window.setInterval(()=>setLoadingElapsed(Math.floor((Date.now()-startedAt)/1000)),1000);
-    fetch(`${API_BASE}/api/matches`,{signal:controller.signal})
+    fetch("/data/upcoming.json",{signal:controller.signal,cache:"no-store"})
       .then(r=>{if(!r.ok)throw new Error();return r.json();})
-      .then(data=>{window.clearInterval(timer);setMatches(data.matches??[]);setStatus("ready");})
+      .then(data=>{
+        if(!Array.isArray(data.matches)||!data.predictions||data.matches.some((match:Match)=>!data.predictions[String(match.match_id)]))throw new Error("Incomplete match snapshot");
+        window.clearInterval(timer);
+        setPrecomputedPredictions(data.predictions);
+        setMatches(data.matches);
+        setStatus("ready");
+      })
       .catch(()=>{window.clearInterval(timer);if(!controller.signal.aborted)setStatus("error");});
     return()=>{controller.abort();window.clearInterval(timer);};
   },[loadAttempt]);
-  useEffect(()=>{if(view!=="previous"||previousRequested.current)return;previousRequested.current=true;fetch(`${API_BASE}/api/previous-matches`).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
+  useEffect(()=>{if(view!=="previous"||previousRequested.current)return;previousRequested.current=true;fetch("/data/previous.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
     const history:PreviousMatch[]=Array.isArray(data.matches)?data.matches:[];
     setPreviousMatches(history.filter(match=>!/\blaver\s+cup\b/i.test(match.tournament_name)));
     setPreviousStatus("ready");
@@ -1022,7 +1027,7 @@ export function MatchDashboard(){
     if(match.schedule_precision==="not_before")return `${labels[language].notBefore} ${formatStart(match.start_time_utc)}`;
     return formatStart(match.start_time_utc);
   }
-  async function openMatch(match:Match){setSelected(match);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});try{const response=await fetch(`${API_BASE}/api/matches/${match.match_id}/prediction`);if(!response.ok)throw new Error();setPrediction(await response.json());}catch{setPredictionError(true);}}
+  function openMatch(match:Match){setSelected(match);const saved=precomputedPredictions[String(match.match_id)];setPrediction(saved??null);setPredictionError(!saved);window.scrollTo({top:0,behavior:"smooth"});}
   function closeMatch(){setView("matches");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
   function showModel(){setView("model");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
   function showPrevious(){setView("previous");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}

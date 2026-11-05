@@ -66,18 +66,12 @@ pnpm install
 pnpm dev
 ```
 
-The frontend uses the production API by default. To use another backend, set:
-
-```bash
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
-```
-
-The Matches landing screen reads the backend `/api/matches` endpoint directly.
-The backend serves its last refreshed fixture snapshot without calling the live
-provider on a page visit. `scripts/update_live_site_data.ps1` in the workspace
-refreshes that backend data; publish the backend after updates. The generated
-`public/data/upcoming.json` remains an export artifact but is not used to load
-the Matches page. Previous matches are requested only when that tab is opened.
+The public site reads Cloudflare-served `public/data/upcoming.json` (including
+precomputed match details) and `public/data/previous.json`. A visitor never
+waits for the Python API to wake up. The workspace's
+`scripts/update_live_site_data.ps1` refreshes both assets; publish the frontend
+after updates. The Python backend remains available for data processing and
+independent API access, but is not required for public page visits.
 
 Useful commands:
 

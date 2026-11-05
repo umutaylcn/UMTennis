@@ -44,15 +44,17 @@ test("server-renders the UMTennis application shell", async () => {
   assert.doesNotMatch(html, /vinext-starter|Starter Project/i);
 });
 
-test("keeps production API and model presentation in source", async () => {
+test("loads public match data without waiting for the Python API", async () => {
   const [dashboard, layout, mobile] = await Promise.all([
     readFile(new URL("../app/MatchDashboard.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/mobile.css", import.meta.url), "utf8"),
   ]);
 
-  assert.match(dashboard, /https:\/\/umtennis-api\.onrender\.com/);
-  assert.match(dashboard, /fetch\(`\$\{API_BASE\}\/api\/matches`/);
+  assert.match(dashboard, /fetch\("\/data\/upcoming\.json"/);
+  assert.match(dashboard, /fetch\("\/data\/previous\.json"/);
+  assert.match(dashboard, /precomputedPredictions\[String\(match\.match_id\)\]/);
+  assert.doesNotMatch(dashboard, /umtennis-api\.onrender\.com|\/api\/matches|\/api\/previous-matches/);
   assert.match(dashboard, /match-loading-inline/);
   assert.match(dashboard, /fixture-column\$\{status==="loading"\?" is-loading"/);
   assert.match(dashboard, /status!=="loading"&&<div className="fixture-heading"/);
@@ -67,7 +69,6 @@ test("keeps production API and model presentation in source", async () => {
   assert.match(dashboard, /loadingPercent/);
   assert.doesNotMatch(dashboard, /match-loading-card|match-loading-track/);
   assert.match(dashboard, /setLoadAttempt\(current=>current\+1\)/);
-  assert.doesNotMatch(dashboard, /fetch\("\/data\/upcoming\.json"/);
   assert.match(dashboard, /view!=="previous"\|\|previousRequested\.current/);
   assert.match(dashboard, /XGBoost/);
   assert.match(dashboard, /Logistic Regression/);
@@ -78,8 +79,12 @@ test("keeps production API and model presentation in source", async () => {
 test("ships the generated upcoming snapshot as a static asset", async () => {
   const snapshot = JSON.parse(await readFile(new URL("../public/data/upcoming.json", import.meta.url), "utf8"));
   assert.equal(snapshot.count, snapshot.matches.length);
+  assert.equal(Object.keys(snapshot.predictions).length, snapshot.count);
+  assert.ok(snapshot.matches.every(match => snapshot.predictions[String(match.match_id)]?.p1_profile));
   assert.ok(Number.isFinite(Date.parse(snapshot.generated_at_utc)));
   assert.ok(snapshot.matches.every(match => Number.isFinite(Date.parse(match.start_time_utc))));
+  const previous = JSON.parse(await readFile(new URL("../public/data/previous.json", import.meta.url), "utf8"));
+  assert.equal(previous.count, previous.matches.length);
 });
 
 test("loading ball projects a rotating 3D seam onto the visible hemisphere", async () => {
