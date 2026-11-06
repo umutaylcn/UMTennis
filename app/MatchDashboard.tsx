@@ -441,7 +441,6 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
 const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"1143"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"1333"|"140"|"140plain"|"143"|"145"|"150"|"157"|"160"|"164"|"166"|"169"|"176"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"224"|"240"|"242">={
   "Luciano Darderi":"160",
   "Daniel Merida Aguilar":"110",
-  "Casper Ruud":"224",
   "Tomas Machac":"1333",
   "Alejandro Davidovich Fokina":"1143",
   "Quentin Halys":"1143",
@@ -616,7 +615,7 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   const homeSide=portraitValue(PLAYER_PHOTO_HOME_SIDE,name);
   const shouldMirror=homeSide!=null&&homeSide!==side;
   const sources=[
-    ...(top20Slug?[`/players/cutouts/top20/${top20Slug}.png${top20Slug==="rafael-jodar"?"?v=action-oct25":top20Slug==="casper-ruud"?"?v=real-photo-nov2":""}`]:[]),
+    ...(top20Slug?[`/players/cutouts/top20/${top20Slug}.png${top20Slug==="rafael-jodar"?"?v=action-oct25":top20Slug==="casper-ruud"?"?v=basel-hd-nov6":""}`]:[]),
     ...(top40Slug?[`/players/cutouts/top40/${top40Slug}.png${top40Slug==="francisco-cerundolo"?"?v=real-photo-oct19":top40Slug==="quentin-halys"?"?v=wimbledon-real-nov5":["alejandro-davidovich-fokina","stefanos-tsitsipas"].includes(top40Slug)?"?v=edge-clean-nov3b":["luciano-darderi","tomas-machac","matteo-berrettini","andrey-rublev"].includes(top40Slug)?"?v=real-photo-nov2":""}`]:[]),
     ...(top60Slug?[`/players/cutouts/top60/${top60Slug}.png${top60Slug==="daniel-merida-aguilar"?"?v=real-photo-nov2b":""}`]:[]),
     ...(top80Slug?[`/players/cutouts/top80/${top80Slug}.png?v=griekspoor2`]:[]),
@@ -805,7 +804,7 @@ function ModelDetails({language}:{language:Language}){
       </div>
 
       <section className="model-disclaimer"><span>UM</span><p><b>{m.guarantee}</b>{m.disclaimer}</p></section>
-      <details className="photo-credits"><summary>Photo credits</summary><p>Player portraits are edited cutouts of source photographs. <a href="https://commons.wikimedia.org/wiki/File:Mattia_Bellucci_(2024_DC_Open)_02.jpg" target="_blank" rel="noreferrer">Mattia Bellucci</a> and <a href="https://commons.wikimedia.org/wiki/File:Timofey_Skatov_(2026_US_Open)_01.jpg" target="_blank" rel="noreferrer">Timofey Skatov</a>: Hameltion, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>. <a href="https://commons.wikimedia.org/wiki/File:Bernard_Tomic_2,_Wimbledon_2013_-_Diliff.jpg" target="_blank" rel="noreferrer">Bernard Tomic</a>: David Iliff, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noreferrer">CC BY-SA 3.0</a>. <a href="https://commons.wikimedia.org/wiki/File:Marcos_Giron_((SA)_at_2014_USOPEN.jpg" target="_blank" rel="noreferrer">Marcos Giron</a>: Emmett Hume, CC BY-SA 4.0. <a href="https://www.tennismagazin.de/news/max-schoenhaus-im-portraet-der-zocker-aus-dem-sauerland/" target="_blank" rel="noreferrer">Max Schoenhaus</a>: Imago / Hasenkopf. Backgrounds were removed and portraits cropped or resized.</p></details>
+      <details className="photo-credits"><summary>Photo credits</summary><p>Player portraits are edited cutouts of source photographs. <a href="https://commons.wikimedia.org/wiki/File:Casper_Ruud,_ATP_Basel_2025.jpg" target="_blank" rel="noreferrer">Casper Ruud</a>: Skyscraper2010, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer">CC BY-SA 4.0</a>. <a href="https://commons.wikimedia.org/wiki/File:Mattia_Bellucci_(2024_DC_Open)_02.jpg" target="_blank" rel="noreferrer">Mattia Bellucci</a> and <a href="https://commons.wikimedia.org/wiki/File:Timofey_Skatov_(2026_US_Open)_01.jpg" target="_blank" rel="noreferrer">Timofey Skatov</a>: Hameltion, CC BY-SA 4.0. <a href="https://commons.wikimedia.org/wiki/File:Bernard_Tomic_2,_Wimbledon_2013_-_Diliff.jpg" target="_blank" rel="noreferrer">Bernard Tomic</a>: David Iliff, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noreferrer">CC BY-SA 3.0</a>. <a href="https://commons.wikimedia.org/wiki/File:Marcos_Giron_((SA)_at_2014_USOPEN.jpg" target="_blank" rel="noreferrer">Marcos Giron</a>: Emmett Hume, CC BY-SA 4.0. <a href="https://www.tennismagazin.de/news/max-schoenhaus-im-portraet-der-zocker-aus-dem-sauerland/" target="_blank" rel="noreferrer">Max Schoenhaus</a>: Imago / Hasenkopf. Backgrounds were removed and portraits cropped or resized.</p></details>
     </div>
   </section>;
 }
