@@ -635,7 +635,11 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
   }));
   const source=sources[sourceIndex]??null;
   return <div className={`portrait-shell ${side}${portraitScale?` portrait-scale-${portraitScale}`:""}${boundedPortrait?" portrait-bounded":""}${mobilePortraitScale?` portrait-mobile-scale-${mobilePortraitScale}`:""}${nameCutout==="jerome-kym"?" portrait-mobile-kym":""}${normalizedPortraitName(name)==="adrian mannarino"?" portrait-mobile-mannarino":""}${shouldMirror?" portrait-mirrored":""}`} style={portraitStyle}>
-    {source?<img src={source} alt={name} onError={failCurrentSource}/>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
+    {source?<>
+      {/* Fallback URLs can be remote and must advance on load errors. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={source} alt={name} onError={failCurrentSource}/>
+    </>:<div className="player-silhouette" aria-label={`${name} silhouette`}><span/><i/></div>}
   </div>;
 }
 
@@ -806,7 +810,7 @@ function ModelDetails({language}:{language:Language}){
   </section>;
 }
 
-function PreviousMatches({matches,status,language,formatStart}:{matches:PreviousMatch[];status:"loading"|"ready"|"error";language:Language;formatStart:(value:string)=>string}){
+function PreviousMatches({matches,status,language,formatStart,onRetry}:{matches:PreviousMatch[];status:"loading"|"ready"|"error";language:Language;formatStart:(value:string)=>string;onRetry:()=>void}){
   const t=text[language];
   const verifiedRoundNote={tr:"Tur maçtan sonra doğrulandı; tahmin yapılırken bilinmiyordu.",en:"Round verified after the match; it was unknown when the prediction was made.",fr:"Tour confirmé après le match ; il était inconnu lors de la prédiction.",es:"Ronda verificada después del partido; se desconocía al hacer la predicción.",de:"Runde erst nach dem Match bestätigt; bei der Prognose war sie unbekannt.",it:"Turno verificato dopo la partita; non era noto al momento del pronostico."}[language];
   const [query,setQuery]=useState("");
@@ -869,7 +873,7 @@ function PreviousMatches({matches,status,language,formatStart}:{matches:Previous
       <div className="history-filter-summary"><span><b>{filteredMatches.length}</b> / {matches.length} {labels.shown}</span>{filtersActive&&<button type="button" onClick={()=>{setQuery("");setTournament("all");setRound("all");setResult("all");setConfidenceRange([50,100]);setPage(1);}}>↺ {labels.clear}</button>}</div>
     </div>
     {status==="loading"&&<div className="message-card">{t.loading}</div>}
-    {status==="error"&&<div className="message-card">{t.failed}</div>}
+    {status==="error"&&<div className="message-card match-load-error">{t.failed} <button type="button" onClick={onRetry}>{({tr:"Tekrar dene",en:"Try again",fr:"Réessayer",es:"Reintentar",de:"Erneut versuchen",it:"Riprova"} as const)[language]}</button></div>}
     {status==="ready"&&!matches.length&&<div className="message-card">{t.noPrevious}</div>}
     {status==="ready"&&matches.length>0&&!filteredMatches.length&&<div className="message-card history-empty">{labels.none}</div>}
     <div className="previous-list">{paginatedMatches.map(match=>{
@@ -913,6 +917,7 @@ export function MatchDashboard(){
   const [loadingElapsed,setLoadingElapsed]=useState(0);
   const [loadAttempt,setLoadAttempt]=useState(0);
   const [previousStatus,setPreviousStatus]=useState<"loading"|"ready"|"error">("loading");
+  const [previousAttempt,setPreviousAttempt]=useState(0);
   const previousRequested=useRef(false);
   const [predictionError,setPredictionError]=useState(false);
   const [upcomingQuery,setUpcomingQuery]=useState("");
@@ -988,8 +993,6 @@ export function MatchDashboard(){
   useEffect(()=>{
     const controller=new AbortController();
     const startedAt=Date.now();
-    setStatus("loading");
-    setLoadingElapsed(0);
     const timer=window.setInterval(()=>setLoadingElapsed(Math.floor((Date.now()-startedAt)/1000)),1000);
     fetch("/data/upcoming.json",{signal:controller.signal,cache:"no-store"})
       .then(r=>{if(!r.ok)throw new Error();return r.json();})
@@ -1004,10 +1007,13 @@ export function MatchDashboard(){
     return()=>{controller.abort();window.clearInterval(timer);};
   },[loadAttempt]);
   useEffect(()=>{if(view!=="previous"||previousRequested.current)return;previousRequested.current=true;fetch("/data/previous.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
-    const history:PreviousMatch[]=Array.isArray(data.matches)?data.matches:[];
+    if(!Array.isArray(data.matches))throw new Error("Invalid previous match snapshot");
+    const history:PreviousMatch[]=data.matches;
     setPreviousMatches(history.filter(match=>!/\blaver\s+cup\b/i.test(match.tournament_name)));
     setPreviousStatus("ready");
-  }).catch(()=>setPreviousStatus("error"));},[view]);
+  }).catch(()=>{previousRequested.current=false;setPreviousStatus("error");});},[view,previousAttempt]);
+  function retryUpcoming(){setStatus("loading");setLoadingElapsed(0);setLoadAttempt(current=>current+1);}
+  function retryPrevious(){previousRequested.current=false;setPreviousStatus("loading");setPreviousAttempt(current=>current+1);}
   function formatStart(value:string){const locale:Record<Language,string>={en:"en-GB",tr:"tr-TR",fr:"fr-FR",es:"es-ES",de:"de-DE",it:"it-IT"};return new Intl.DateTimeFormat(locale[language],{timeZone:timezone==="local"?undefined:timezone,weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(value));}
   function formatFixtureStart(match:Match){
     const locale:Record<Language,string>={en:"en-GB",tr:"tr-TR",fr:"fr-FR",es:"es-ES",de:"de-DE",it:"it-IT"};
@@ -1050,10 +1056,10 @@ export function MatchDashboard(){
       </div>
     </header>
 
-    {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart}/>:!selected?<section className={`fixture-column${status==="loading"?" is-loading":""}`}>
+    {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart} onRetry={retryPrevious}/>:!selected?<section className={`fixture-column${status==="loading"?" is-loading":""}`}>
       {status!=="loading"&&<div className="fixture-heading"><div><span className="live-dot"/>ATP TOUR</div><h1>{t.upcoming}</h1><p>{status==="ready"&&!availableMatches.length?t.noUpcoming:t.choose}</p></div>}
       {status==="loading"&&<div className="match-loading-inline" role="status" aria-live="polite"><LoadingTennisBall/><span className="match-loading-caption"><span>{t.loading}</span><strong title={estimateLabel}>{loadingPercent}%</strong></span></div>}
-      {status==="error"&&<div className="match-loading-inline match-load-error"><span>{t.failed}</span><button type="button" onClick={()=>setLoadAttempt(current=>current+1)}>{retryLabel}</button></div>}
+      {status==="error"&&<div className="match-loading-inline match-load-error"><span>{t.failed}</span><button type="button" onClick={retryUpcoming}>{retryLabel}</button></div>}
       {status==="ready"&&availableMatches.length>0&&<div className="upcoming-filter-bar">
         <label className="upcoming-search"><span aria-hidden="true"/><input type="search" value={upcomingQuery} onChange={event=>setUpcomingQuery(event.target.value)} placeholder={upcomingLabels.search} aria-label={upcomingLabels.search}/>{upcomingQuery&&<button type="button" onClick={()=>setUpcomingQuery("")} aria-label={upcomingLabels.clear}>×</button>}</label>
         <CustomSelect label={upcomingLabels.tournament} value={activeUpcomingTournament} className="upcoming-tournament-field" options={upcomingTournamentOptions} onChange={setUpcomingTournament}/>

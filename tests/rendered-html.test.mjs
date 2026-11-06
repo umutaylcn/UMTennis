@@ -68,7 +68,9 @@ test("loads public match data without waiting for the Python API", async () => {
   assert.doesNotMatch(dashboard, /match-loading-spinner/);
   assert.match(dashboard, /loadingPercent/);
   assert.doesNotMatch(dashboard, /match-loading-card|match-loading-track/);
-  assert.match(dashboard, /setLoadAttempt\(current=>current\+1\)/);
+  assert.match(dashboard, /function retryUpcoming\(\)/);
+  assert.match(dashboard, /function retryPrevious\(\)/);
+  assert.match(dashboard, /onRetry=\{retryPrevious\}/);
   assert.match(dashboard, /view!=="previous"\|\|previousRequested\.current/);
   assert.match(dashboard, /XGBoost/);
   assert.match(dashboard, /Logistic Regression/);
