@@ -28,7 +28,7 @@ These nine portraits were rebuilt using alpha extraction from the **original pho
 
 | Portrait | Source | Credit / terms |
 | --- | --- | --- |
-| `cutouts/top20/casper-ruud.png` | [Casper Ruud, ATP Basel 2025](https://commons.wikimedia.org/wiki/File:Casper_Ruud,_ATP_Basel_2025.jpg), local source `assets/player_sources/top20_references/casper-ruud-basel-2025.jpg` | Skyscraper2010, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Background removed and portrait cropped; cutout edited from the authentic photo. |
+| `cutouts/top20/casper-ruud.png` | [Casper Ruud, 2023 US Open practice](https://commons.wikimedia.org/wiki/File:Casper_Ruud_(2023_US_Open)_01.jpg), local source `assets/player_sources/top20_references/casper-ruud-us-open-2023.jpg` | Hameltion, [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Background removed and portrait cropped; cutout edited from the authentic photo. |
 | `cutouts/top40/luciano-darderi.png` | Archived real match photo `assets/player_sources/top40_references/luciano-darderi.jpg` | Source attribution not yet verified. |
 | `cutouts/top40/alejandro-davidovich-fokina.png` | Archived real match photo `assets/player_sources/top40_references/alejandro-davidovich-fokina.jpg` | Source attribution not yet verified. |
 | `cutouts/top40/quentin-halys.png` | Archived real match photo `assets/player_sources/top40_references/quentin-halys.jpg` | Source attribution not yet verified. |
