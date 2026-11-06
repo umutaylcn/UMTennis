@@ -4,7 +4,7 @@ import handler from "vinext/server/app-router-entry";
 import { visibleUpcomingMatches } from "./upcoming-filter";
 import { matchingCompletedResults } from "./completed-filter";
 
-const COMPLETED_FEED_URL = "https://raw.githubusercontent.com/umutaylcn/umtennis-api/main/data/public/completed_fixtures.json";
+const COMPLETED_FEED_URL = "https://api.github.com/repos/umutaylcn/umtennis-api/contents/data/public/completed_fixtures.json?ref=main";
 const REFRESH_AFTER_MS = 5 * 60 * 1000;
 
 type Match = { match_id: number; start_time_utc: string; p1_name: string; p2_name: string;
@@ -21,7 +21,10 @@ function validCompletedFeed(value: unknown): value is CompletedFeed {
 }
 
 async function fetchCompletedFeed(cache: Cache, cacheKey: Request): Promise<Response> {
-  const response = await fetch(COMPLETED_FEED_URL, { signal: AbortSignal.timeout(3000) });
+  const response = await fetch(COMPLETED_FEED_URL, {
+    signal: AbortSignal.timeout(3000),
+    headers: { "Accept": "application/vnd.github.raw+json", "User-Agent": "UMTennis-site" },
+  });
   if (!response.ok) throw new Error(`Completed fixture feed returned ${response.status}`);
   const payload: unknown = await response.json();
   if (!validCompletedFeed(payload)) throw new Error("Invalid completed fixture feed");
@@ -37,7 +40,7 @@ async function fetchCompletedFeed(cache: Cache, cacheKey: Request): Promise<Resp
 
 async function completedFeed(request: Request, ctx: ExecutionContext): Promise<CompletedFeed | null> {
   const cache = (caches as CacheStorage & { default: Cache }).default;
-  const key = new Request(new URL("/data/completed-fixtures-cache-v1", request.url));
+  const key = new Request(new URL("/data/completed-fixtures-cache-v2", request.url));
   const cached = await cache.match(key);
   if (cached) {
     const age = Date.now() - Number(cached.headers.get("X-UMTennis-Cached-At") || 0);
@@ -113,7 +116,8 @@ const worker = {
       );
       return Response.json(
         { ...payload, count: matches.length, matches, predictions },
-        { headers: { "Cache-Control": "no-store" } },
+        { headers: { "Cache-Control": "no-store",
+          "X-UMTennis-Completed-Feed": String(completed?.completed.length ?? -1) } },
       );
     }
 
