@@ -9,6 +9,7 @@ const REFRESH_AFTER_MS = 5 * 60 * 1000;
 type Match = { match_id: number; start_time_utc: string; schedule_precision?: "time" | "not_before" | "date_only" | "tba" };
 type LiveBundle = {
   generated_at_utc: string;
+  state_as_of_utc?: string | null;
   upcoming: { count: number; matches: Match[]; predictions: Record<string, unknown> };
   previous: { count: number; matches: Array<{ match_id: number }> };
 };
@@ -83,14 +84,19 @@ const worker = {
       const bundle = await liveBundle(request, ctx);
       if (url.pathname === "/data/previous.json") {
         if (bundle) {
-          return Response.json(bundle.previous, { headers: { "Cache-Control": "no-store" } });
+          return Response.json({ generated_at_utc: bundle.generated_at_utc, ...bundle.previous },
+            { headers: { "Cache-Control": "no-store" } });
         }
         return env.ASSETS.fetch(request);
       }
 
       const upcomingResponse = bundle ? null : await env.ASSETS.fetch(request);
       if (upcomingResponse && !upcomingResponse.ok) return upcomingResponse;
-      const payload = bundle ? bundle.upcoming : await upcomingResponse!.json() as {
+      const payload = bundle ? {
+        generated_at_utc: bundle.generated_at_utc,
+        state_as_of_utc: bundle.state_as_of_utc ?? null,
+        ...bundle.upcoming,
+      } : await upcomingResponse!.json() as {
         matches: Match[];
         predictions: Record<string, unknown>;
         [key: string]: unknown;
