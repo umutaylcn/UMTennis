@@ -2,30 +2,29 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import { visibleUpcomingMatches } from "./upcoming-filter";
+import { matchingCompletedResults } from "./completed-filter";
 
-const LIVE_BUNDLE_URL = "https://raw.githubusercontent.com/umutaylcn/umtennis-api/main/data/public/live_bundle.json";
+const COMPLETED_FEED_URL = "https://raw.githubusercontent.com/umutaylcn/umtennis-api/main/data/public/completed_fixtures.json";
 const REFRESH_AFTER_MS = 5 * 60 * 1000;
 
-type Match = { match_id: number; start_time_utc: string; schedule_precision?: "time" | "not_before" | "date_only" | "tba" };
-type LiveBundle = {
-  generated_at_utc: string;
-  state_as_of_utc?: string | null;
-  upcoming: { count: number; matches: Match[]; predictions: Record<string, unknown> };
-  previous: { count: number; matches: Array<{ match_id: number }> };
-};
+type Match = { match_id: number; start_time_utc: string; p1_name: string; p2_name: string;
+  tournament_name: string; schedule_precision?: "time" | "not_before" | "date_only" | "tba" };
+type CompletedFeed = { completed: Match[] };
 
-function validBundle(value: unknown): value is LiveBundle {
+function validCompletedFeed(value: unknown): value is CompletedFeed {
   if (!value || typeof value !== "object") return false;
-  const bundle = value as Partial<LiveBundle>;
-  return Boolean(bundle.upcoming && Array.isArray(bundle.upcoming.matches)
-    && bundle.upcoming.predictions && bundle.previous && Array.isArray(bundle.previous.matches));
+  const feed = value as Partial<CompletedFeed>;
+  return Array.isArray(feed.completed) && feed.completed.every(item =>
+    typeof item.match_id === "number" && typeof item.start_time_utc === "string"
+    && typeof item.p1_name === "string" && typeof item.p2_name === "string"
+    && typeof item.tournament_name === "string");
 }
 
-async function fetchLiveBundle(cache: Cache, cacheKey: Request): Promise<Response> {
-  const response = await fetch(LIVE_BUNDLE_URL, { signal: AbortSignal.timeout(3000) });
-  if (!response.ok) throw new Error(`Public snapshot returned ${response.status}`);
+async function fetchCompletedFeed(cache: Cache, cacheKey: Request): Promise<Response> {
+  const response = await fetch(COMPLETED_FEED_URL, { signal: AbortSignal.timeout(3000) });
+  if (!response.ok) throw new Error(`Completed fixture feed returned ${response.status}`);
   const payload: unknown = await response.json();
-  if (!validBundle(payload)) throw new Error("Invalid public snapshot");
+  if (!validCompletedFeed(payload)) throw new Error("Invalid completed fixture feed");
   const cached = Response.json(payload, {
     headers: {
       "Cache-Control": "public, max-age=86400",
@@ -36,19 +35,19 @@ async function fetchLiveBundle(cache: Cache, cacheKey: Request): Promise<Respons
   return cached;
 }
 
-async function liveBundle(request: Request, ctx: ExecutionContext): Promise<LiveBundle | null> {
+async function completedFeed(request: Request, ctx: ExecutionContext): Promise<CompletedFeed | null> {
   const cache = (caches as CacheStorage & { default: Cache }).default;
-  const key = new Request(new URL("/data/live-bundle-cache", request.url));
+  const key = new Request(new URL("/data/completed-fixtures-cache-v1", request.url));
   const cached = await cache.match(key);
   if (cached) {
     const age = Date.now() - Number(cached.headers.get("X-UMTennis-Cached-At") || 0);
     if (age > REFRESH_AFTER_MS) {
-      ctx.waitUntil(fetchLiveBundle(cache, key).catch(() => undefined));
+      ctx.waitUntil(fetchCompletedFeed(cache, key).catch(() => undefined));
     }
-    return cached.json() as Promise<LiveBundle>;
+    return cached.json() as Promise<CompletedFeed>;
   }
   try {
-    return await (await fetchLiveBundle(cache, key)).json() as LiveBundle;
+    return await (await fetchCompletedFeed(cache, key)).json() as CompletedFeed;
   } catch {
     return null;
   }
@@ -80,23 +79,10 @@ const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
-    if ((url.pathname === "/data/upcoming.json" || url.pathname === "/data/previous.json") && request.method === "GET") {
-      const bundle = await liveBundle(request, ctx);
-      if (url.pathname === "/data/previous.json") {
-        if (bundle) {
-          return Response.json({ generated_at_utc: bundle.generated_at_utc, ...bundle.previous },
-            { headers: { "Cache-Control": "no-store" } });
-        }
-        return env.ASSETS.fetch(request);
-      }
-
-      const upcomingResponse = bundle ? null : await env.ASSETS.fetch(request);
-      if (upcomingResponse && !upcomingResponse.ok) return upcomingResponse;
-      const payload = bundle ? {
-        generated_at_utc: bundle.generated_at_utc,
-        state_as_of_utc: bundle.state_as_of_utc ?? null,
-        ...bundle.upcoming,
-      } : await upcomingResponse!.json() as {
+    if (url.pathname === "/data/upcoming.json" && request.method === "GET") {
+      const upcomingResponse = await env.ASSETS.fetch(request);
+      if (!upcomingResponse.ok) return upcomingResponse;
+      const payload = await upcomingResponse.json() as {
         matches: Match[];
         predictions: Record<string, unknown>;
         [key: string]: unknown;
@@ -105,20 +91,21 @@ const worker = {
         return Response.json({ error: "Invalid upcoming snapshot" }, { status: 502 });
       }
 
-      let previousPayload: { matches?: Array<{ match_id: number }> } | null = bundle?.previous ?? null;
-      if (!previousPayload) {
-        const previousResponse = await env.ASSETS.fetch(new Request(new URL("/data/previous.json", request.url)));
-        if (previousResponse.ok) {
-          try {
-            previousPayload = await previousResponse.json() as { matches?: Array<{ match_id: number }> };
-          } catch {
-            // The time guard still works when the independent result asset is invalid.
-          }
+      let previousPayload: { matches?: Array<{ match_id: number }> } | null = null;
+      const previousResponse = await env.ASSETS.fetch(new Request(new URL("/data/previous.json", request.url)));
+      if (previousResponse.ok) {
+        try {
+          previousPayload = await previousResponse.json() as { matches?: Array<{ match_id: number }> };
+        } catch {
+          // The time guard still works when the independent result asset is invalid.
         }
       }
+      const completed = await completedFeed(request, ctx);
+      const confirmedResults = completed
+        ? matchingCompletedResults(payload.matches, completed.completed) : [];
       const matches = visibleUpcomingMatches(
         payload.matches,
-        Array.isArray(previousPayload?.matches) ? previousPayload.matches : [],
+        [...(Array.isArray(previousPayload?.matches) ? previousPayload.matches : []), ...confirmedResults],
         Date.now(),
       );
       const predictions = Object.fromEntries(
