@@ -457,6 +457,7 @@ const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"1143"|"115"|"117"|"
   "Clément Tabur":"242",
   "Zangar Nurlanuly":"220",
   "Mattia Bellucci":"110",
+  "Casper Ruud":"110",
   "Max Schoenhaus":"120",
   "Max Schönhaus":"120",
   "Adolfo Daniel Vallejo":"110",
