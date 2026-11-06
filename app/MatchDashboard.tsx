@@ -994,17 +994,21 @@ export function MatchDashboard(){
     const controller=new AbortController();
     const startedAt=Date.now();
     const timer=window.setInterval(()=>setLoadingElapsed(Math.floor((Date.now()-startedAt)/1000)),1000);
-    fetch("/data/upcoming.json",{signal:controller.signal,cache:"no-store"})
+    const refresh=(initial:boolean)=>fetch("/data/upcoming.json",{signal:controller.signal,cache:"no-store"})
       .then(r=>{if(!r.ok)throw new Error();return r.json();})
       .then(data=>{
         if(!Array.isArray(data.matches)||!data.predictions||data.matches.some((match:Match)=>!data.predictions[String(match.match_id)]))throw new Error("Incomplete match snapshot");
-        window.clearInterval(timer);
+        if(initial)window.clearInterval(timer);
         setPrecomputedPredictions(data.predictions);
         setMatches(data.matches);
         setStatus("ready");
       })
-      .catch(()=>{window.clearInterval(timer);if(!controller.signal.aborted)setStatus("error");});
-    return()=>{controller.abort();window.clearInterval(timer);};
+      .catch(()=>{if(initial){window.clearInterval(timer);if(!controller.signal.aborted)setStatus("error");}});
+    void refresh(true);
+    const refreshInterval=window.setInterval(()=>{if(document.visibilityState==="visible")void refresh(false);},60_000);
+    const onVisible=()=>{if(document.visibilityState==="visible")void refresh(false);};
+    document.addEventListener("visibilitychange",onVisible);
+    return()=>{controller.abort();window.clearInterval(timer);window.clearInterval(refreshInterval);document.removeEventListener("visibilitychange",onVisible);};
   },[loadAttempt]);
   useEffect(()=>{if(view!=="previous"||previousRequested.current)return;previousRequested.current=true;fetch("/data/previous.json",{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error();return r.json();}).then(data=>{
     if(!Array.isArray(data.matches))throw new Error("Invalid previous match snapshot");
