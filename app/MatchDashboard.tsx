@@ -812,7 +812,7 @@ function ModelDetails({language}:{language:Language}){
 
 function PreviousMatches({matches,status,language,formatStart,onRetry}:{matches:PreviousMatch[];status:"loading"|"ready"|"error";language:Language;formatStart:(value:string)=>string;onRetry:()=>void}){
   const t=text[language];
-  const verifiedRoundNote={tr:"Tur maçtan sonra doğrulandı; tahmin yapılırken bilinmiyordu.",en:"Round verified after the match; it was unknown when the prediction was made.",fr:"Tour confirmé après le match ; il était inconnu lors de la prédiction.",es:"Ronda verificada después del partido; se desconocía al hacer la predicción.",de:"Runde erst nach dem Match bestätigt; bei der Prognose war sie unbekannt.",it:"Turno verificato dopo la partita; non era noto al momento del pronostico."}[language];
+  const verifiedRoundNote={tr:"Tur, tahmin kaydında yoktu; sonuç verisinden doğrulandı. Tahmin yüzdesi maç öncesine ait.",en:"The round was missing from the saved prediction and verified from match data. The probability is still pre-match.",fr:"Le tour manquait dans la prédiction enregistrée et a été vérifié dans les résultats. La probabilité reste celle d'avant-match.",es:"La ronda faltaba en la predicción guardada y se verificó con los resultados. La probabilidad sigue siendo previa al partido.",de:"Die Runde fehlte im gespeicherten Tipp und wurde anhand der Ergebnisse bestätigt. Die Wahrscheinlichkeit stammt weiterhin von vor dem Match.",it:"Il turno mancava nella previsione salvata ed è stato verificato dai risultati. La probabilità resta quella pre-partita."}[language];
   const [query,setQuery]=useState("");
   const [tournament,setTournament]=useState("all");
   const [round,setRound]=useState("all");
