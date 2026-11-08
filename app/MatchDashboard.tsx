@@ -46,6 +46,8 @@ const PLAYER_CUTOUT_IDS=new Set([2,5,6,7,9,15,18,19,23,27,31,33,37,64,68,73,93,9
 // Provider IDs can change or be temporarily unavailable in a cached fixture.
 // Resolve these locally prepared portraits by stable player name first.
 const PLAYER_NAME_CUTOUTS:Record<string,string>={
+  "Elias Ymer":"elias-ymer-action",
+  "Max Dahlin":"max-dahlin-action",
   "Pierre-Hugues Herbert":"176",
   "Borna Gojo":"140",
   "Clement Tabur":"175",
