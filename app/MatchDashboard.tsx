@@ -443,6 +443,7 @@ const PLAYER_PHOTO_HOME_SIDE:Record<string,"left"|"right">={
   "Ethan Quinn":"left",
 };
 const PLAYER_PORTRAIT_SCALE:Record<string,"108"|"109"|"110"|"1143"|"115"|"117"|"118"|"120"|"121"|"127"|"130"|"133"|"1333"|"140"|"140plain"|"143"|"145"|"150"|"157"|"160"|"164"|"166"|"169"|"176"|"177"|"180"|"182"|"183"|"186"|"192"|"200"|"220"|"224"|"240"|"242">={
+  "Leo Borg":"120",
   "Max Dahlin":"130",
   "Luciano Darderi":"160",
   "Daniel Merida Aguilar":"110",
