@@ -23,8 +23,8 @@ test("precise starts allow live/delayed matches briefly but never indefinitely",
   assert.deepEqual(visibleUpcomingMatches(matches, [], now), [matches[0], matches[2]]);
 });
 
-test("uncertain schedules get a wider safety window", () => {
-  const matches = [match(1, 11, "not_before"), match(2, 13, "not_before"), match(3, 35, "date_only"), match(4, 37, "date_only")];
+test("not-before starts expire after three hours; date-only fixtures retain a safety window", () => {
+  const matches = [match(1, 2.9, "not_before"), match(2, 3.1, "not_before"), match(3, 35, "date_only"), match(4, 37, "date_only")];
   assert.deepEqual(visibleUpcomingMatches(matches, [], now), [matches[0], matches[2]]);
 });
 

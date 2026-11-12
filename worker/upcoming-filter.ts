@@ -8,7 +8,7 @@ type PreviousResult = { match_id: number };
 
 const GRACE_MS = {
   time: 3 * 60 * 60 * 1000,
-  not_before: 12 * 60 * 60 * 1000,
+  not_before: 3 * 60 * 60 * 1000,
   date_only: 36 * 60 * 60 * 1000,
   tba: 36 * 60 * 60 * 1000,
 } as const;

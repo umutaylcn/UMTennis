@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { matchesSearch } from "./search";
 import LoadingTennisBall from "./LoadingTennisBall";
+import { visibleUpcomingMatches } from "../worker/upcoming-filter";
 
 type Language = "en" | "tr" | "fr" | "es" | "de" | "it";
 type View = "matches" | "previous" | "model";
@@ -915,6 +916,7 @@ export function MatchDashboard(){
   const [view,setView]=useState<View>("matches");
   const [timezone,setTimezone]=useState("local");
   const [matches,setMatches]=useState<Match[]>([]);
+  const [nowMs,setNowMs]=useState(()=>Date.now());
   const [precomputedPredictions,setPrecomputedPredictions]=useState<Record<string,Prediction>>({});
   const [previousMatches,setPreviousMatches]=useState<PreviousMatch[]>([]);
   const [selected,setSelected]=useState<Match|null>(null);
@@ -966,7 +968,7 @@ export function MatchDashboard(){
     de:{search:"Spieler oder Turnier suchen",tournament:"TURNIER",allTournaments:"Alle Turniere",confidence:"KONFIDENZ",shown:"Matches angezeigt",none:"Keine bevorstehenden Matches entsprechen diesen Filtern.",clear:"Filter löschen"},
     it:{search:"Cerca giocatore o torneo",tournament:"TORNEO",allTournaments:"Tutti i tornei",confidence:"AFFIDABILITÀ",shown:"partite mostrate",none:"Nessuna partita in programma corrisponde a questi filtri.",clear:"Azzera filtri"},
   }[language];
-  const availableMatches=useMemo(()=>status==="ready"?matches:[],[matches,status]);
+  const availableMatches=useMemo(()=>status==="ready"?visibleUpcomingMatches(matches,[],nowMs):[],[matches,status,nowMs]);
   const upcomingTournamentOptions=useMemo(()=>[{value:"all",label:upcomingLabels.allTournaments},...Array.from(new Set(availableMatches.map(match=>match.tournament_name))).sort().map(value=>({value,label:value}))],[availableMatches,upcomingLabels.allTournaments]);
   const activeUpcomingTournament=upcomingTournament==="all"||availableMatches.some(match=>match.tournament_name===upcomingTournament)?upcomingTournament:"all";
   const visibleMatches=useMemo(()=>{
@@ -979,6 +981,13 @@ export function MatchDashboard(){
     });
   },[availableMatches,upcomingQuery,activeUpcomingTournament,upcomingConfidence]);
   const upcomingFiltersActive=Boolean(upcomingQuery)||activeUpcomingTournament!=="all"||upcomingConfidence[0]!==50||upcomingConfidence[1]!==100;
+
+  useEffect(()=>{
+    const updateClock=()=>setNowMs(Date.now());
+    const clockInterval=window.setInterval(updateClock,60_000);
+    document.addEventListener("visibilitychange",updateClock);
+    return()=>{window.clearInterval(clockInterval);document.removeEventListener("visibilitychange",updateClock);};
+  },[]);
 
   useEffect(()=>{
     let frame=0;
