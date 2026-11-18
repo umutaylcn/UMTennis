@@ -809,3 +809,173 @@
   }
 
 }
+
+/* Court-side broadcast experiment: touch layouts and small-screen hierarchy. */
+@media (max-width: 760px) {
+  .site-screen { padding-bottom: 76px; }
+  .page-background { height: 100dvh; }
+  .surface-default .page-background {
+    background-image: linear-gradient(180deg,rgba(5,25,20,.77),rgba(5,25,20,.9) 49%,#061b17 100%),url('/backgrounds/default.jpg');
+    background-position: center;
+  }
+  .surface-default .page-background:before { display: none; }
+  .umt-header {
+    height: 116px;
+    padding: 9px 16px 8px;
+    border-bottom-color: rgba(227,237,219,.22);
+    background: rgba(5,25,20,.96);
+  }
+  .umt-header.mobile-nav-hidden { height: 58px; }
+  .umt-logo { font-size: 27px !important; }
+  .umt-header nav {
+    width: min(310px,calc(100vw - 34px));
+    height: 42px;
+    padding: 2px 8px;
+    gap: 3px !important;
+    border-radius: 6px;
+    background: rgba(19,53,43,.8);
+  }
+  .umt-header nav button {
+    height: 100%;
+    min-width: 0;
+    padding: 6px 8px;
+    font-size: 11px;
+    letter-spacing: .07em;
+  }
+  .umt-header nav .active:after { left: 8px; right: 8px; bottom: 3px; }
+  .mobile-settings-toggle,.mobile-back-button {
+    width: auto;
+    min-width: 44px;
+    height: 44px;
+    border-radius: 5px;
+    border-color: rgba(217,193,123,.4);
+    background: #12372d;
+    box-shadow: none;
+  }
+  .mobile-back-button { padding: 0 10px; font-size: 11px; }
+  .header-controls { right: 16px; }
+  .header-controls .control-field { height: 44px; border-radius: 5px; background: #0b2b24; }
+  .language-field { width: 58px; min-width: 58px; }
+  .timezone-field { width: 104px; }
+  .fixture-column {
+    width: calc(100% - 36px);
+    padding-top: 66px;
+  }
+  .fixture-heading { margin-bottom: 36px; text-align: left; }
+  .fixture-heading>div { font-size: 10px; }
+  .fixture-heading h1 {
+    margin: 15px 0 13px;
+    font-size: clamp(58px,15vw,86px);
+    line-height: .86;
+    letter-spacing: -.025em;
+  }
+  .fixture-heading p { padding: 0; font-size: 15px; line-height: 1.55; }
+  .fixture-heading:after { margin-top: 27px; width: 70px; }
+  .upcoming-filter-bar { grid-template-columns: 1fr 1fr; padding: 10px; gap: 8px; }
+  .upcoming-search { grid-column: 1/-1; }
+  .upcoming-search,.upcoming-filter-bar>.control-field { min-height: 48px; }
+  .upcoming-filter-bar>.confidence-range-field>button { position: relative; inset: auto; width: 100%; height: 100%; }
+  .upcoming-filter-bar>.confidence-range-field>button .control-label { display: block; font-size: 9px; }
+  .upcoming-filter-bar>.confidence-range-field>button b,.upcoming-filter-bar>.upcoming-tournament-field>button b { font-size: 12px; }
+  .upcoming-filter-bar .confidence-range-popover { left: 50%; width: min(300px,calc(100vw - 32px)); }
+  .upcoming-search input { font-size: 13px; }
+  .upcoming-filter-summary { font-size: 9px; }
+  .upcoming-filter-summary button { font-size: 9px; }
+  .fixture-list { gap: 10px; }
+  .fixture-row { padding: 19px 17px 17px; border-radius: 7px; }
+  .fixture-topline { gap: 15px; font-size: 9px; line-height: 1.4; }
+  .fixture-topline>span:last-child { text-align: right; }
+  .fixture-mainline {
+    grid-template-columns: minmax(0,1fr) 68px minmax(0,1fr);
+    grid-template-areas: "player-one versus player-two" "probability-one versus probability-two";
+    column-gap: 8px;
+    row-gap: 5px;
+    margin: 20px 0 0;
+  }
+  .fixture-player b { font-size: clamp(22px,6.2vw,31px); line-height: .94; }
+  .fixture-player small { font-size: 11px; }
+  .fixture-probability { font-size: clamp(21px,6vw,28px); }
+  .versus { gap: 6px; }
+  .versus>b { width: 34px; height: 34px; }
+  .match-strength>div { font-size: 14px; }
+  .mobile-fixture-meta { gap: 4px; }
+  .mobile-fixture-meta .surface-tag { border-radius: 2px; font-size: 8px; }
+  .mobile-fixture-meta .fixture-round { font-size: 9px; }
+  .fixture-footer { display: none; }
+  .match-detail { padding: 22px 12px 75px; }
+  .match-kicker { margin: 0 0 18px; padding: 0 0 15px; gap: 6px; font-size: 11px; }
+  .match-kicker b { font-size: 13px; }
+  .match-kicker>span:last-child { font-size: 10px; }
+  .analysis-stage { gap: 8px; }
+  .analysis-player { min-height: 408px; }
+  .analysis-player-name,.analysis-player.right .analysis-player-name {
+    min-height: 72px;
+    padding: 0 3px 9px;
+    font-size: clamp(25px,6.4vw,34px);
+    line-height: .89;
+    overflow-wrap: anywhere;
+  }
+  .analysis-photo-zone { min-height: clamp(245px,72vw,345px); }
+  .player-rank-overlay { padding: 8px 7px; border-radius: 4px; background: rgba(5,24,20,.9); }
+  .player-rank-overlay span { font-size: 9px; line-height: 1.1; }
+  .player-rank-overlay b { font-size: 12px; line-height: 1.1; }
+  .player-probability b { font-size: clamp(45px,13vw,62px); }
+  .comparison-spine { margin-top: 18px; padding: 20px 13px 24px; border-radius: 7px; }
+  .comparison-heading h2 { font-size: 25px; }
+  .comparison-heading>span { font-size: 11px; }
+  .form-comparison-row { padding: 15px 0; }
+  .form-comparison-row>span,.metric-label span { font-size: 10px; }
+  .form-comparison-row small { font-size: 10px; }
+  .comparison-row { min-height: 59px; }
+  .comparison-row b { font-size: 16px; }
+  .previous-page { width: calc(100% - 32px); padding-top: 49px; }
+  .previous-heading { min-height: 0; margin-bottom: 26px; }
+  .previous-heading>div { font-size: 10px; }
+  .previous-heading h1 { font-size: clamp(61px,14.5vw,84px); line-height: .84; }
+  .previous-heading p { font-size: 13px; }
+  .previous-heading>strong {
+    position: static;
+    display: inline-flex;
+    flex-direction: row;
+    gap: 9px;
+    margin-top: 24px;
+    padding: 9px 0 9px 14px;
+    font-size: 38px;
+    text-align: left;
+  }
+  .history-filter-panel { padding: 12px; }
+  .history-search,.history-filter-selects .control-field { min-height: 46px; }
+  .history-filter-selects { gap: 8px; }
+  .previous-card { padding: 16px 14px; border-radius: 6px; }
+  .previous-meta { font-size: 9px; }
+  .previous-meta>span:last-child { text-align: right; }
+  .previous-matchup { gap: 6px; margin: 17px 0 13px; }
+  .previous-matchup b { font-size: clamp(21px,5.5vw,27px); }
+  .previous-vs>b { font-size: 10px; }
+  .previous-outcome { padding-top: 13px; }
+  .previous-outcome small { font-size: 9px; }
+  .previous-outcome b { font-size: clamp(11px,3.3vw,13px); }
+  .model-hero { min-height: 0; padding: 67px 20px 55px; }
+  .model-hero h1 { font-size: clamp(65px,15vw,92px); }
+  .model-hero>p { width: 100%; font-size: 14px; }
+  .hero-metrics { width: 100%; margin-top: 42px; }
+  .hero-metrics article { min-height: 122px; padding: 16px 12px; }
+  .hero-metrics b { font-size: 43px; }
+  .hero-metrics small { font-size: 9px; }
+  .hero-metrics p { font-size: 10px; }
+  .model-content { width: calc(100% - 28px); gap: 14px; }
+  .model-block { padding: 23px 17px; }
+  .block-heading h2 { font-size: 29px; }
+  .model-node p,.process-line article p { font-size: 12px; }
+  .chart-title h3 { font-size: 22px; }
+}
+
+@media (max-width: 390px) {
+  .fixture-column { width: calc(100% - 28px); }
+  .fixture-heading h1 { font-size: 56px; }
+  .analysis-player-name,.analysis-player.right .analysis-player-name { font-size: 23px; }
+  .player-rank-overlay span { font-size: 8.5px; }
+  .player-rank-overlay b { font-size: 11px; }
+  .previous-heading h1 { font-size: 57px; }
+  .previous-matchup b { font-size: 20px; }
+}
