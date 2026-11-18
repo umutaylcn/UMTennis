@@ -495,8 +495,9 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .comparison-spine{border-top-color:var(--court-ball)}
 .comparison-spine .center-pick>span{border-color:var(--court-ball);color:var(--court-ball)}
 .analysis-player .analysis-photo-zone:after{height:26%;background:linear-gradient(0deg,rgba(6,27,23,.42),transparent)}
-.player-rank-overlay{background:rgba(5,25,21,.36);border-color:rgba(231,243,225,.28);backdrop-filter:none;box-shadow:0 12px 34px rgba(0,0,0,.18)}
+.player-rank-overlay{background:rgba(5,25,21,.36);border:0;backdrop-filter:none;box-shadow:0 12px 34px rgba(0,0,0,.18)}
 .player-rank-overlay span,.player-rank-overlay b{text-shadow:0 2px 6px rgba(0,0,0,.96),0 0 14px rgba(0,0,0,.85)}
+.player-probability,.analysis-player.right .player-probability{width:100%;box-sizing:border-box;align-self:stretch;justify-content:center;align-items:center;text-align:center}
 @media(min-width:851px){
   .analysis-player{align-self:start;height:640px;min-height:0}
   .analysis-photo-zone{min-height:0}
