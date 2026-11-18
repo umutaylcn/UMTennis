@@ -979,3 +979,7 @@
   .previous-heading h1 { font-size: 57px; }
   .previous-matchup b { font-size: 20px; }
 }
+
+@media (max-width: 850px) {
+  .player-rank-overlay { background: rgba(5,24,20,.38); backdrop-filter: none; }
+}
