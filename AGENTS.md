@@ -30,7 +30,7 @@ The user expects the phrase **"UMTennis eski haline geri dön"** to initiate the
 
 ## Before declaring success
 
-1. Check `git diff --name-only` against the baseline: only the explicitly allowed UI files and add-only dedicated visual assets can differ (plus the `AGENTS.md`, skill files and rollback doc preinstalled for agent tooling).
+1. Run `node scripts/assert-ui-scope.mjs` and inspect `git diff --name-only` against the baseline: only explicitly allowed UI files and add-only dedicated visual assets can differ (plus preinstalled agent tooling). A passing scope check does NOT prove JSX logic is unchanged; inspect the `MatchDashboard.tsx` diff for hooks, state, handlers, network, persistence, translations and calculations.
 2. Run `pnpm build`, `pnpm test`, `pnpm lint`; report any unavailable/failed checks honestly. Do not modify tests to make them pass.
 3. Exercise EN/TR, switches, controls, filters, upcoming/previous matches, player details, loading and error states; compare outputs and numerical values with the baseline.
 4. Take before/after screenshots and give a concise visual critique at desktop and mobile sizes. Missing screenshots are not verified.
