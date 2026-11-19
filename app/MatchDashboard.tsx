@@ -868,7 +868,7 @@ function PreviousMatches({matches,status,language,formatStart,onRetry}:{matches:
     return unique.flatMap((value,index)=>index&&value-unique[index-1]>1?[`gap-${value}`,value]:[value]);
   },[currentPage,pageCount]);
   return <section className="previous-page">
-    <div className="previous-heading"><div><span className="history-dot"/>UMTENNIS TRACK RECORD</div><h1>{t.previousHeading}</h1><p>{t.previousIntro}</p>{matches.some(match=>match.round_verified_after_match)&&<p>* {verifiedRoundNote}</p>}{accuracy!=null&&<strong>{accuracy.toFixed(2)}% <span>{labels.accuracy}</span></strong>}</div>
+    <div className="previous-heading"><div><span className="history-dot"/>UMTENNIS TRACK RECORD</div>{accuracy!=null&&<strong>{accuracy.toFixed(2)}% <span>{labels.accuracy}</span></strong>}<h1>{t.previousHeading}</h1><p>{t.previousIntro}</p>{matches.some(match=>match.round_verified_after_match)&&<p>* {verifiedRoundNote}</p>}</div>
     <div className="history-filter-panel">
       <label className="history-search"><span aria-hidden="true"/><input type="search" value={query} onChange={event=>{setQuery(event.target.value);setPage(1);}} placeholder={labels.search} aria-label={labels.search}/>{query&&<button type="button" onClick={()=>{setQuery("");setPage(1);}} aria-label={labels.clear}>×</button>}</label>
       <div className="history-filter-selects">
