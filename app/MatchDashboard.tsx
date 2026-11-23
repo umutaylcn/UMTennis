@@ -15,6 +15,21 @@ type HeadToHead = { matches:number; p1_wins:number; p2_wins:number; surface_matc
 type Prediction = Match & { p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; h2h:HeadToHead; state_as_of_utc:string; p1_profile:PlayerProfile; p2_profile:PlayerProfile; };
 type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; round_at_prediction?:string; round_verified_after_match?:boolean; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_side?:"p1"|"p2"; predicted_winner:string; confidence:number; actual_side?:"p1"|"p2"; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean|null; winner_sets?:number; loser_sets?:number; };
 
+// Isolated visual preview: never written to the fixture feed or prediction archive.
+function roundPreviewMatches():Match[]{
+  const startTime=new Date(Date.now()+24*60*60*1000).toISOString();
+  return [
+    {match_id:-1,round:"R32",surface:"Hard",p1_name:"Carlos Alcaraz",p2_name:"Jannik Sinner",p1_rank:1,p2_rank:2,p1_elo_rank:2,p2_elo_rank:1,p1_win_probability:.51,p2_win_probability:.49,match_strength:5},
+    {match_id:-2,round:"QF",surface:"Clay",p1_name:"Novak Djokovic",p2_name:"Alexander Zverev",p1_rank:4,p2_rank:3,p1_elo_rank:3,p2_elo_rank:4,p1_win_probability:.61,p2_win_probability:.39,match_strength:5},
+    {match_id:-3,round:"SF",surface:"Grass",p1_name:"Lorenzo Musetti",p2_name:"Taylor Fritz",p1_rank:8,p2_rank:7,p1_elo_rank:8,p2_elo_rank:7,p1_win_probability:.44,p2_win_probability:.56,match_strength:4.5},
+    {match_id:-4,round:"F",surface:"Hard",p1_name:"Ben Shelton",p2_name:"Daniil Medvedev",p1_rank:6,p2_rank:10,p1_elo_rank:6,p2_elo_rank:10,p1_win_probability:.58,p2_win_probability:.42,match_strength:4.5},
+  ].map(match=>({
+    ...match,start_time_utc:startTime,schedule_precision:"time",tournament_name:"UMTennis UI Preview",
+    p1_id:null,p2_id:null,predicted_winner:match.p1_win_probability>match.p2_win_probability?match.p1_name:match.p2_name,
+    confidence:Math.max(match.p1_win_probability,match.p2_win_probability),confidence_label:"Mock preview",
+  }));
+}
+
 function roundPresentation(round:string){
   const normalized=round.trim().toUpperCase();
   if(!normalized||normalized==="NAN"||normalized==="NONE"||normalized==="NULL")return{tier:"standard",label:"TBD"};
@@ -917,6 +932,7 @@ export function MatchDashboard(){
   const [view,setView]=useState<View>("matches");
   const [timezone,setTimezone]=useState("local");
   const [matches,setMatches]=useState<Match[]>([]);
+  const [roundPreview,setRoundPreview]=useState(false);
   const [nowMs,setNowMs]=useState(()=>Date.now());
   const [precomputedPredictions,setPrecomputedPredictions]=useState<Record<string,Prediction>>({});
   const [previousMatches,setPreviousMatches]=useState<PreviousMatch[]>([]);
@@ -1007,6 +1023,12 @@ export function MatchDashboard(){
   },[]);
 
   useEffect(()=>{
+    if(new URLSearchParams(window.location.search).get("mock")==="rounds"){
+      setRoundPreview(true);
+      setMatches(roundPreviewMatches());
+      setStatus("ready");
+      return;
+    }
     const controller=new AbortController();
     const startedAt=Date.now();
     const timer=window.setInterval(()=>setLoadingElapsed(Math.floor((Date.now()-startedAt)/1000)),1000);
@@ -1077,7 +1099,7 @@ export function MatchDashboard(){
     </header>
 
     {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart} onRetry={retryPrevious}/>:!selected?<section className={`fixture-column${status==="loading"?" is-loading":""}`}>
-      {status!=="loading"&&<div className="fixture-heading"><div><span className="live-dot"/>ATP TOUR</div><h1>{t.upcoming}</h1><p>{status==="ready"&&!availableMatches.length?t.noUpcoming:t.choose}</p></div>}
+      {status!=="loading"&&<div className="fixture-heading"><div><span className="live-dot"/>{roundPreview?"UI PREVIEW · MOCK DATA":"ATP TOUR"}</div><h1>{t.upcoming}</h1><p>{roundPreview?"Sample cards only — not real fixtures or model predictions.":status==="ready"&&!availableMatches.length?t.noUpcoming:t.choose}</p></div>}
       {status==="loading"&&<div className="match-loading-inline" role="status" aria-live="polite"><LoadingTennisBall/><span className="match-loading-caption"><span>{t.loading}</span><strong title={estimateLabel}>{loadingPercent}%</strong></span></div>}
       {status==="error"&&<div className="match-loading-inline match-load-error"><span>{t.failed}</span><button type="button" onClick={retryUpcoming}>{retryLabel}</button></div>}
       {status==="ready"&&availableMatches.length>0&&<div className="upcoming-filter-bar">
@@ -1089,7 +1111,7 @@ export function MatchDashboard(){
       {status==="ready"&&availableMatches.length>0&&!visibleMatches.length&&<div className="message-card upcoming-empty">{upcomingLabels.none}</div>}
       <div className="fixture-list" data-expiry-policy="start-plus-3h">{visibleMatches.map(match=>{
         const round=roundPresentation(match.round);
-        return <button className={`fixture-row round-${round.tier}`} type="button" key={match.match_id} onClick={()=>openMatch(match)}><div className="fixture-topline"><span>{match.tournament_name}</span><span>{formatFixtureStart(match)}</span></div><div className="fixture-mainline"><div className="fixture-player"><small>{match.p1_rank?`#${match.p1_rank}`:"—"}</small><b>{match.p1_name}</b></div><strong className="fixture-probability" style={probabilityTone(match.p1_win_probability)}>{probability(match.p1_win_probability)}</strong><div className="versus"><b>VS</b><MatchStrength value={match.match_strength}/><div className="mobile-fixture-meta"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div></div><strong className="fixture-probability" style={probabilityTone(match.p2_win_probability)}>{probability(match.p2_win_probability)}</strong><div className="fixture-player right"><small>{match.p2_rank?`#${match.p2_rank}`:"—"}</small><b>{match.p2_name}</b></div></div><div className="fixture-footer"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div></button>;
+        return <button className={`fixture-row round-${round.tier}${roundPreview?" fixture-mock":""}`} type="button" key={match.match_id} disabled={roundPreview} onClick={()=>openMatch(match)}><div className="fixture-topline"><span>{match.tournament_name}</span><span>{roundPreview?"MOCK":formatFixtureStart(match)}</span></div><div className="fixture-mainline"><div className="fixture-player"><small>{match.p1_rank?`#${match.p1_rank}`:"—"}</small><b>{match.p1_name}</b></div><strong className="fixture-probability" style={probabilityTone(match.p1_win_probability)}>{probability(match.p1_win_probability)}</strong><div className="versus"><b>VS</b><MatchStrength value={match.match_strength}/><div className="mobile-fixture-meta"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div></div><strong className="fixture-probability" style={probabilityTone(match.p2_win_probability)}>{probability(match.p2_win_probability)}</strong><div className="fixture-player right"><small>{match.p2_rank?`#${match.p2_rank}`:"—"}</small><b>{match.p2_name}</b></div></div><div className="fixture-footer"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div></button>;
       })}</div>
     </section>:<section className="match-detail">
       <button className="back-button" onClick={closeMatch}>← {t.back}</button>

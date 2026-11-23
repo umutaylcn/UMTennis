@@ -492,6 +492,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .fixture-heading:after{background:var(--court-ball);box-shadow:42px 0 0 rgba(201,255,69,.27)}
 .live-dot{background:var(--court-ball);box-shadow:0 0 0 5px rgba(201,255,69,.11),0 0 20px rgba(201,255,69,.55)}
 .fixture-row:before{content:none}
+.fixture-row.fixture-mock:disabled{cursor:default}
 .fixture-row:hover,.fixture-row:focus-visible{border-color:rgba(201,255,69,.7);box-shadow:0 28px 65px rgba(0,0,0,.34),0 0 0 1px rgba(201,255,69,.15)}
 .comparison-spine{border-top-color:var(--court-ball)}
 .comparison-spine .center-pick>span{border-color:var(--court-ball);color:var(--court-ball)}
