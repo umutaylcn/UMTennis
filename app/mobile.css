@@ -986,3 +986,28 @@
 @media (max-width: 850px) {
   .player-rank-overlay { background: rgba(5,24,20,.38); backdrop-filter: none; }
 }
+
+@media (max-width: 760px) {
+  .fixture-row { padding: 11px 12px 9px; }
+  .fixture-mainline {
+    grid-template-columns: minmax(0,1fr) 82px minmax(0,1fr);
+    grid-template-rows: auto 28px auto;
+    grid-template-areas:
+      "player-one court player-two"
+      "probability-one versus probability-two"
+      ". stars .";
+    column-gap: 6px;
+    row-gap: 2px;
+    margin: 7px 0 0;
+  }
+  .fixture-player small,.fixture-player.right small { position: static; }
+  .fixture-player { gap: 2px; }
+  .fixture-player b { font-size: clamp(20px,5.5vw,27px); }
+  .fixture-probability { font-size: clamp(20px,5.7vw,26px); }
+  .versus>b { width: 28px; height: 28px; }
+  .fixture-mainline>.fixture-probability:nth-child(2) { text-align: left; }
+  .fixture-mainline>.fixture-probability:nth-child(4) { text-align: right; }
+  .fixture-center-meta { gap: 4px; }
+  .fixture-center-meta .surface-tag { padding: 3px 5px; font-size: 8px; }
+  .fixture-center-meta .fixture-round { font-size: 9px; }
+}

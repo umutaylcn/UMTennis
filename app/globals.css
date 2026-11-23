@@ -513,3 +513,36 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
   .analysis-player-name,.analysis-player.right .analysis-player-name{min-height:72px;font-size:clamp(32px,4.5vw,44px)}
   .analysis-photo-zone{min-height:0}
 }
+
+/* Fixture scoreline: court and round above VS, stars below it. */
+.fixture-row{padding-top:18px;padding-bottom:17px}
+.fixture-mainline{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 82px 108px 82px minmax(0,1fr);
+  grid-template-rows:auto minmax(42px,auto) auto;
+  grid-template-areas:
+    ". . court . ."
+    "player-one probability-one versus probability-two player-two"
+    ". . stars . .";
+  align-items:center;
+  column-gap:10px;
+  row-gap:4px;
+  margin:13px 0 0;
+}
+.fixture-mainline>.fixture-player:first-child{grid-area:player-one}
+.fixture-mainline>.fixture-probability:nth-child(2){grid-area:probability-one}
+.fixture-mainline>.fixture-probability:nth-child(4){grid-area:probability-two}
+.fixture-mainline>.fixture-player:last-child{grid-area:player-two}
+.fixture-player{position:relative;min-width:0;align-self:center}
+.fixture-player small{position:absolute;bottom:calc(100% + 5px);left:0}
+.fixture-player.right small{right:0;left:auto}
+.fixture-probability{align-self:center}
+.fixture-mainline>.versus{display:contents}
+.fixture-center-meta{grid-area:court;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.fixture-center-meta .surface-tag{padding:4px 6px;font-size:9px}
+.fixture-center-meta .fixture-round{min-height:0}
+.fixture-mainline>.versus>b{grid-area:versus;justify-self:center}
+.fixture-mainline>.versus>.match-strength{grid-area:stars;justify-self:center}
+.fixture-row.round-qf{border-color:rgba(209,139,75,.78);box-shadow:0 0 0 1px rgba(209,139,75,.24),0 0 18px rgba(209,139,75,.44),0 0 54px rgba(209,139,75,.3),inset 0 0 25px rgba(209,139,75,.1),0 16px 35px rgba(0,0,0,.22)}
+.fixture-row.round-sf{border-color:rgba(231,242,250,.8);box-shadow:0 0 0 1px rgba(231,242,250,.27),0 0 18px rgba(221,239,250,.48),0 0 56px rgba(206,228,247,.32),inset 0 0 25px rgba(221,239,250,.1),0 16px 35px rgba(0,0,0,.22)}
+.fixture-row.round-f{border-color:rgba(255,218,111,.84);box-shadow:0 0 0 1px rgba(255,218,111,.3),0 0 20px rgba(255,211,82,.53),0 0 62px rgba(255,194,54,.36),inset 0 0 28px rgba(255,211,82,.12),0 16px 35px rgba(0,0,0,.22)}

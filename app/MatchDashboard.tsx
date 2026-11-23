@@ -932,7 +932,7 @@ export function MatchDashboard(){
   const [view,setView]=useState<View>("matches");
   const [timezone,setTimezone]=useState("local");
   const [matches,setMatches]=useState<Match[]>([]);
-  const [roundPreview,setRoundPreview]=useState(false);
+  const roundPreview=typeof window!=="undefined"&&new URLSearchParams(window.location.search).get("mock")==="rounds";
   const [nowMs,setNowMs]=useState(()=>Date.now());
   const [precomputedPredictions,setPrecomputedPredictions]=useState<Record<string,Prediction>>({});
   const [previousMatches,setPreviousMatches]=useState<PreviousMatch[]>([]);
@@ -1024,10 +1024,11 @@ export function MatchDashboard(){
 
   useEffect(()=>{
     if(new URLSearchParams(window.location.search).get("mock")==="rounds"){
-      setRoundPreview(true);
-      setMatches(roundPreviewMatches());
-      setStatus("ready");
-      return;
+      const previewTimer=window.setTimeout(()=>{
+        setMatches(roundPreviewMatches());
+        setStatus("ready");
+      },0);
+      return()=>window.clearTimeout(previewTimer);
     }
     const controller=new AbortController();
     const startedAt=Date.now();
@@ -1111,7 +1112,20 @@ export function MatchDashboard(){
       {status==="ready"&&availableMatches.length>0&&!visibleMatches.length&&<div className="message-card upcoming-empty">{upcomingLabels.none}</div>}
       <div className="fixture-list" data-expiry-policy="start-plus-3h">{visibleMatches.map(match=>{
         const round=roundPresentation(match.round);
-        return <button className={`fixture-row round-${round.tier}${roundPreview?" fixture-mock":""}`} type="button" key={match.match_id} disabled={roundPreview} onClick={()=>openMatch(match)}><div className="fixture-topline"><span>{match.tournament_name}</span><span>{roundPreview?"MOCK":formatFixtureStart(match)}</span></div><div className="fixture-mainline"><div className="fixture-player"><small>{match.p1_rank?`#${match.p1_rank}`:"—"}</small><b>{match.p1_name}</b></div><strong className="fixture-probability" style={probabilityTone(match.p1_win_probability)}>{probability(match.p1_win_probability)}</strong><div className="versus"><b>VS</b><MatchStrength value={match.match_strength}/><div className="mobile-fixture-meta"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div></div><strong className="fixture-probability" style={probabilityTone(match.p2_win_probability)}>{probability(match.p2_win_probability)}</strong><div className="fixture-player right"><small>{match.p2_rank?`#${match.p2_rank}`:"—"}</small><b>{match.p2_name}</b></div></div><div className="fixture-footer"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div></button>;
+        return <button className={`fixture-row round-${round.tier}${roundPreview?" fixture-mock":""}`} type="button" key={match.match_id} disabled={roundPreview} onClick={()=>openMatch(match)}>
+          <div className="fixture-topline"><span>{match.tournament_name}</span><span>{roundPreview?"MOCK":formatFixtureStart(match)}</span></div>
+          <div className="fixture-mainline">
+            <div className="fixture-player"><small>{match.p1_rank?`#${match.p1_rank}`:"—"}</small><b>{match.p1_name}</b></div>
+            <strong className="fixture-probability" style={probabilityTone(match.p1_win_probability)}>{probability(match.p1_win_probability)}</strong>
+            <div className="versus">
+              <div className="fixture-center-meta"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><span className="fixture-round">{round.label}</span></div>
+              <b>VS</b>
+              <MatchStrength value={match.match_strength}/>
+            </div>
+            <strong className="fixture-probability" style={probabilityTone(match.p2_win_probability)}>{probability(match.p2_win_probability)}</strong>
+            <div className="fixture-player right"><small>{match.p2_rank?`#${match.p2_rank}`:"—"}</small><b>{match.p2_name}</b></div>
+          </div>
+        </button>;
       })}</div>
     </section>:<section className="match-detail">
       <button className="back-button" onClick={closeMatch}>← {t.back}</button>
