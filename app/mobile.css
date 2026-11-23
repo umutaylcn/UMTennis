@@ -949,13 +949,13 @@
   .history-filter-panel { padding: 12px; }
   .history-search,.history-filter-selects .control-field { min-height: 46px; }
   .history-filter-selects { gap: 8px; }
-  .previous-card { padding: 16px 14px; border-radius: 6px; }
+  .previous-card { padding: 11px 12px; border-radius: 6px; }
   .previous-meta { font-size: 9px; }
   .previous-meta>span:last-child { text-align: right; }
-  .previous-matchup { gap: 6px; margin: 17px 0 13px; }
-  .previous-matchup b { font-size: clamp(21px,5.5vw,27px); }
+  .previous-matchup { gap: 6px; margin: 10px 0 8px; }
+  .previous-matchup b { font-size: clamp(19px,5vw,25px); }
   .previous-vs>b { font-size: 10px; }
-  .previous-outcome { padding-top: 13px; }
+  .previous-outcome { padding-top: 8px; }
   .previous-outcome small { font-size: 9px; }
   .previous-outcome b { font-size: clamp(11px,3.3vw,13px); }
   .model-hero { min-height: 0; padding: 67px 20px 55px; }

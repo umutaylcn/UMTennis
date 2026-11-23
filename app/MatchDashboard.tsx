@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { matchesSearch } from "./search";
+import { previousTournamentName } from "./tournament-display";
 import LoadingTennisBall from "./LoadingTennisBall";
 import { visibleUpcomingMatches } from "../worker/upcoming-filter";
 
@@ -835,7 +836,7 @@ function PreviousMatches({matches,status,language,formatStart,onRetry}:{matches:
     de:{search:"Spieler oder Turnier suchen",tournament:"TURNIER",allTournaments:"Alle Turniere",round:"RUNDE",allRounds:"Alle Runden",result:"ERGEBNIS",allResults:"Alle Prognosen",confidence:"KONFIDENZ",correct:"Richtig",wrong:"Falsch",void:"Ungültig",clear:"Filter löschen",shown:"Matches angezeigt",none:"Keine Matches für diese Filter gefunden.",previous:"Zurück",next:"Weiter",page:"Seite",accuracy:"Genauigkeit"},
     it:{search:"Cerca giocatore o torneo",tournament:"TORNEO",allTournaments:"Tutti i tornei",round:"TURNO",allRounds:"Tutti i turni",result:"RISULTATO",allResults:"Tutti i pronostici",confidence:"AFFIDABILITÀ",correct:"Corretto",wrong:"Errato",void:"Annullata",clear:"Azzera filtri",shown:"partite mostrate",none:"Nessuna partita corrisponde ai filtri.",previous:"Precedente",next:"Successivo",page:"Pagina",accuracy:"precisione"},
   }[language];
-  const tournamentOptions=useMemo(()=>[{value:"all",label:labels.allTournaments},...Array.from(new Set(matches.map(match=>match.tournament_name))).sort().map(value=>({value,label:value}))],[matches,labels.allTournaments]);
+  const tournamentOptions=useMemo(()=>[{value:"all",label:labels.allTournaments},...Array.from(new Set(matches.map(match=>previousTournamentName(match.tournament_name)))).sort().map(value=>({value,label:value}))],[matches,labels.allTournaments]);
   const roundOptions=useMemo(()=>{
     const order=["F","SF","QF","R16","R32","R64","R128","RR"];
     const rounds=Array.from(new Set(matches.map(match=>match.round))).sort((a,b)=>{
@@ -847,8 +848,8 @@ function PreviousMatches({matches,status,language,formatStart,onRetry}:{matches:
   },[matches,labels.allRounds]);
   const filteredMatches=useMemo(()=>{
     return matches.filter(match=>{
-      return matchesSearch(query,[match.p1_name,match.p2_name,match.tournament_name,match.round])
-        &&(tournament==="all"||match.tournament_name===tournament)
+      return matchesSearch(query,[match.p1_name,match.p2_name,match.tournament_name,previousTournamentName(match.tournament_name),match.round])
+        &&(tournament==="all"||previousTournamentName(match.tournament_name)===tournament)
         &&(round==="all"||match.round===round)
         &&(result==="all"||(result==="void"?match.match_status==="defaulted":match.match_status!=="defaulted"&&(result==="correct")===match.prediction_correct))
         &&match.confidence*100>=confidenceRange[0]
@@ -889,7 +890,7 @@ function PreviousMatches({matches,status,language,formatStart,onRetry}:{matches:
       const isVoid=match.match_status==="defaulted";
       const statusLabel=isVoid?labels.void:match.prediction_correct?t.correct:t.wrong;
       return <article className={`previous-card ${isVoid?"void":match.prediction_correct?"correct":"wrong"}`} key={match.match_id}>
-        <div className="previous-meta"><span>{match.tournament_name}</span><span className="previous-meta-center"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><small title={match.round_verified_after_match?verifiedRoundNote:undefined}>{match.round}{match.round_verified_after_match?"*":""}</small></span><span>{formatStart(match.start_time_utc)}</span></div>
+        <div className="previous-meta"><span>{previousTournamentName(match.tournament_name)}</span><span className="previous-meta-center"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><small title={match.round_verified_after_match?verifiedRoundNote:undefined}>{match.round}{match.round_verified_after_match?"*":""}</small></span><span>{formatStart(match.start_time_utc)}</span></div>
         <div className="previous-matchup">
           <div className={!isVoid&&actualSide==="p1"?"actual-winner":""}><b>{match.p1_name}</b><strong>{probability(match.p1_win_probability)}</strong></div>
           <div className="previous-vs"><span className={`surface-tag ${match.surface.toLowerCase()}`}>{match.surface}</span><b>VS</b><small title={match.round_verified_after_match?verifiedRoundNote:undefined}>{match.round}{match.round_verified_after_match?"*":""}</small></div>
