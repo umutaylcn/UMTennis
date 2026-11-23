@@ -462,6 +462,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .previous-outcome{min-height:42px;padding-top:9px;gap:10px;border-top-color:rgba(232,239,223,.16)}
 .previous-outcome small{color:#afc2b4;font-size:9px}.previous-outcome b{font-size:13px}.previous-outcome div>span{font-size:15px;color:var(--court-gold)}
 .result-badge{padding:6px 8px;border-radius:4px;font-size:9px}
+.wrong-pick-icon{display:inline-block;font-size:17px;font-weight:900;line-height:9px;vertical-align:-2px}
 .history-pagination>button,.history-pagination div button{height:44px;border-radius:5px;background:#0b2b24}
 .model-page{font-family:var(--font-geist-sans),"Segoe UI",sans-serif}
 .surface-model .page-background{background-image:linear-gradient(145deg,#071e19,#0d352b 55%,#051712)}
