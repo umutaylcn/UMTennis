@@ -988,7 +988,7 @@
 }
 
 @media (max-width: 760px) {
-  .fixture-row { padding: 11px 12px 9px; }
+  .fixture-row { padding: 11px 12px 14px; }
   .fixture-mainline {
     grid-template-columns: minmax(0,1fr) 82px minmax(0,1fr);
     grid-template-rows: auto 28px auto;
@@ -1007,7 +1007,8 @@
   .versus>b { width: 28px; height: 28px; }
   .fixture-mainline>.fixture-probability:nth-child(2) { text-align: left; }
   .fixture-mainline>.fixture-probability:nth-child(4) { text-align: right; }
-  .fixture-center-meta { gap: 4px; }
+  .fixture-center-meta { gap: 4px; transform: translateY(-20px); }
   .fixture-center-meta .surface-tag { padding: 3px 5px; font-size: 8px; }
   .fixture-center-meta .fixture-round { font-size: 9px; }
+  .fixture-mainline>.versus>.match-strength { transform: translateY(4px); }
 }

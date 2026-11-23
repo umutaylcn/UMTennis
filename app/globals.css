@@ -538,11 +538,11 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .fixture-player.right small{right:0;left:auto}
 .fixture-probability{align-self:center}
 .fixture-mainline>.versus{display:contents}
-.fixture-center-meta{grid-area:court;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.fixture-center-meta{grid-area:court;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;transform:translateY(-22px)}
 .fixture-center-meta .surface-tag{padding:4px 6px;font-size:9px}
 .fixture-center-meta .fixture-round{min-height:0}
 .fixture-mainline>.versus>b{grid-area:versus;justify-self:center}
-.fixture-mainline>.versus>.match-strength{grid-area:stars;justify-self:center}
+.fixture-mainline>.versus>.match-strength{grid-area:stars;justify-self:center;transform:translateY(7px)}
 .fixture-row.round-qf{border-color:rgba(209,139,75,.78);box-shadow:0 0 0 1px rgba(209,139,75,.24),0 0 18px rgba(209,139,75,.44),0 0 54px rgba(209,139,75,.3),inset 0 0 25px rgba(209,139,75,.1),0 16px 35px rgba(0,0,0,.22)}
 .fixture-row.round-sf{border-color:rgba(231,242,250,.8);box-shadow:0 0 0 1px rgba(231,242,250,.27),0 0 18px rgba(221,239,250,.48),0 0 56px rgba(206,228,247,.32),inset 0 0 25px rgba(221,239,250,.1),0 16px 35px rgba(0,0,0,.22)}
 .fixture-row.round-f{border-color:rgba(255,218,111,.84);box-shadow:0 0 0 1px rgba(255,218,111,.3),0 0 20px rgba(255,211,82,.53),0 0 62px rgba(255,194,54,.36),inset 0 0 28px rgba(255,211,82,.12),0 16px 35px rgba(0,0,0,.22)}
