@@ -436,10 +436,12 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .comparison-heading>span{font-size:11px;color:#c1d1c3}
 .form-comparison-row{padding:17px 0}.form-comparison-row>span,.metric-label span{font-size:11px;line-height:1.25;color:#d2dfd2}
 .form-comparison-row small{font-size:11px;color:#d1ded0}
+.form-comparison-row>div,.form-comparison-row>div:last-child{min-width:0;align-items:center}
+.form-comparison-row .form-dots{max-width:100%;justify-content:center}
 .form-comparison-row .form-dots span{box-shadow:none;border-radius:2px;width:7px}
 .comparison-row{min-height:62px}.comparison-row b{font-size:20px;font-variant-numeric:tabular-nums}
 .career-metrics-title{margin-top:20px;padding-top:14px;border-top:1px solid rgba(232,239,223,.16);color:var(--court-gold);font-size:12px}
-.career-metrics .comparison-row>b{text-align:center}
+.comparison-row>b,.comparison-row>b:last-child{text-align:center}
 .previous-page{width:min(1120px,calc(100% - 72px));padding-top:72px}
 .surface-history .page-background{background-image:linear-gradient(115deg,rgba(4,24,19,.96),rgba(8,39,31,.96)),repeating-linear-gradient(0deg,rgba(228,238,218,.06) 0 1px,transparent 1px 44px)}
 .surface-history .page-background:after{background:repeating-linear-gradient(90deg,transparent 0 100px,rgba(239,244,226,.045) 101px 102px),linear-gradient(180deg,transparent 10%,rgba(3,18,14,.86) 100%);box-shadow:none}

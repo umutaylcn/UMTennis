@@ -1174,7 +1174,7 @@ export function MatchDashboard(){
               <ComparisonRow label={`${selected.surface} ${t.surfaceH2h}`} left={prediction.h2h.p1_surface_wins} right={prediction.h2h.p2_surface_wins}/>
             </div>
             <div className="career-metrics-title">{t.career}</div>
-            <div className="metric-comparisons career-metrics">
+            <div className="metric-comparisons">
               {CAREER_METRICS.map(({label,field,suffix,lowerIsBetter})=><ComparisonRow
                 key={field} label={t[label]} left={prediction.p1_profile.career[field]} right={prediction.p2_profile.career[field]}
                 suffix={suffix} lowerIsBetter={lowerIsBetter} decimals={2}
