@@ -7,7 +7,7 @@ import LoadingTennisBall from "./LoadingTennisBall";
 import { visibleUpcomingMatches } from "../worker/upcoming-filter";
 
 type Language = "en" | "tr" | "fr" | "es" | "de" | "it";
-type View = "matches" | "previous" | "model";
+type View = "matches" | "previous" | "model" | "showroom";
 type FormSummary = { matches:number; wins:number; losses:number; form:string; win_rate:number|null; aces:number|null; double_faults:number|null; service_points_won_pct:number|null; return_points_won_pct:number|null; break_points_saved_pct:number|null; };
 type PlayerProfile = { atp_rank:number|null; elo:number; elo_rank:number|null; surface_elo:number; surface_elo_rank:number|null; last_5:FormSummary; last_10:FormSummary; surface_last_10:FormSummary; career:FormSummary; };
 type Match = { match_id:number; start_time_utc:string; schedule_precision?:"time"|"not_before"|"date_only"|"tba"; tournament_name:string; surface:string; round:string; p1_name:string; p2_name:string; p1_id:number|null; p2_id:number|null; p1_rank:number|null; p2_rank:number|null; p1_elo_rank:number|null; p2_elo_rank:number|null; match_strength:number; p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; };
@@ -15,20 +15,36 @@ type HeadToHead = { matches:number; p1_wins:number; p2_wins:number; surface_matc
 type Prediction = Match & { p1_win_probability:number; p2_win_probability:number; predicted_winner:string; confidence:number; confidence_label:string; h2h:HeadToHead; state_as_of_utc:string; p1_profile:PlayerProfile; p2_profile:PlayerProfile; };
 type PreviousMatch = { match_id:number; start_time_utc:string; tournament_name:string; surface:string; round:string; round_at_prediction?:string; round_verified_after_match?:boolean; p1_name:string; p2_name:string; p1_win_probability:number; p2_win_probability:number; predicted_side?:"p1"|"p2"; predicted_winner:string; confidence:number; actual_side?:"p1"|"p2"; actual_winner:string; actual_loser:string; match_status:string; prediction_correct:boolean|null; winner_sets?:number; loser_sets?:number; };
 
-// Isolated visual preview: never written to the fixture feed or prediction archive.
-function roundPreviewMatches():Match[]{
-  const startTime=new Date(Date.now()+24*60*60*1000).toISOString();
-  return [
-    {match_id:-1,round:"R32",surface:"Hard",p1_name:"Carlos Alcaraz",p2_name:"Jannik Sinner",p1_rank:1,p2_rank:2,p1_elo_rank:2,p2_elo_rank:1,p1_win_probability:.51,p2_win_probability:.49,match_strength:5},
-    {match_id:-2,round:"QF",surface:"Clay",p1_name:"Novak Djokovic",p2_name:"Alexander Zverev",p1_rank:4,p2_rank:3,p1_elo_rank:3,p2_elo_rank:4,p1_win_probability:.61,p2_win_probability:.39,match_strength:5},
-    {match_id:-3,round:"SF",surface:"Grass",p1_name:"Lorenzo Musetti",p2_name:"Taylor Fritz",p1_rank:8,p2_rank:7,p1_elo_rank:8,p2_elo_rank:7,p1_win_probability:.44,p2_win_probability:.56,match_strength:4.5},
-    {match_id:-4,round:"F",surface:"Hard",p1_name:"Ben Shelton",p2_name:"Daniil Medvedev",p1_rank:6,p2_rank:10,p1_elo_rank:6,p2_elo_rank:10,p1_win_probability:.58,p2_win_probability:.42,match_strength:4.5},
-  ].map(match=>({
-    ...match,start_time_utc:startTime,schedule_precision:"time",tournament_name:"UMTennis UI Preview",
-    p1_id:null,p2_id:null,predicted_winner:match.p1_win_probability>match.p2_win_probability?match.p1_name:match.p2_name,
-    confidence:Math.max(match.p1_win_probability,match.p2_win_probability),confidence_label:"Mock preview",
-  }));
+// Synthetic examples stay out of the fixture feed and prediction archive.
+function showroomForm(form:string):FormSummary{
+  const wins=form.split("W").length-1;
+  return {form,wins,losses:form.length-wins,matches:form.length,win_rate:form.length?wins/form.length:null,aces:null,double_faults:null,service_points_won_pct:null,return_points_won_pct:null,break_points_saved_pct:null};
 }
+
+function showroomProfile(rank:number,eloRank:number,form:string,surfaceForm:string,aces:number):PlayerProfile{
+  return {
+    atp_rank:rank,elo_rank:eloRank,elo:2160-eloRank*13,surface_elo_rank:eloRank,surface_elo:2080-eloRank*12,
+    last_5:showroomForm(form.slice(-5)),last_10:showroomForm(form),surface_last_10:showroomForm(surfaceForm),
+    career:{...showroomForm(""),aces,double_faults:2.8+rank%5*.3,service_points_won_pct:62+aces*.65,return_points_won_pct:34+rank%7*.65,break_points_saved_pct:59+rank%8*.85},
+  };
+}
+
+const SHOWROOM_MATCHES:Prediction[]=[
+    {match_id:-1,round:"R32",surface:"Hard",p1_name:"Carlos Alcaraz",p2_name:"Jannik Sinner",p1_rank:1,p2_rank:2,p1_elo_rank:2,p2_elo_rank:1,p1_win_probability:.51,p2_win_probability:.49,match_strength:5},
+    {match_id:-2,round:"QF",surface:"Clay",p1_name:"Novak Djokovic",p2_name:"Alexander Zverev",p1_rank:4,p2_rank:3,p1_elo_rank:3,p2_elo_rank:4,p1_win_probability:.61,p2_win_probability:.39,match_strength:4},
+    {match_id:-3,round:"SF",surface:"Grass",p1_name:"Lorenzo Musetti",p2_name:"Taylor Fritz",p1_rank:8,p2_rank:7,p1_elo_rank:8,p2_elo_rank:7,p1_win_probability:.44,p2_win_probability:.56,match_strength:4.5},
+    {match_id:-4,round:"F",surface:"Hard",p1_name:"Ben Shelton",p2_name:"Daniil Medvedev",p1_rank:6,p2_rank:10,p1_elo_rank:6,p2_elo_rank:10,p1_win_probability:.78,p2_win_probability:.22,match_strength:3.5},
+    {match_id:-5,round:"R64",surface:"Grass",p1_name:"Matteo Berrettini",p2_name:"Cameron Norrie",p1_rank:57,p2_rank:48,p1_elo_rank:44,p2_elo_rank:52,p1_win_probability:.72,p2_win_probability:.28,match_strength:2.5},
+    {match_id:-6,round:"R16",surface:"Clay",p1_name:"Mariano Navone",p2_name:"Daniel Altmaier",p1_rank:86,p2_rank:105,p1_elo_rank:91,p2_elo_rank:108,p1_win_probability:.35,p2_win_probability:.65,match_strength:1},
+  ].map(match=>({
+    ...match,start_time_utc:"",schedule_precision:"tba",tournament_name:"UMTennis Showroom",
+    p1_id:null,p2_id:null,predicted_winner:match.p1_win_probability>match.p2_win_probability?match.p1_name:match.p2_name,
+    confidence:Math.max(match.p1_win_probability,match.p2_win_probability),confidence_label:"Demo",
+    p1_profile:showroomProfile(match.p1_rank,match.p1_elo_rank,"WLWWLWWLWW","LWWWLWWLWW",8.4),
+    p2_profile:showroomProfile(match.p2_rank,match.p2_elo_rank,"WWLLWLWWLW","WWLWLLWLWW",6.1),
+    h2h:{matches:5,p1_wins:3,p2_wins:2,surface_matches:2,p1_surface_wins:1,p2_surface_wins:1},
+    state_as_of_utc:"",
+  }));
 
 function roundPresentation(round:string){
   const normalized=round.trim().toUpperCase();
@@ -932,7 +948,7 @@ export function MatchDashboard(){
   const [view,setView]=useState<View>("matches");
   const [timezone,setTimezone]=useState("local");
   const [matches,setMatches]=useState<Match[]>([]);
-  const roundPreview=typeof window!=="undefined"&&new URLSearchParams(window.location.search).get("mock")==="rounds";
+  const isShowroom=view==="showroom";
   const [nowMs,setNowMs]=useState(()=>Date.now());
   const [precomputedPredictions,setPrecomputedPredictions]=useState<Record<string,Prediction>>({});
   const [previousMatches,setPreviousMatches]=useState<PreviousMatch[]>([]);
@@ -974,6 +990,14 @@ export function MatchDashboard(){
     ];
   },[]);
   const t=text[language];
+  const demoCopy={
+    en:{badge:"Demo data",intro:"Open any matchup to explore win probabilities, Elo, recent form and head-to-head. All numbers are illustrative, not live predictions.",back:"Showroom",cta:"Explore example matches",pick:"EXAMPLE PICK"},
+    tr:{badge:"Örnek veri",intro:"Bir maçı seçip kazanma olasılıklarını, Elo’yu, formu ve H2H’yi incele. Sayılar örnektir; canlı tahmin değildir.",back:"Showroom",cta:"Örnek maçları incele",pick:"ÖRNEK TAHMİN"},
+    fr:{badge:"Données de démo",intro:"Ouvrez un match pour explorer les probabilités, le classement Elo, la forme et les confrontations. Les chiffres sont fictifs.",back:"Showroom",cta:"Voir les matchs de démo",pick:"PRÉDICTION EXEMPLE"},
+    es:{badge:"Datos de ejemplo",intro:"Abre un partido para explorar probabilidades, Elo, forma y enfrentamientos. Las cifras son ilustrativas.",back:"Showroom",cta:"Ver partidos de ejemplo",pick:"PRONÓSTICO DE EJEMPLO"},
+    de:{badge:"Beispieldaten",intro:"Öffne ein Match für Siegchancen, Elo, Form und direkte Duelle. Alle Zahlen dienen nur als Beispiel.",back:"Showroom",cta:"Beispielmatches ansehen",pick:"BEISPIELPROGNOSE"},
+    it:{badge:"Dati dimostrativi",intro:"Apri un incontro per esplorare probabilità, Elo, forma e precedenti. I dati sono illustrativi.",back:"Showroom",cta:"Esplora gli incontri di esempio",pick:"PRONOSTICO DI ESEMPIO"},
+  }[language];
   const retryLabel={tr:"Tekrar dene",en:"Try again",fr:"Réessayer",es:"Reintentar",de:"Erneut versuchen",it:"Riprova"}[language];
   const estimateLabel={tr:"Tahmini ilerleme",en:"Estimated progress",fr:"Progression estimée",es:"Progreso estimado",de:"Geschätzter Fortschritt",it:"Avanzamento stimato"}[language];
   const loadingPercent=Math.min(95,Math.round(95*(1-Math.exp(-loadingElapsed/48))));
@@ -1023,13 +1047,13 @@ export function MatchDashboard(){
   },[]);
 
   useEffect(()=>{
-    if(new URLSearchParams(window.location.search).get("mock")==="rounds"){
-      const previewTimer=window.setTimeout(()=>{
-        setMatches(roundPreviewMatches());
-        setStatus("ready");
-      },0);
-      return()=>window.clearTimeout(previewTimer);
-    }
+    const params=new URLSearchParams(window.location.search);
+    if(!params.has("showroom")&&params.get("mock")!=="rounds")return;
+    const timer=window.setTimeout(()=>setView("showroom"),0);
+    return()=>window.clearTimeout(timer);
+  },[]);
+
+  useEffect(()=>{
     const controller=new AbortController();
     const startedAt=Date.now();
     const timer=window.setInterval(()=>setLoadingElapsed(Math.floor((Date.now()-startedAt)/1000)),1000);
@@ -1076,19 +1100,18 @@ export function MatchDashboard(){
     if(match.schedule_precision==="not_before")return `${labels[language].notBefore} ${formatStart(match.start_time_utc)}`;
     return formatStart(match.start_time_utc);
   }
-  function openMatch(match:Match){setSelected(match);const saved=precomputedPredictions[String(match.match_id)];setPrediction(saved??null);setPredictionError(!saved);window.scrollTo({top:0,behavior:"smooth"});}
-  function closeMatch(){setView("matches");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
-  function showModel(){setView("model");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
-  function showPrevious(){setView("previous");setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
+  function openMatch(match:Match){setSelected(match);const saved=isShowroom?SHOWROOM_MATCHES.find(example=>example.match_id===match.match_id):precomputedPredictions[String(match.match_id)];setPrediction(saved??null);setPredictionError(!saved);window.scrollTo({top:0,behavior:"smooth"});}
+  function navigate(next:View){setView(next);setSelected(null);setPrediction(null);setPredictionError(false);window.scrollTo({top:0,behavior:"smooth"});}
+  function closeMatch(){navigate(isShowroom?"showroom":"matches");}
   const surfaceClass=view==="model"?"model":view==="previous"?"history":selected?.surface.toLowerCase()??"default";
 
   return <main className={`site-screen surface-${surfaceClass}`}>
     <div className="page-background" aria-hidden="true"/>
     {view==="previous"&&<div className="history-sparks" aria-hidden="true"><div className="history-spark-gutter left">{Array.from({length:6},(_,index)=><i key={index}/>)}</div><div className="history-spark-gutter right">{Array.from({length:6},(_,index)=><i key={index}/>)}</div></div>}
     <header className={`umt-header${mobileNavHidden?" mobile-nav-hidden":""}`}>
-      {view==="matches"&&selected&&<button className="mobile-back-button" type="button" onClick={closeMatch}>← {t.back}</button>}
-      <button className="umt-logo" onClick={closeMatch}><span>UM</span>Tennis</button>
-      <nav><button className={view==="matches"?"active":""} onClick={closeMatch}>{t.matches}</button><button className={view==="previous"?"active":""} type="button" onClick={showPrevious}>{t.previous}</button><button className={view==="model"?"active":""} type="button" onClick={showModel}>Model</button></nav>
+      {selected&&<button className="mobile-back-button" type="button" onClick={closeMatch}>← {isShowroom?demoCopy.back:t.back}</button>}
+      <button className="umt-logo" onClick={()=>navigate("matches")}><span>UM</span>Tennis</button>
+      <nav>{(["matches","previous","model","showroom"] as const).map(item=><button key={item} className={view===item?"active":""} aria-current={view===item?"page":undefined} type="button" onClick={()=>navigate(item)}>{item==="model"?"Model":item==="showroom"?"Showroom":t[item]}</button>)}</nav>
       <button className={`mobile-settings-toggle${mobileSettingsOpen?" active":""}`} type="button" aria-label="Settings" aria-expanded={mobileSettingsOpen} onClick={()=>setMobileSettingsOpen(current=>!current)}>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M7 14v6"/><circle cx="14" cy="7" r="2"/><circle cx="7" cy="17" r="2"/></svg>
       </button>
@@ -1099,21 +1122,21 @@ export function MatchDashboard(){
       </div>
     </header>
 
-    {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart} onRetry={retryPrevious}/>:!selected?<section className={`fixture-column${status==="loading"?" is-loading":""}`}>
-      {status!=="loading"&&<div className="fixture-heading"><div><span className="live-dot"/>{roundPreview?"UI PREVIEW · MOCK DATA":"ATP TOUR"}</div><h1>{t.upcoming}</h1><p>{roundPreview?"Sample cards only — not real fixtures or model predictions.":status==="ready"&&!availableMatches.length?t.noUpcoming:t.choose}</p></div>}
-      {status==="loading"&&<div className="match-loading-inline" role="status" aria-live="polite"><LoadingTennisBall/><span className="match-loading-caption"><span>{t.loading}</span><strong title={estimateLabel}>{loadingPercent}%</strong></span></div>}
-      {status==="error"&&<div className="match-loading-inline match-load-error"><span>{t.failed}</span><button type="button" onClick={retryUpcoming}>{retryLabel}</button></div>}
-      {status==="ready"&&availableMatches.length>0&&<div className="upcoming-filter-bar">
+    {view==="model"?<ModelDetails language={language}/>:view==="previous"?<PreviousMatches matches={previousMatches} status={previousStatus} language={language} formatStart={formatStart} onRetry={retryPrevious}/>:!selected?<section className={`fixture-column${!isShowroom&&status==="loading"?" is-loading":""}`}>
+      {(isShowroom||status!=="loading")&&<div className="fixture-heading"><div>{!isShowroom&&<span className="live-dot"/>}{isShowroom?demoCopy.badge:"ATP TOUR"}</div><h1>{isShowroom?"Showroom":t.upcoming}</h1><p>{isShowroom?demoCopy.intro:status==="ready"&&!availableMatches.length?t.noUpcoming:t.choose}</p>{!isShowroom&&status==="ready"&&!availableMatches.length&&<button className="showroom-cta" type="button" onClick={()=>navigate("showroom")}>{demoCopy.cta}</button>}</div>}
+      {!isShowroom&&status==="loading"&&<div className="match-loading-inline" role="status" aria-live="polite"><LoadingTennisBall/><span className="match-loading-caption"><span>{t.loading}</span><strong title={estimateLabel}>{loadingPercent}%</strong></span></div>}
+      {!isShowroom&&status==="error"&&<div className="match-loading-inline match-load-error"><span>{t.failed}</span><button type="button" onClick={retryUpcoming}>{retryLabel}</button></div>}
+      {!isShowroom&&status==="ready"&&availableMatches.length>0&&<div className="upcoming-filter-bar">
         <label className="upcoming-search"><span aria-hidden="true"/><input type="search" value={upcomingQuery} onChange={event=>setUpcomingQuery(event.target.value)} placeholder={upcomingLabels.search} aria-label={upcomingLabels.search}/>{upcomingQuery&&<button type="button" onClick={()=>setUpcomingQuery("")} aria-label={upcomingLabels.clear}>×</button>}</label>
         <CustomSelect label={upcomingLabels.tournament} value={activeUpcomingTournament} className="upcoming-tournament-field" options={upcomingTournamentOptions} onChange={setUpcomingTournament}/>
         <ConfidenceRange label={upcomingLabels.confidence} value={upcomingConfidence} onChange={setUpcomingConfidence}/>
         <div className="upcoming-filter-summary"><span><b>{visibleMatches.length}</b> / {availableMatches.length} {upcomingLabels.shown}</span>{upcomingFiltersActive&&<button type="button" onClick={()=>{setUpcomingQuery("");setUpcomingTournament("all");setUpcomingConfidence([50,100]);}}>↺ {upcomingLabels.clear}</button>}</div>
       </div>}
-      {status==="ready"&&availableMatches.length>0&&!visibleMatches.length&&<div className="message-card upcoming-empty">{upcomingLabels.none}</div>}
-      <div className="fixture-list" data-expiry-policy="start-plus-3h">{visibleMatches.map(match=>{
+      {!isShowroom&&status==="ready"&&availableMatches.length>0&&!visibleMatches.length&&<div className="message-card upcoming-empty">{upcomingLabels.none}</div>}
+      <div className="fixture-list" data-expiry-policy={isShowroom?undefined:"start-plus-3h"}>{(isShowroom?SHOWROOM_MATCHES:visibleMatches).map(match=>{
         const round=roundPresentation(match.round);
-        return <button className={`fixture-row round-${round.tier}${roundPreview?" fixture-mock":""}`} type="button" key={match.match_id} disabled={roundPreview} onClick={()=>openMatch(match)}>
-          <div className="fixture-topline"><span>{match.tournament_name}</span><span>{roundPreview?"MOCK":formatFixtureStart(match)}</span></div>
+        return <button className={`fixture-row round-${round.tier}`} type="button" key={match.match_id} onClick={()=>openMatch(match)}>
+          <div className="fixture-topline"><span>{match.tournament_name}</span><span>{isShowroom?demoCopy.badge:formatFixtureStart(match)}</span></div>
           <div className="fixture-mainline">
             <div className="fixture-player"><small>{match.p1_rank?`#${match.p1_rank}`:"—"}</small><b>{match.p1_name}</b></div>
             <strong className="fixture-probability" style={probabilityTone(match.p1_win_probability)}>{probability(match.p1_win_probability)}</strong>
@@ -1128,8 +1151,8 @@ export function MatchDashboard(){
         </button>;
       })}</div>
     </section>:<section className="match-detail">
-      <button className="back-button" onClick={closeMatch}>← {t.back}</button>
-      <div className="match-kicker"><span className={`surface-tag ${selected.surface.toLowerCase()}`}>{selected.surface}</span><b>{selected.tournament_name}</b><span>{roundPresentation(selected.round).label} · {formatFixtureStart(selected)}</span></div>
+      <button className="back-button" onClick={closeMatch}>← {isShowroom?demoCopy.back:t.back}</button>
+      <div className="match-kicker"><span className={`surface-tag ${selected.surface.toLowerCase()}`}>{selected.surface}</span><b>{selected.tournament_name}</b><span>{roundPresentation(selected.round).label} · {isShowroom?demoCopy.badge:formatFixtureStart(selected)}</span></div>
       {!prediction&&!predictionError?<div className="prediction-loader"><span/>{t.calculating}</div>:predictionError?<div className="prediction-loader error">{t.failed}</div>:prediction&&<>
         <div className="analysis-stage">
           <article className="analysis-player left">
@@ -1138,7 +1161,7 @@ export function MatchDashboard(){
             <div className={`big-probability player-probability ${prediction.p1_win_probability>=.5?"favorite":"underdog"}`}><span>{t.prediction}</span><b>{probability(prediction.p1_win_probability)}</b></div>
           </article>
           <section className="comparison-spine">
-            <div className="center-pick"><span>VS</span><small>{t.modelPick}</small><b>{prediction.predicted_winner}</b></div>
+            <div className="center-pick"><span>VS</span><small>{isShowroom?demoCopy.pick:t.modelPick}</small><b>{prediction.predicted_winner}</b></div>
             <div className="comparison-heading"><span>{selected.p1_name.split(" ").slice(-1)[0]}</span><h2>{t.preMatch}</h2><span>{selected.p2_name.split(" ").slice(-1)[0]}</span></div>
             <div className="form-comparisons">
               <FormComparisonRow label={t.last5} left={prediction.p1_profile.last_5} right={prediction.p2_profile.last_5}/>

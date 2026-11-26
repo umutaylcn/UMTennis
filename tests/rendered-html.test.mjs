@@ -56,8 +56,8 @@ test("loads public match data without waiting for the Python API", async () => {
   assert.match(dashboard, /precomputedPredictions\[String\(match\.match_id\)\]/);
   assert.doesNotMatch(dashboard, /umtennis-api\.onrender\.com|\/api\/matches|\/api\/previous-matches/);
   assert.match(dashboard, /match-loading-inline/);
-  assert.match(dashboard, /fixture-column\$\{status==="loading"\?" is-loading"/);
-  assert.match(dashboard, /status!=="loading"&&<div className="fixture-heading"/);
+  assert.match(dashboard, /fixture-column\$\{!isShowroom&&status==="loading"\?" is-loading"/);
+  assert.match(dashboard, /\(isShowroom\|\|status!=="loading"\)&&<div className="fixture-heading"/);
   assert.match(dashboard, /match-loading-caption/);
   assert.match(dashboard, /LoadingTennisBall/);
   assert.match(dashboard, /"Jakub Mensik":"110"/);

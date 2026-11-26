@@ -828,7 +828,7 @@
   .umt-header.mobile-nav-hidden { height: 58px; }
   .umt-logo { font-size: 27px !important; }
   .umt-header nav {
-    width: min(310px,calc(100vw - 34px));
+    width: min(360px,calc(100vw - 26px));
     height: 42px;
     padding: 2px 8px;
     gap: 3px !important;
@@ -838,9 +838,9 @@
   .umt-header nav button {
     height: 100%;
     min-width: 0;
-    padding: 6px 8px;
-    font-size: 11px;
-    letter-spacing: .07em;
+    padding: 6px clamp(4px,1.3vw,8px);
+    font-size: clamp(9px,2.7vw,11px);
+    letter-spacing: .045em;
   }
   .umt-header nav .active:after { left: 8px; right: 8px; bottom: 3px; }
   .mobile-settings-toggle,.mobile-back-button {
