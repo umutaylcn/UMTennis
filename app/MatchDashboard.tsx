@@ -684,8 +684,8 @@ function PlayerPortrait({id,name,side}:{id:number|null;name:string;side:"left"|"
 
 function FormDots({form}:{form:string}){return <div className="form-dots">{form?form.split("").map((result,index)=><span className={result==="W"?"win":result==="L"?"loss":"neutral"} key={`${result}-${index}`}>{result}</span>):<em>—</em>}</div>;}
 
-function ComparisonRow({label,left,right,suffix="",lowerIsBetter=false}:{label:string;left:number|null;right:number|null;suffix?:string;lowerIsBetter?:boolean}){
-  const display=(value:number|null)=>value==null?"—":`${value}${suffix}`;
+function ComparisonRow({label,left,right,suffix="",lowerIsBetter=false,decimals}:{label:string;left:number|null;right:number|null;suffix?:string;lowerIsBetter?:boolean;decimals?:number}){
+  const display=(value:number|null)=>value==null?"—":`${decimals===undefined?value:value.toFixed(decimals)}${suffix}`;
   const tones=(()=>{
     if(left==null||right==null)return ["missing","missing"];
     if(left===right)return ["even","even"];
@@ -1175,7 +1175,7 @@ export function MatchDashboard(){
             <div className="career-metrics-title">{t.career}</div>
             <div className="metric-comparisons">
               <ComparisonRow label={t.aces} left={prediction.p1_profile.career.aces} right={prediction.p2_profile.career.aces}/>
-              <ComparisonRow label={t.doubleFaults} left={prediction.p1_profile.career.double_faults} right={prediction.p2_profile.career.double_faults} lowerIsBetter/>
+              <ComparisonRow label={t.doubleFaults} left={prediction.p1_profile.career.double_faults} right={prediction.p2_profile.career.double_faults} lowerIsBetter decimals={2}/>
               <ComparisonRow label={t.serve} left={prediction.p1_profile.career.service_points_won_pct} right={prediction.p2_profile.career.service_points_won_pct} suffix="%"/>
               <ComparisonRow label={t.return} left={prediction.p1_profile.career.return_points_won_pct} right={prediction.p2_profile.career.return_points_won_pct} suffix="%"/>
               <ComparisonRow label={t.bpSaved} left={prediction.p1_profile.career.break_points_saved_pct} right={prediction.p2_profile.career.break_points_saved_pct} suffix="%"/>
