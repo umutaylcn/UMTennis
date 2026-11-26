@@ -985,6 +985,11 @@
 
 @media (max-width: 850px) {
   .player-rank-overlay { background: rgba(5,24,20,.38); backdrop-filter: none; }
+  .analysis-player .player-probability,
+  .analysis-player.right .player-probability {
+    display: grid;
+    place-items: center;
+  }
 }
 
 @media (max-width: 760px) {
