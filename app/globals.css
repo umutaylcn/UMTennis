@@ -44,7 +44,7 @@
 .match-detail{width:100%;padding-left:28px;padding-right:28px;overflow:hidden}
 .analysis-stage{width:100%;min-height:760px;display:grid;grid-template-columns:minmax(290px,1fr) minmax(380px,520px) minmax(290px,1fr);align-items:stretch;position:relative;margin-top:12px}
 .analysis-player{position:relative;min-width:0;min-height:720px;display:flex;align-items:flex-end}
-.analysis-player.left{justify-content:flex-start;margin-left:-28px}.analysis-player.right{justify-content:flex-end;margin-right:-28px}
+.analysis-player.left{justify-content:flex-start;margin-left:calc(-1 * var(--portrait-bleed,28px))}.analysis-player.right{justify-content:flex-end;margin-right:calc(-1 * var(--portrait-bleed,28px))}
 .analysis-player .portrait-shell{inset:0;width:100%;height:100%;opacity:1;pointer-events:none}
 .analysis-player .portrait-shell.left,.analysis-player .portrait-shell.right{justify-content:center}
 .analysis-player .portrait-shell img{width:clamp(430px,43vw,720px);height:100%;object-fit:contain;object-position:center bottom;mask-image:linear-gradient(to bottom,transparent 0,#000 4%,#000 82%,transparent 100%);filter:saturate(.92) contrast(1.08) drop-shadow(0 25px 34px rgba(0,0,0,.4))}
@@ -506,9 +506,12 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .player-rank-overlay span,.player-rank-overlay b{text-shadow:0 2px 6px rgba(0,0,0,.96),0 0 14px rgba(0,0,0,.85)}
 .player-probability,.analysis-player.right .player-probability{width:100%;box-sizing:border-box;align-self:stretch;justify-content:center;align-items:center;text-align:center}
 @media(min-width:851px){
-  .analysis-player{align-self:start;height:640px;min-height:0}
+  .analysis-player{--portrait-bleed:28px;align-self:start;height:640px;min-height:0}
   .analysis-photo-zone{min-height:0}
-  .player-probability{padding-top:13px}
+  /* Keep the percentage inside the grid column, excluding the portrait bleed. */
+  .analysis-player .player-probability{width:auto;padding-top:13px}
+  .analysis-player.left .player-probability{margin-left:var(--portrait-bleed)}
+  .analysis-player.right .player-probability{margin-right:var(--portrait-bleed)}
 }
 @media(min-width:761px) and (max-width:850px){
   .back-button{position:relative;top:auto;left:auto;margin-bottom:14px}
